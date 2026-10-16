@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crossfit"
+version = "0.1.0"
+description = "CROSSFIT — crosscoder model-diffing of evolutionary vs fitness-adapted protein language models"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.0",
+  "numpy>=1.24",
+  "pyarrow>=14",
+  "pyyaml>=6",
+  "requests>=2.31",
+  "scipy>=1.11",
+  "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[tool.setuptools.packages.find]
+where = ["Code"]
+include = ["crossfit*"]
+
+[tool.pytest.ini_options]
+testpaths = ["Code/tests"]

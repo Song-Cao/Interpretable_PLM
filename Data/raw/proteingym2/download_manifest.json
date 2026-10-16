@@ -1,0 +1,87 @@
+{
+  "repo": "ProteinGym/ProteinGym2.0",
+  "revision": "2e5c7b10c3dda55ca7295c5f1334887801294131",
+  "n_assays": 10,
+  "files": [
+    {
+      "assay_id": "GFP_AEQVI_Sarkisyan_2016",
+      "file": "GFP_AEQVI_Sarkisyan_2016.pgdata",
+      "size_bytes": 1654434,
+      "pinned_size": 1654434,
+      "pinned_oid": "a25aebbaa96807ed8b59c358bbed490941e318ae9a3955f2a2cd3a78ab1051d0",
+      "local_sha256": "a25aebbaa96807ed8b59c358bbed490941e318ae9a3955f2a2cd3a78ab1051d0"
+    },
+    {
+      "assay_id": "SPG1_STRSG_Olson_2014",
+      "file": "SPG1_STRSG_Olson_2014.pgdata",
+      "size_bytes": 9791574,
+      "pinned_size": 9791574,
+      "pinned_oid": "67e36da5e45ceec94a081232840d25058356b29d7198f47464f8a9373705a50b",
+      "local_sha256": "67e36da5e45ceec94a081232840d25058356b29d7198f47464f8a9373705a50b"
+    },
+    {
+      "assay_id": "RASK_HUMAN_Weng_2022_abundance",
+      "file": "RASK_HUMAN_Weng_2022_abundance.pgdata",
+      "size_bytes": 34474245,
+      "pinned_size": 34474245,
+      "pinned_oid": "757d6c6d3b425b41f56dafefda3493302919a714ffbe7faf009d907e742ba9ac",
+      "local_sha256": "757d6c6d3b425b41f56dafefda3493302919a714ffbe7faf009d907e742ba9ac"
+    },
+    {
+      "assay_id": "ESTA_BACSU_Nutschel_2020",
+      "file": "ESTA_BACSU_Nutschel_2020.pgdata",
+      "size_bytes": 53823735,
+      "pinned_size": 53823735,
+      "pinned_oid": "a9dd8d265016de7de4b332e3ec883d874764be55799a031bdaa471a84e6ff3a4",
+      "local_sha256": "a9dd8d265016de7de4b332e3ec883d874764be55799a031bdaa471a84e6ff3a4"
+    },
+    {
+      "assay_id": "OXDA_RHOTO_Vanella_2023_activity",
+      "file": "OXDA_RHOTO_Vanella_2023_activity.pgdata",
+      "size_bytes": 58550103,
+      "pinned_size": 58550103,
+      "pinned_oid": "f6d0fa2c16959a8a990a18ee645d9ee45d3131b5d069b32d595a52b762885ca2",
+      "local_sha256": "f6d0fa2c16959a8a990a18ee645d9ee45d3131b5d069b32d595a52b762885ca2"
+    },
+    {
+      "assay_id": "GCN4_YEAST_Staller_2018",
+      "file": "GCN4_YEAST_Staller_2018.pgdata",
+      "size_bytes": 966096,
+      "pinned_size": 966096,
+      "pinned_oid": "ae4332b95932ea19039dda21dca23be567f88634a5a58adcd3dedf2c41a2319f",
+      "local_sha256": "ae4332b95932ea19039dda21dca23be567f88634a5a58adcd3dedf2c41a2319f"
+    },
+    {
+      "assay_id": "TPMT_HUMAN_Matreyek_2018",
+      "file": "TPMT_HUMAN_Matreyek_2018.pgdata",
+      "size_bytes": 33263756,
+      "pinned_size": 33263756,
+      "pinned_oid": "44f79734f40866d1b21325bc29498eae399f14d6d3c1c4e2166a613a3334a1f1",
+      "local_sha256": "44f79734f40866d1b21325bc29498eae399f14d6d3c1c4e2166a613a3334a1f1"
+    },
+    {
+      "assay_id": "CCDB_ECOLI_Adkar_2012",
+      "file": "CCDB_ECOLI_Adkar_2012.pgdata",
+      "size_bytes": 771643,
+      "pinned_size": 771643,
+      "pinned_oid": "f6dc6c7cda304b7045af86b70771497feedf054b4589ba1ec8211d0b59cb87f3",
+      "local_sha256": "f6dc6c7cda304b7045af86b70771497feedf054b4589ba1ec8211d0b59cb87f3"
+    },
+    {
+      "assay_id": "RL40A_YEAST_Roscoe_2014",
+      "file": "RL40A_YEAST_Roscoe_2014.pgdata",
+      "size_bytes": 8650189,
+      "pinned_size": 8650189,
+      "pinned_oid": "b6e513c5428b6a19848545f3dd4b4f8606d7cae1989b4cd6b52f1abb9df8060f",
+      "local_sha256": "b6e513c5428b6a19848545f3dd4b4f8606d7cae1989b4cd6b52f1abb9df8060f"
+    },
+    {
+      "assay_id": "FECA_ECOLI_Tsuboyama_2023_2D1U",
+      "file": "FECA_ECOLI_Tsuboyama_2023_2D1U.pgdata",
+      "size_bytes": 2039733,
+      "pinned_size": 2039733,
+      "pinned_oid": "262f71cf8247bde41d94c0a509be39ff6e78838e38dccdd2068131aead50417f",
+      "local_sha256": "262f71cf8247bde41d94c0a509be39ff6e78838e38dccdd2068131aead50417f"
+    }
+  ]
+}

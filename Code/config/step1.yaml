@@ -1,0 +1,91 @@
+# CROSSFIT Step 1 — dataset curation config.
+# Every threshold, seed and path used by the curation pipeline lives here.
+# Nothing downstream should hardcode a number that appears in this file.
+
+paths:
+  root: /Users/songcao/workdir/Interpretable_PLM
+  raw_pgdata: Data/raw/proteingym2
+  reference: Data/raw/reference
+  interim: Data/interim
+  processed: Data/processed
+  splits: Data/processed/splits
+  reports: Reports/step1
+
+sources:
+  proteingym2_repo: ProteinGym/ProteinGym2.0
+  proteingym2_revision: "2e5c7b10c3dda55ca7295c5f1334887801294131"
+  reference_v1_url: https://raw.githubusercontent.com/OATML-Markslab/ProteinGym/main/reference_files/DMS_substitutions.csv
+  reference_v1_commit: "62eab5b3c83a3727b5b57bfbe377b24ef7545ccc"
+
+selection:
+  keep_phenotypes: [Activity, Binding, Stability, Expression]
+  min_variants: 500
+  preferred_min_variants: 2000
+  max_seq_len: 1024
+  preferred_seq_len: [100, 500]
+  size_bins:                        # target composition
+    "500-2000": 3
+    "2000-10000": 4
+    "10000-inf": 3
+  min_multimutant_assays: 3
+  n_assays: 10
+
+qc:
+  invalid_residues: "XBZUJO*"       # '*' handled separately (terminal stop)
+  standard_aa: ACDEFGHIKLMNPQRSTVWY
+  # duplicate measurements disagreeing by more than this many combined SEs are flagged
+  duplicate_disagreement_sigma: 3.0
+  # censoring detection: a variant is floor/ceiling censored if its y_raw lies within
+  # censor_eps (in units of assay dynamic range) of the observed extreme AND the
+  # extreme carries at least censor_mass_frac of total probability mass.
+  censor_eps: 0.01
+  censor_mass_frac: 0.02
+  # variants with sigma_v above this within-assay quantile are dropped
+  sigma_drop_quantile: 0.99
+
+labels:
+  standardize: zscore_within_assay   # y = (y_raw - mean) / sd, within assay
+  # ORIENTATION: ProteinGym's `DMS Score` is ALREADY oriented higher = fitter.
+  # `raw_DMS_directionality` in DMS_substitutions.csv records the sign that was
+  # applied to the raw phenotype when ProteinGym built `DMS Score`; applying it
+  # again is a silent sign flip. Verified empirically against each bundle's own
+  # `DMS Score Bin` column (mean score higher in functional bin 1 for all 10,
+  # including CCDB whose directionality is -1). crossfit.labels.assert_orientation
+  # re-runs that check at build time and raises on contradiction.
+  apply_directionality: false
+  verify_orientation_against_bin_column: true
+  # sigma_v: ProteinGym 2.0 declares has_uncertainty=true in every manifest but
+  # ships NO per-variant uncertainty column, and the v1 reference table has no
+  # uncertainty field. sigma_v is therefore genuinely unavailable except where
+  # duplicate measurements of the same mutant sequence exist (FecA only).
+  sigma_min_groups_for_mv_trend: 30
+
+splits:
+  master_seed: 20260827
+  published_scheme_name: pg_kfold
+  unseen_position:
+    test_frac: 0.2
+    n_folds: 5
+    # A variant enters fold f's test set only if EVERY mutated position is in
+    # held-out group f, and enters train only if NO position is. Straddling
+    # multi-mutants are dropped for that fold. A k-mutant survives with prob
+    # ~n_folds^-k, so combinatorially-saturated assays lose almost everything;
+    # rather than report a 3-variant test set, mark B2 unavailable for them.
+    min_test_size: 200
+    min_train_size: 500
+  mutation_count_extrapolation:
+    k: 1                             # train n_mutations <= k, test > k
+  low_n:
+    N: [16, 32, 64, 128, 256, 512]
+    n_seeds: 10
+    nested: true                     # N=16 subset is a subset of N=32, etc.
+
+reservations:
+  layer_freeze:
+    frac: 0.05
+    seed: 424242
+    stratify_on: [n_mutations, y_decile]
+  prediction_folds:
+    K: 3
+    balance_on: [phenotype_class, size_bin]
+    seed: 20260827

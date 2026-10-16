@@ -1,0 +1,861 @@
+{
+ "pinned_at_utc": "2026-08-27T17:30:53+00:00",
+ "proteingym2": {
+  "hf_repo": "ProteinGym/ProteinGym2.0",
+  "revision_sha": "2e5c7b10c3dda55ca7295c5f1334887801294131",
+  "last_modified": "2026-08-25T18:49:13.000Z",
+  "n_pgdata_files": 211,
+  "total_bytes": 4846635552,
+  "file_manifest": {
+   "A0A192B1T2_9HIV1_Haddox_2018.pgdata": {
+    "size": 48237202,
+    "oid": "7ffc2ba182ae02f13ba586ffe4fe8cbbea7180d6a61feae4284feaca267ddd02"
+   },
+   "A0A1I9GEU1_NEIME_Kennouche_2019.pgdata": {
+    "size": 11439928,
+    "oid": "8419bda590d2a7b4158d8d07f59f0d057d001728d614a95d1491bd1e2905abab"
+   },
+   "A0A247D711_LISMN_Stadelmann_2021.pgdata": {
+    "size": 363858,
+    "oid": "6cb9d0a2b60f758f1f44a6b9c5a5008fd343b998a228d26ec8c6cdad2e14e7e4"
+   },
+   "A0A2Z5U3Z0_9INFA_Doud_2016.pgdata": {
+    "size": 6008598,
+    "oid": "da5580613e8ead684e53e68baad215f3340e0032627baff588e758e35e2449ce"
+   },
+   "A0A2Z5U3Z0_9INFA_Wu_2014.pgdata": {
+    "size": 5865552,
+    "oid": "bdca9e0594f7eb71d0f030d87e531c9fb364f554ba5b1937df06605549f0ed19"
+   },
+   "A4D664_9INFA_Soh_2019.pgdata": {
+    "size": 2220546,
+    "oid": "0d1880adc644cb7f00df3715942e7e87ee5576d1a8925b378a6d2043020de315"
+   },
+   "A4GRB6_PSEAI_Chen_2020.pgdata": {
+    "size": 58626174,
+    "oid": "cd4bcc8e3f44711e01128eb6c0cf8bd712177608750356fef658d11ae8adcca8"
+   },
+   "A4_HUMAN_Seuma_2022.pgdata": {
+    "size": 8202994,
+    "oid": "3d1bccc67e10609e62a3baacb214852ecb74df73a7c7755f67ec6b5af4dfcb69"
+   },
+   "AACC1_PSEAI_Dandage_2018.pgdata": {
+    "size": 56476550,
+    "oid": "a33b7e77dd650cd875544964005aa65dab56a1071e2c62b2fb65675d8306140c"
+   },
+   "ACE2_HUMAN_Chan_2020.pgdata": {
+    "size": 7043500,
+    "oid": "cf760d27b7bf45c6742e7f9d565c14f57cc07d51809351fe35c02b10f44debf6"
+   },
+   "ADRB2_HUMAN_Jones_2020.pgdata": {
+    "size": 92088398,
+    "oid": "ec26e51513855d251c41cc074079a06fbd36d909a34271ac86b3db755342105b"
+   },
+   "AICDA_HUMAN_Gajula_2014_3cycles.pgdata": {
+    "size": 717088,
+    "oid": "1c45685b3b3da9d0e64b263a837dd8284a212bcfe4a23825b4399eb95e332805"
+   },
+   "AMFR_HUMAN_Tsuboyama_2023_4G3O.pgdata": {
+    "size": 227915,
+    "oid": "06276901d040d1930610821210fc23271c61fb026644037d727c8cd67f2c4912"
+   },
+   "AMIE_PSEAE_Wrenbeck_2017.pgdata": {
+    "size": 50844454,
+    "oid": "7600ab0f4fb49b780ddd12cda868a0782dfe4cdcef352a579b083323f0ab89ef"
+   },
+   "ANCSZ_Hobbs_2022.pgdata": {
+    "size": 92014221,
+    "oid": "6b6d29d0e8b6a86d4e76e1bfe26c57da3abd0368759efca39d939592bfcede3a"
+   },
+   "ARGR_ECOLI_Tsuboyama_2023_1AOY.pgdata": {
+    "size": 455185,
+    "oid": "b848b61e43d86d6073b96de78b8ba51d89cb661f52b4cc5f06f360beabb5c79e"
+   },
+   "B2L11_HUMAN_Dutta_2010_binding-Mcl-1.pgdata": {
+    "size": 187231,
+    "oid": "f383c293092a1eac48f4a38c1e9b66d0a2c9e1b72cd886b99e317f383c70fe8d"
+   },
+   "BBC1_YEAST_Tsuboyama_2023_1TG0.pgdata": {
+    "size": 4252322,
+    "oid": "e56899c729f6150f3cfe9d83dbc59cd51b83bea47b0797f0b3902ae955130239"
+   },
+   "BCHB_CHLTE_Tsuboyama_2023_2KRU.pgdata": {
+    "size": 215775,
+    "oid": "e9ea2fd3d6365ff544d40fd7deed5b3494faf29a819496419195615afadf6206"
+   },
+   "BLAT_ECOLX_Deng_2012.pgdata": {
+    "size": 30510733,
+    "oid": "e57219f8f1ad69bee61c3af79aa05ec29baab1cc4b52c0e9a96443b26b9ca8c8"
+   },
+   "BLAT_ECOLX_Firnberg_2014.pgdata": {
+    "size": 30501558,
+    "oid": "38654389cc80bd08d58e6d3c9422a677b62ffef6020a02306a36dfd2937b295c"
+   },
+   "BLAT_ECOLX_Jacquier_2013.pgdata": {
+    "size": 30454967,
+    "oid": "296f76997432ef1f2116ea534a56de267f1f5317bef213ef9729fd777529baf0"
+   },
+   "BLAT_ECOLX_Stiffler_2015.pgdata": {
+    "size": 30523569,
+    "oid": "3a07ea019591d006e00d147c2418d66cd96c84efe65e46fda9aa3fcd88230043"
+   },
+   "BRCA1_HUMAN_Findlay_2018.pgdata": {
+    "size": 17794375,
+    "oid": "ba9af4c68d94fb2aa894f1eac614fb6b6d8d754f6449ab0b5f6b9f662222650e"
+   },
+   "C6KNH7_9INFA_Lee_2018.pgdata": {
+    "size": 6080041,
+    "oid": "2cada8e0f619591bdbcb26839edee201ec042a67ec53f4b348acc252916bd823"
+   },
+   "CALM1_HUMAN_Weile_2017.pgdata": {
+    "size": 29857001,
+    "oid": "5402ab16665c3eb589b5efa64b5cfd23b763848dfd6840ccd58fdb1e59dee200"
+   },
+   "CAPSD_AAV2S_Sinai_2021.pgdata": {
+    "size": 1946384,
+    "oid": "4a63dae92318d73b98e476ccf4fa4d5ddb083b0d63a12e27694b7cec6501f051"
+   },
+   "CAR11_HUMAN_Meitlis_2020_gof.pgdata": {
+    "size": 27484521,
+    "oid": "f79cb666943d54f4f907476fb40a279d96a6524fcbe5984f6b97e479a7bcd1a0"
+   },
+   "CAR11_HUMAN_Meitlis_2020_lof.pgdata": {
+    "size": 27485041,
+    "oid": "30ec46e6b012134864daef0abca68520e4cb2d5b728354152c117ae965f08e21"
+   },
+   "CAS9_STRP1_Spencer_2017_positive.pgdata": {
+    "size": 8912655,
+    "oid": "eb2d3a10475f2ee29f2d565dc4860c1dd9a4f4458f7d929f04704cb58f4525f6"
+   },
+   "CASP3_HUMAN_Roychowdhury_2020.pgdata": {
+    "size": 8788003,
+    "oid": "3aaa136dd83c9b52fd87b7e95caf134ccd0881680e60e6763fbcfa8bf3abe6a8"
+   },
+   "CASP7_HUMAN_Roychowdhury_2020.pgdata": {
+    "size": 9138329,
+    "oid": "44049e1d1774466c9053373c00c8085affee468dde5eab9744809a7ccc4da741"
+   },
+   "CBPA2_HUMAN_Tsuboyama_2023_1O6X.pgdata": {
+    "size": 375870,
+    "oid": "4dbb00d064154d57aa15cac4196386389dd43ac8f1e2c032ea8a228d153d8ff3"
+   },
+   "CBS_HUMAN_Sun_2020.pgdata": {
+    "size": 109810591,
+    "oid": "47f927e491cf49e877b15dfdaf129de13f22808031029c43d1b1a83610391b78"
+   },
+   "CBX4_HUMAN_Tsuboyama_2023_2K28.pgdata": {
+    "size": 2206752,
+    "oid": "ff642ceaa1c29bf476596782e6a48380ef1d5b20d16625b3c4e8e32d7ecdce22"
+   },
+   "CCDB_ECOLI_Adkar_2012.pgdata": {
+    "size": 771643,
+    "oid": "f6dc6c7cda304b7045af86b70771497feedf054b4589ba1ec8211d0b59cb87f3"
+   },
+   "CCDB_ECOLI_Tripathi_2016.pgdata": {
+    "size": 774951,
+    "oid": "eba6f5ae70a56d81cd1cc2b6d32e36301817995ab59842a7a23e314a873a91f0"
+   },
+   "CCR5_HUMAN_Gill_2023.pgdata": {
+    "size": 83889290,
+    "oid": "662b085039c23f89b9f4082ccf1056b32ef1124bcb8d95bd1bfc0647f18fba51"
+   },
+   "CD19_HUMAN_Klesmith_2019_FMC_singles.pgdata": {
+    "size": 1476308,
+    "oid": "a75fe7026d2e174a5dc3cd293d5be9751a3661343a072e664a82cb1e9ae2005e"
+   },
+   "CP2C9_HUMAN_Amorosi_2021_abundance.pgdata": {
+    "size": 160144376,
+    "oid": "1f2981950f246e4e13b9454b9bced9ea0021cced23f0759315b92d997e609733"
+   },
+   "CP2C9_HUMAN_Amorosi_2021_activity.pgdata": {
+    "size": 160139275,
+    "oid": "26ef86a7d559cce15958c5b53841be91c44d64f0739e81c59f8dd135a304c06e"
+   },
+   "CSN4_MOUSE_Tsuboyama_2023_1UFM.pgdata": {
+    "size": 543490,
+    "oid": "b0a941f4ab3a3e44377a52b78cca8c4ededdf48b24215c303eae32d5471a51db"
+   },
+   "CUE1_YEAST_Tsuboyama_2023_2MYX.pgdata": {
+    "size": 159758,
+    "oid": "506cf34cb78ef15e692906040c91b22686cdf67bdadef95b9758a346fb900f9c"
+   },
+   "D7PM05_CLYGR_Somermeyer_2022.pgdata": {
+    "size": 802975,
+    "oid": "b06bac58037c0b1ad76f0d6a0daf848465acd0f0e7ad51cf86f5dc0f7bc5edf1"
+   },
+   "DLG4_HUMAN_Faure_2021.pgdata": {
+    "size": 47523378,
+    "oid": "d5aa5961d470009bc3d768834d38ddd6194ff4f1c19f6a197d56a901b41f0c21"
+   },
+   "DLG4_RAT_McLaughlin_2012.pgdata": {
+    "size": 47337011,
+    "oid": "db541a0051f772832368e27a979b889074f387db40168b444a89f9660a93ff02"
+   },
+   "DN7A_SACS2_Tsuboyama_2023_1JIC.pgdata": {
+    "size": 122386,
+    "oid": "b1effcf9af7af46d9c57cf115f4e8edf4ef6afacbccf03cbbbcdb5f40b9d03b1"
+   },
+   "DNJA1_HUMAN_Tsuboyama_2023_2LO1.pgdata": {
+    "size": 13648957,
+    "oid": "6b04fde3da72e1852e160394c9d4b2d0835cc992cacfcbebe8941e3a5c9f20c2"
+   },
+   "DOCK1_MOUSE_Tsuboyama_2023_2M0Y.pgdata": {
+    "size": 10473235,
+    "oid": "3d4877153e771db1706310c864c1aa3d89b8cdc5c0a2be5994ed6f89b536709c"
+   },
+   "DYR_ECOLI_Nguyen_2023.pgdata": {
+    "size": 9714850,
+    "oid": "3655661e18d245202a0205820c56f99906ae3ba801b61f6d610e13cc4b605a33"
+   },
+   "DYR_ECOLI_Thompson_2019.pgdata": {
+    "size": 9721845,
+    "oid": "fa51c2c3ffb6298d3c3eedc66eeb85912f2b816c360ca6cb3178d0d3ee4e02e9"
+   },
+   "ENVZ_ECOLI_Ghose_2023.pgdata": {
+    "size": 32618590,
+    "oid": "0d5fc6603290a77118a42e1f641362c0ccc8671ffdde491229de1814612d7d6c"
+   },
+   "ENV_HV1B9_DuenasDecamp_2016.pgdata": {
+    "size": 46939533,
+    "oid": "fc9c54a9c500e191ba8bac2ba06ec7f6e666dbfdbef15ab39d0a9cf4eff9e19a"
+   },
+   "ENV_HV1BR_Haddox_2016.pgdata": {
+    "size": 47345338,
+    "oid": "451c0797b2f995f3802d9cfef4c2cec2504a1987e82b101615aab46bbed0cda0"
+   },
+   "EPHB2_HUMAN_Tsuboyama_2023_1F0M.pgdata": {
+    "size": 2401088,
+    "oid": "0d60f9d02aa7f91cd20f1c89a014f7f5dbaf4d78fb77ad211b0f298a144f8720"
+   },
+   "ERBB2_HUMAN_Elazar_2016.pgdata": {
+    "size": 66311756,
+    "oid": "3b98e20faf7a954abd4e9b94002fc816f249ab233d3c3a057a36ed8097022d2a"
+   },
+   "ESTA_BACSU_Nutschel_2020.pgdata": {
+    "size": 53823735,
+    "oid": "a9dd8d265016de7de4b332e3ec883d874764be55799a031bdaa471a84e6ff3a4"
+   },
+   "F7YBW8_MESOW_Aakre_2015.pgdata": {
+    "size": 2747107,
+    "oid": "4d09b8fa5213a068d629e1cedb89f5b782f0011abecbc53b30ee747f75617d64"
+   },
+   "F7YBW8_MESOW_Ding_2023.pgdata": {
+    "size": 2835909,
+    "oid": "40ccadf57c67f3ac840d15ef9cf2fa72b41ff2187788a9e0de8677b425266760"
+   },
+   "FECA_ECOLI_Tsuboyama_2023_2D1U.pgdata": {
+    "size": 2039733,
+    "oid": "262f71cf8247bde41d94c0a509be39ff6e78838e38dccdd2068131aead50417f"
+   },
+   "FKBP3_HUMAN_Tsuboyama_2023_2KFV.pgdata": {
+    "size": 249794,
+    "oid": "f4131469f565f36109dcaeac0bffd7c8d5cd262cf96cce8b4e0b9e7982df0479"
+   },
+   "GAL4_YEAST_Kitzman_2015.pgdata": {
+    "size": 35393494,
+    "oid": "00ed608db50514cbc15c7f50fa066e071a8192f69d5f3ab361904227c081a816"
+   },
+   "GCN4_YEAST_Staller_2018.pgdata": {
+    "size": 966096,
+    "oid": "ae4332b95932ea19039dda21dca23be567f88634a5a58adcd3dedf2c41a2319f"
+   },
+   "GDIA_HUMAN_Silverstein_2021.pgdata": {
+    "size": 22920449,
+    "oid": "2368088e5ba4181112153ae86e3477aa6b01171191082b359ac1b5e4238d0537"
+   },
+   "GFP_AEQVI_Sarkisyan_2016.pgdata": {
+    "size": 1654434,
+    "oid": "a25aebbaa96807ed8b59c358bbed490941e318ae9a3955f2a2cd3a78ab1051d0"
+   },
+   "GLPA_HUMAN_Elazar_2016.pgdata": {
+    "size": 89384,
+    "oid": "50f07d8716f3f073f76b1a509f7af0c94a1c74935d4d6c628506ff0b2a4b1a3a"
+   },
+   "GRB2_HUMAN_Faure_2021.pgdata": {
+    "size": 39672205,
+    "oid": "a7037572dd5858890c1d2bf778a25bc9245b7e4ba3210eab075fc0a726f4c825"
+   },
+   "HCP_LAMBD_Tsuboyama_2023_2L6Q.pgdata": {
+    "size": 299458,
+    "oid": "e6e5701125c762ced7c215b677dd4785023e444c4688086acb8d97f978ad630a"
+   },
+   "HECD1_HUMAN_Tsuboyama_2023_3DKM.pgdata": {
+    "size": 793368,
+    "oid": "c0a1abaa93f1a87256587aa1806ec239c7b7e3dc713e84f3336f421bf7fb12d8"
+   },
+   "HEM3_HUMAN_Loggerenberg_2023.pgdata": {
+    "size": 15836594,
+    "oid": "5240f19009f1f0c9dd1c145f8afab3b4479f015b53cfe88c8fcadd722efa3494"
+   },
+   "HIS7_YEAST_Pokusaeva_2019.pgdata": {
+    "size": 13864078,
+    "oid": "4d0ac5ad8edbd67846b26a5ff1030cf1b3fb2cdd075acdbf109a27057484ee57"
+   },
+   "HMDH_HUMAN_Jiang_2019.pgdata": {
+    "size": 9696069,
+    "oid": "fbdccae4246540a1e3511da83a8e3a814e501c382887e14931adea79dd2aedf3"
+   },
+   "HSP82_YEAST_Cote-Hammarlof_2020_growth-H2O2.pgdata": {
+    "size": 33609632,
+    "oid": "d9a0e1834a46852a6e64b45d97b321438750a0e583edae3e6661e3f955d4fcc4"
+   },
+   "HSP82_YEAST_Flynn_2019.pgdata": {
+    "size": 33824727,
+    "oid": "895f8b28be061cfb8339f8065a78f1a42d0a611aad9de9f5ad579c681adb6344"
+   },
+   "HSP82_YEAST_Mishra_2016.pgdata": {
+    "size": 33643275,
+    "oid": "40fcb2ee6880bf60f320fd53906a197598cf3a5457bd4f02e95b4f7fd49f6343"
+   },
+   "HXK4_HUMAN_Gersing_2022_activity.pgdata": {
+    "size": 8528203,
+    "oid": "57ed8489497e199bc82d0e385feae6059cdc822a908cd6b92579d1c8642c52c9"
+   },
+   "HXK4_HUMAN_Gersing_2023_abundance.pgdata": {
+    "size": 8553645,
+    "oid": "3e08a3445c0b75dc1f473b22df2b49559e1649737f04e9019ef776ebac39cd43"
+   },
+   "I6TAH8_I68A0_Doud_2015.pgdata": {
+    "size": 1009275,
+    "oid": "916153e2bb1dc7a7c6908476b72dbe68c7ff4e2f0120733331d4f868b60f3865"
+   },
+   "IF1_ECOLI_Kelsic_2016.pgdata": {
+    "size": 1186455,
+    "oid": "73977483d8ba68361f579bdb29599669f697e8eeb9aa764276a4e44eadee0bde"
+   },
+   "ILF3_HUMAN_Tsuboyama_2023_2L33.pgdata": {
+    "size": 2329947,
+    "oid": "5ed5177e2008fcbc5ce2ad17b518b30a5aa95b770867d3ece5b6c2ed34c72bfa"
+   },
+   "ISDH_STAAW_Tsuboyama_2023_2LHR.pgdata": {
+    "size": 309377,
+    "oid": "bba65e0724d91a19ecb3257b2c5d10185411125b8a034653ff27dcea99384b4c"
+   },
+   "KCNE1_HUMAN_Muhammad_2023_expression.pgdata": {
+    "size": 325776,
+    "oid": "d3f4487b7cca909172ca67ba8613ba6716bca14f2bd6bccba5fc44ef22912817"
+   },
+   "KCNE1_HUMAN_Muhammad_2023_function.pgdata": {
+    "size": 325467,
+    "oid": "587acbacc81c6d42c1136094721f9554721a7bd8167bbe7fec299bd0ec196bec"
+   },
+   "KCNH2_HUMAN_Kozek_2020.pgdata": {
+    "size": 33552430,
+    "oid": "297834621bafe4c365a2249b9f13244b6d9d943ada88cc484df093f20c073f5e"
+   },
+   "KCNJ2_MOUSE_Coyote-Maestas_2022_function.pgdata": {
+    "size": 4561248,
+    "oid": "894f0c1a8bd4e5cc8ba49d001a7348b3db276462548a07d7477744909152c4dd"
+   },
+   "KCNJ2_MOUSE_Coyote-Maestas_2022_surface.pgdata": {
+    "size": 4562441,
+    "oid": "29c28023d797417f389f6b5dd176fd2642139176b0b2e468b9eab75fdc444ddd"
+   },
+   "KKA2_KLEPN_Melnikov_2014.pgdata": {
+    "size": 37304706,
+    "oid": "b4eeb8ade3fb02aeeb419fb4067311ce3242e5fe1d35136a431ada02c48f90e1"
+   },
+   "LGK_LIPST_Klesmith_2015.pgdata": {
+    "size": 13829665,
+    "oid": "d4e080deda0ec7e26eacdb9fd2b97284734f848bb5e1b85085f1588c5d87a318"
+   },
+   "LYAM1_HUMAN_Elazar_2016.pgdata": {
+    "size": 38193659,
+    "oid": "11b8ea363fe2cd3590882652228d4294836f57505f4af6a85ba7fd61e0eeb1ae"
+   },
+   "MAFG_MOUSE_Tsuboyama_2023_1K1V.pgdata": {
+    "size": 251801,
+    "oid": "0921052a922cb6fab7de421998fba66b0e4b1fa604bf00449de6efc3e7bee7f5"
+   },
+   "MBD11_ARATH_Tsuboyama_2023_6ACV.pgdata": {
+    "size": 249379,
+    "oid": "ea74738df308a9a8017a9862dbd363807275d58d5bfd6a6da9a53eae8753a52b"
+   },
+   "MET_HUMAN_Estevam_2023.pgdata": {
+    "size": 115222674,
+    "oid": "738798c4058fdab91c9b734c156dc29b7fa9542e4bc16cddbca126c0f1f9c27b"
+   },
+   "MK01_HUMAN_Brenan_2016.pgdata": {
+    "size": 58839139,
+    "oid": "466e50ab17f1adab6063d332f82bab5180a15a9dd9da0f1cd3164ff181ec262a"
+   },
+   "MLAC_ECOLI_MacRae_2023.pgdata": {
+    "size": 3263828,
+    "oid": "8bf4ac7b158526e54d3ca674bbbf4284635b93147b1b31a2a47a1ecd95769572"
+   },
+   "MSH2_HUMAN_Jia_2020.pgdata": {
+    "size": 65029623,
+    "oid": "aba18fe33d2f67cf2139f29eefc18e90f1377d4cc6313c11c7d23886731b5e99"
+   },
+   "MTH3_HAEAE_RockahShmuel_2015.pgdata": {
+    "size": 35592726,
+    "oid": "c2d822df15b203bd546d0b70d96be373975a458e9ba92eaa58b22224716dff86"
+   },
+   "MTHR_HUMAN_Weile_2021.pgdata": {
+    "size": 16720765,
+    "oid": "3065df1110eeabeacaf959b8cef8506d9f888de4ddbba28c8a1a1397cb8b7ca2"
+   },
+   "MYO3_YEAST_Tsuboyama_2023_2BTT.pgdata": {
+    "size": 5766092,
+    "oid": "3cc9a2a02a9f1a78fb584711f1e3ad9d456f2f8718c9f6569d80d7f5c6f71d55"
+   },
+   "NCAP_I34A1_Doud_2015.pgdata": {
+    "size": 1023705,
+    "oid": "ff1e8c8811b308f39c6ad80fe2240207c6c2b08b0fbd566a25fff3929ef0af92"
+   },
+   "NKX31_HUMAN_Tsuboyama_2023_2L9R.pgdata": {
+    "size": 6403370,
+    "oid": "f7cb93709d03fda97c959aa2e96d08f0895769cb3111ae1ad3d1ba9ac19ef63c"
+   },
+   "NPC1_HUMAN_Erwood_2022_HEK293T.pgdata": {
+    "size": 33041873,
+    "oid": "6a7bc96fe2acd35e939ee879bf605c4d99d48edb0d2e8e44df85fb7a8702bd64"
+   },
+   "NPC1_HUMAN_Erwood_2022_RPE1.pgdata": {
+    "size": 33030342,
+    "oid": "bb84d7fe300b4995168df50085f0c1c8889add0dc965d818ef52567d1550eafa"
+   },
+   "NRAM_I33A0_Jiang_2016.pgdata": {
+    "size": 3508030,
+    "oid": "51f39836121a5f4c3cbca49dc67e88db53aa95392a83a57f2e45616e78edfcfa"
+   },
+   "NUD15_HUMAN_Suiter_2020.pgdata": {
+    "size": 47145306,
+    "oid": "14ae159023fbcd488bb20469314537c8fa87d0c13cf7157a859509b4ef5f32a8"
+   },
+   "NUSA_ECOLI_Tsuboyama_2023_1WCL.pgdata": {
+    "size": 859860,
+    "oid": "da1318c0a9e0207992ad969cb6e8a63ce6f256da08e9ecfc20f11a8e323f1065"
+   },
+   "NUSG_MYCTU_Tsuboyama_2023_2MI6.pgdata": {
+    "size": 960503,
+    "oid": "25e3099171fc632fe7f2d0aaf66daf2072e1c2b88da4dd744709be96e7a2c904"
+   },
+   "OBSCN_HUMAN_Tsuboyama_2023_1V1C.pgdata": {
+    "size": 679609,
+    "oid": "cce5004400ff5dce1090183a82e168acd1969399acc7cc046f9743fe9fe64472"
+   },
+   "ODP2_GEOSE_Tsuboyama_2023_1W4G.pgdata": {
+    "size": 4134734,
+    "oid": "ddc218860aeb16b2ad6e91a43686b2aa5fc9b77259c51bc63a8cb62206e030f1"
+   },
+   "OPSD_HUMAN_Wan_2019.pgdata": {
+    "size": 95407110,
+    "oid": "22c9b5cd9af4b0e43cb564332c197f78219954cebdbc2d9bd85578b937c31cdb"
+   },
+   "OTC_HUMAN_Lo_2023.pgdata": {
+    "size": 27140842,
+    "oid": "415398e21aac3be294979e4dbe8aefb672e6f5cc93772761fc2dd6b8cced4aa0"
+   },
+   "OTU7A_HUMAN_Tsuboyama_2023_2L2D.pgdata": {
+    "size": 248099,
+    "oid": "07cdacb608852c8ba457bfbde2a2882f3f34ec008354207b4f50d7cb31aa4600"
+   },
+   "OXDA_RHOTO_Vanella_2023_activity.pgdata": {
+    "size": 58550103,
+    "oid": "f6d0fa2c16959a8a990a18ee645d9ee45d3131b5d069b32d595a52b762885ca2"
+   },
+   "OXDA_RHOTO_Vanella_2023_expression.pgdata": {
+    "size": 58558593,
+    "oid": "bd388c92e3744fef259191fd773b06ff01d89116d0f4b1a62d47c4ac69c1e250"
+   },
+   "P53_HUMAN_Giacomelli_2018_Null_Etoposide.pgdata": {
+    "size": 1123556,
+    "oid": "8318c2c4f8fcc4201baab7f4c28dd9289fdcdaef9cbace35ed96eaba562a4252"
+   },
+   "P53_HUMAN_Giacomelli_2018_Null_Nutlin.pgdata": {
+    "size": 1124565,
+    "oid": "5f944b1b38c308aeb06420e94a16e797a640460330122e26a23601b4abffb42a"
+   },
+   "P53_HUMAN_Giacomelli_2018_WT_Nutlin.pgdata": {
+    "size": 1122785,
+    "oid": "c4962872146978b9d9d27aa9e59418fa6e7c9926b453b7eb60da13f1a22f8b45"
+   },
+   "P53_HUMAN_Kotler_2018.pgdata": {
+    "size": 995822,
+    "oid": "acb727e98368c3c5121aa614af93203711f872d8144c26dc642f6460fb4cb3e2"
+   },
+   "P84126_THETH_Chan_2017.pgdata": {
+    "size": 26274525,
+    "oid": "b200fd7d227de37b7652bb78f4bcb5fe968472e4255c42a9f41baf58ea20eac3"
+   },
+   "PABP_YEAST_Melamed_2013.pgdata": {
+    "size": 32925886,
+    "oid": "779da8c165c4969f652e0e2fb612f780e5dd235ed0fea758851304cae7fb1db3"
+   },
+   "PAI1_HUMAN_Huttinger_2021.pgdata": {
+    "size": 29713471,
+    "oid": "8e2c4226689bf5a8e0ee017a5757a3845db393bb88d98ca4928e47356921dfea"
+   },
+   "PA_I34A1_Wu_2015.pgdata": {
+    "size": 2334407,
+    "oid": "547dad92bc5c4b4b95fe4fa3cbc9e2a182856ec2d63f2fcd2faf8cbcc6057862"
+   },
+   "PIN1_HUMAN_Tsuboyama_2023_1I6C.pgdata": {
+    "size": 4533306,
+    "oid": "867dd55fe4c38760e96ec78d9c4950c21011102d98805350ebb3914ffaf9fe4b"
+   },
+   "PITX2_HUMAN_Tsuboyama_2023_2L7M.pgdata": {
+    "size": 6529889,
+    "oid": "4435baf8524f60ca223f419b84151e802c3019c034be45d5f0f7eaa049b0c037"
+   },
+   "PKN1_HUMAN_Tsuboyama_2023_1URF.pgdata": {
+    "size": 496125,
+    "oid": "98d57a11db10c885a3a896ca78c6bbbb19966d62da26a527965b9db33d0052b3"
+   },
+   "POLG_CXB3N_Mattenberger_2021.pgdata": {
+    "size": 13593540,
+    "oid": "3fc880ac8d01e1b200a56d38701864161b7307bd918a52ae858a41ec7e0220af"
+   },
+   "POLG_DEN26_Suphatrakul_2023.pgdata": {
+    "size": 4798109,
+    "oid": "8527f082a9306ac44166e98d647184e36d2d6b1de6e19e4055cf081ed0ad9e9e"
+   },
+   "POLG_PESV_Tsuboyama_2023_2MXD.pgdata": {
+    "size": 241538,
+    "oid": "a7bcce7412cbd38281da434e70da5d72118c7bad80b2bca757a4f7de818746ce"
+   },
+   "PPARG_HUMAN_Majithia_2016.pgdata": {
+    "size": 21125031,
+    "oid": "2350adfc16662afbec85dbe7321671270fa6d56b0aec037e365b384ef40143ef"
+   },
+   "PPM1D_HUMAN_Miller_2022.pgdata": {
+    "size": 18439019,
+    "oid": "84636784ee25e71d5051defebd20afe0ae21c62eb4cc16b85aeb8992a52c67c6"
+   },
+   "PR40A_HUMAN_Tsuboyama_2023_1UZC.pgdata": {
+    "size": 977924,
+    "oid": "3583cdfabfcebcc6bdbae418768ac93cf34c7f8f7f53d46cde9f7ba7d9124dc7"
+   },
+   "PRKN_HUMAN_Clausen_2023.pgdata": {
+    "size": 8539771,
+    "oid": "b5f80bb376477228985a38b40228fea031f1aaa5b6f29880c17b25ecfa99aadd"
+   },
+   "PSAE_PICP2_Tsuboyama_2023_1PSE.pgdata": {
+    "size": 168472,
+    "oid": "a23005d984ac258beb27b2858e5e24804f6c9448f5fd3ea9a0f4e6b536ad49bd"
+   },
+   "PTEN_HUMAN_Matreyek_2021.pgdata": {
+    "size": 13023830,
+    "oid": "f7183e2f41690ff9e5f870495f9cf2452cfd7ce772e9b9722fc2b8626bbccbe9"
+   },
+   "PTEN_HUMAN_Mighell_2018.pgdata": {
+    "size": 13045068,
+    "oid": "4bff9f1424a340acf42c5b1efed94f4aa63478fcb2b8bdafe3b57c999a2450df"
+   },
+   "Q2N0S5_9HIV1_Haddox_2018.pgdata": {
+    "size": 48802190,
+    "oid": "9566be40a180ed37dc3df884ea4bea42f3b16e6c2df5997f015a62668a8cf580"
+   },
+   "Q53Z42_HUMAN_McShan_2019_binding-TAPBPR.pgdata": {
+    "size": 20088999,
+    "oid": "e02f22a809a567390371c0b0786fb261789618023ee525e5bc90598f8296e569"
+   },
+   "Q53Z42_HUMAN_McShan_2019_expression.pgdata": {
+    "size": 20089371,
+    "oid": "f13c23099b268ad701cccbef0fbef25437ae3649d1a13c1e3ef1177dccfe096c"
+   },
+   "Q59976_STRSQ_Romero_2015.pgdata": {
+    "size": 71216466,
+    "oid": "7d9117a0e590317415ea22936a166267f078676c12cae0ff392b2be1408d5f7b"
+   },
+   "Q6WV12_9MAXI_Somermeyer_2022.pgdata": {
+    "size": 993813,
+    "oid": "f4133dab24b2be407bbde10115627e0e9932e57bb149ca3e3b394be1a5ef8428"
+   },
+   "Q837P4_ENTFA_Meier_2023.pgdata": {
+    "size": 460224962,
+    "oid": "350edc601aa93b4f4286a8166977b23935f7d9c92ae680f7123c5098840baa2d"
+   },
+   "Q837P5_ENTFA_Meier_2023.pgdata": {
+    "size": 219704977,
+    "oid": "fabf691c6d3bdd15796cae15b850ec6cd4cbe4a2d2dfc51ebcfbfbe6e86f0e2b"
+   },
+   "Q8WTC7_9CNID_Somermeyer_2022.pgdata": {
+    "size": 1091295,
+    "oid": "ce131155728fad671bdf425b548fe000ca6f2babb32d6a774c5807dd7593b80b"
+   },
+   "R1AB_SARS2_Flynn_2022.pgdata": {
+    "size": 313815,
+    "oid": "7830bdeb4635c9c9712d65bc05296539aa81fda31169f1928b695d0bffa797de"
+   },
+   "RAD_ANTMA_Tsuboyama_2023_2CJJ.pgdata": {
+    "size": 1886871,
+    "oid": "997996bcb0fbe8f6ddf08b332acb809ac471af31f332beaac7eef14a20f9e060"
+   },
+   "RAF1_HUMAN_Zinkus-Boltz_2019.pgdata": {
+    "size": 54820632,
+    "oid": "801cd0e247e3b6d4f4cef18d77bb9b6004b034ebb5a663e08b766d9bad4ce645"
+   },
+   "RASH_HUMAN_Bandaru_2017.pgdata": {
+    "size": 33667178,
+    "oid": "ae5d856539d49204c561bd6fd1461faef82d20242dc03d904aea7f23ca5c4778"
+   },
+   "RASK_HUMAN_Weng_2022_abundance.pgdata": {
+    "size": 34474245,
+    "oid": "757d6c6d3b425b41f56dafefda3493302919a714ffbe7faf009d907e742ba9ac"
+   },
+   "RASK_HUMAN_Weng_2022_binding-DARPin_K55.pgdata": {
+    "size": 34452217,
+    "oid": "b8316dc59a19cd6608241e14944d816f33e82d87d198cf510899f4519e982e15"
+   },
+   "RBP1_HUMAN_Tsuboyama_2023_2KWH.pgdata": {
+    "size": 179464,
+    "oid": "2f8af66f6528f0938dbc872a321b93e56e81f90f7c1c885c91fcda73a83f4c3e"
+   },
+   "RCD1_ARATH_Tsuboyama_2023_5OAO.pgdata": {
+    "size": 218647,
+    "oid": "117f626dec6139936893de038cd77945ba2affc8e5bc4fd00ee97a535f373298"
+   },
+   "RCRO_LAMBD_Tsuboyama_2023_1ORC.pgdata": {
+    "size": 268311,
+    "oid": "27c976ffc15426704f1e8156f0a074859ab816ef9d462950a79c941dfef7296c"
+   },
+   "RD23A_HUMAN_Tsuboyama_2023_1IFY.pgdata": {
+    "size": 634333,
+    "oid": "ee48bd3fa8ee11a624e89104cd0f3d9d5f10b6e63af62a55a1eeba71111ffb94"
+   },
+   "RDRP_I33A0_Li_2023.pgdata": {
+    "size": 2334879,
+    "oid": "b98d792f6b6e68ab22b2f552d9b96c17b65ae8b4af31d897a8a7e470fbce3663"
+   },
+   "REV_HV1H2_Fernandes_2016.pgdata": {
+    "size": 1134105,
+    "oid": "6b7a6532872a95fe952adeac8a0e6ea16d471d35ba2ad3116a2cfe024e1600dc"
+   },
+   "RFAH_ECOLI_Tsuboyama_2023_2LCL.pgdata": {
+    "size": 294574,
+    "oid": "bee2d0a97a9bb0656fd23b88d3b30699fe1e9ed3c27406aadac794b5d05fb938"
+   },
+   "RL20_AQUAE_Tsuboyama_2023_1GYZ.pgdata": {
+    "size": 1044320,
+    "oid": "08776441ef45e71387f441400582c07db1f03926fa2118051243b0fa13310e1e"
+   },
+   "RL40A_YEAST_Mavor_2016.pgdata": {
+    "size": 8647470,
+    "oid": "2b0355ca7aaafe25b8f732afb7d808a8f1ca049ae090aebd56c4e2db87243079"
+   },
+   "RL40A_YEAST_Roscoe_2013.pgdata": {
+    "size": 8652058,
+    "oid": "97a68eefdcc66010c67ee5ed34c7de8c60e5f11a5a35763f8d21df4aae1c8143"
+   },
+   "RL40A_YEAST_Roscoe_2014.pgdata": {
+    "size": 8650189,
+    "oid": "b6e513c5428b6a19848545f3dd4b4f8606d7cae1989b4cd6b52f1abb9df8060f"
+   },
+   "RNC_ECOLI_Weeks_2023.pgdata": {
+    "size": 17031743,
+    "oid": "d18b0497588ff232d133435bdd4e776707da6e8aa4acc238aaa0cbe59b7dedb7"
+   },
+   "RPC1_BP434_Tsuboyama_2023_1R69.pgdata": {
+    "size": 16453642,
+    "oid": "433afb65542f78f94cd5b4f35d6fadbcfb8fb6521cde5f6f986e58ba49f33d64"
+   },
+   "RPC1_LAMBD_Li_2019_high-expression.pgdata": {
+    "size": 27380442,
+    "oid": "eac2b71ecd839f699fd4edf88c478034e8c36c1610f7a6a515e172ef05891269"
+   },
+   "RPC1_LAMBD_Li_2019_low-expression.pgdata": {
+    "size": 27380491,
+    "oid": "b378630326b5563e09f1d7e7b0e58b4a963af501ad8ba51255cea9ef227bb5d3"
+   },
+   "RS15_GEOSE_Tsuboyama_2023_1A32.pgdata": {
+    "size": 1036559,
+    "oid": "92d3c1cc83b04830138aa3f934a73050a4fd3ef7df6f5d309841074a652963cb"
+   },
+   "S22A1_HUMAN_Yee_2023_abundance.pgdata": {
+    "size": 116921136,
+    "oid": "9cebde7ce137a2405bb8f6cd74295b6826b99409c684bb277a549dc2ffd3d82c"
+   },
+   "S22A1_HUMAN_Yee_2023_activity.pgdata": {
+    "size": 116923399,
+    "oid": "aca70b4d4cc93345664fbfeba31c6518f20160a985c45712304ecee46396bb7c"
+   },
+   "SAV1_MOUSE_Tsuboyama_2023_2YSB.pgdata": {
+    "size": 3475208,
+    "oid": "2f80df3de2776182b6014712fe3f5079d9a4333eef8b62cdc6b316b98a4d0eb4"
+   },
+   "SBI_STAAM_Tsuboyama_2023_2JVG.pgdata": {
+    "size": 172583,
+    "oid": "3837e57a60aa06d335a2185b549cdc53dfe6159bfb6ffc66d5a99202eca6d360"
+   },
+   "SC6A4_HUMAN_Young_2021.pgdata": {
+    "size": 39463773,
+    "oid": "747823524e91951c622f52d8affaaced126e9978f9f813aef39faf2f65961a53"
+   },
+   "SCIN_STAAR_Tsuboyama_2023_2QFF.pgdata": {
+    "size": 177604,
+    "oid": "cda5b00a5637676891701cb48022d3e861e6ea96102fbd8b77d0a8099333a385"
+   },
+   "SCN5A_HUMAN_Glazer_2019.pgdata": {
+    "size": 78058979,
+    "oid": "c0bfc59780bac4a21899a606e40a945b4afcac9ec38dbd497bd4f00f65ee64e1"
+   },
+   "SDA_BACSU_Tsuboyama_2023_1PV0.pgdata": {
+    "size": 241686,
+    "oid": "5061dbcdd80a5720190441b2519f01e4ab7d777d5aa81693b9d90464fdc35ccf"
+   },
+   "SERC_HUMAN_Xie_2023.pgdata": {
+    "size": 26207025,
+    "oid": "d35ec29ca63ba3d7fbafa9e34cfd06307c4ef0af03689a66a16f2950cc1c8620"
+   },
+   "SHOC2_HUMAN_Kwon_2022.pgdata": {
+    "size": 54342337,
+    "oid": "80779780a708271ddcb6ddbbf21d76a73553655130a7ab7914443a1431161bea"
+   },
+   "SOX30_HUMAN_Tsuboyama_2023_7JJK.pgdata": {
+    "size": 2608941,
+    "oid": "a6cb5026d7d5f3b7ffbc7900a4fa5c76015ba2b6fb54da681724c6817c27507e"
+   },
+   "SPG1_STRSG_Olson_2014.pgdata": {
+    "size": 9791574,
+    "oid": "67e36da5e45ceec94a081232840d25058356b29d7198f47464f8a9373705a50b"
+   },
+   "SPG1_STRSG_Wu_2016.pgdata": {
+    "size": 9791574,
+    "oid": "67e36da5e45ceec94a081232840d25058356b29d7198f47464f8a9373705a50b"
+   },
+   "SPG2_STRSG_Tsuboyama_2023_5UBS.pgdata": {
+    "size": 225369,
+    "oid": "b08e9cf41a878312904be9a35929ac64244148a3f8efebd6756c317d7b989ce1"
+   },
+   "SPIKE_SARS2_Starr_2020_binding.pgdata": {
+    "size": 1408526,
+    "oid": "4430ae791e59a86e813ffd9f2a2bb0bc76b9d73908eab61c9f2fa5757881ef3c"
+   },
+   "SPIKE_SARS2_Starr_2020_expression.pgdata": {
+    "size": 1409335,
+    "oid": "dffdc89d3fcfb90defb5eec96ca2e1bbd243d519c2c920af839a27a413ca9aba"
+   },
+   "SPTN1_CHICK_Tsuboyama_2023_1TUD.pgdata": {
+    "size": 8943194,
+    "oid": "3fa1882a9a1c8993f64ff33fd3969022455dc6284d23d5f423550c370ee72948"
+   },
+   "SQSTM_MOUSE_Tsuboyama_2023_2RRU.pgdata": {
+    "size": 109101,
+    "oid": "c18173c0488ea124e000e059343f2d1c09dbe4394c84b68d683be133839ddf3a"
+   },
+   "SR43C_ARATH_Tsuboyama_2023_2N88.pgdata": {
+    "size": 887014,
+    "oid": "34bd9d14db57c118b0313657c9f2ea08b2f51e89a69fca6549e3bcb131d15f94"
+   },
+   "SRBS1_HUMAN_Tsuboyama_2023_2O2W.pgdata": {
+    "size": 10203429,
+    "oid": "79e3c4327436d25d6cb0642c0f10705f11bc605f8be192e3e49225469b7a542c"
+   },
+   "SRC_HUMAN_Ahler_2019.pgdata": {
+    "size": 54379424,
+    "oid": "8897dbde5849c06f8f389237cbb90192687b54cffa0c7b2532dd9fb5427713f9"
+   },
+   "SRC_HUMAN_Chakraborty_2023_binding-DAS_25uM.pgdata": {
+    "size": 54381337,
+    "oid": "e24b4fa432c7057d411c75d3e73f7d1b78989215f91033b849a4b87fc3e57fd7"
+   },
+   "SRC_HUMAN_Nguyen_2022.pgdata": {
+    "size": 54391930,
+    "oid": "b97355232ff76cadefc086a53f842f9ea04363c73a46de0484f27977948df260"
+   },
+   "SUMO1_HUMAN_Weile_2017.pgdata": {
+    "size": 3034740,
+    "oid": "df13eeb47ac1ac0ea48918f6e5563757af3144ab87d7bcadbc74f8872f325644"
+   },
+   "SYUA_HUMAN_Newberry_2020.pgdata": {
+    "size": 328753,
+    "oid": "84506a3790bc5df2489e30b5c11ee320725a402f3e83cc90fa0348a4e6b44a8a"
+   },
+   "TADBP_HUMAN_Bolognesi_2019.pgdata": {
+    "size": 22020918,
+    "oid": "406a04820069d80236848e7abaa9fe12c677f38d722f63928ab98995230e386b"
+   },
+   "TAT_HV1BR_Fernandes_2016.pgdata": {
+    "size": 771572,
+    "oid": "fcdb989231258bb3f6e072b0273f5971c3d64f95a59bd3b66a6199734042f517"
+   },
+   "TCRG1_MOUSE_Tsuboyama_2023_1E0L.pgdata": {
+    "size": 3063816,
+    "oid": "62a2af98046cbfd002aea9fbf600d74cf6e5e781fd5bede930caff6ebc025c11"
+   },
+   "THO1_YEAST_Tsuboyama_2023_2WQG.pgdata": {
+    "size": 317933,
+    "oid": "4e7d21a11c746f4cc6da3c9df11f72a67a42a5c85bb68a97910b4a0110d7f697"
+   },
+   "TNKS2_HUMAN_Tsuboyama_2023_5JRT.pgdata": {
+    "size": 1304838,
+    "oid": "d6d01a7bc3688d436a23e736919574eace318865f27f5210c19cc7389f7e2212"
+   },
+   "TPK1_HUMAN_Weile_2017.pgdata": {
+    "size": 4470227,
+    "oid": "caa76afdc1799e5720974f5aa77895682a7ee7cd252b79a262a9bdeac36fbffd"
+   },
+   "TPMT_HUMAN_Matreyek_2018.pgdata": {
+    "size": 33263756,
+    "oid": "44f79734f40866d1b21325bc29498eae399f14d6d3c1c4e2166a613a3334a1f1"
+   },
+   "TPOR_HUMAN_Bridgford_2020.pgdata": {
+    "size": 40619644,
+    "oid": "fc10a75a91b9dc8f37cdbf373c42d1ce0ef06adde94cf0bedc562f4c14bed084"
+   },
+   "TRPC_SACS2_Chan_2017.pgdata": {
+    "size": 23084852,
+    "oid": "1aaad974dbc1c0cf6840d24a59f7516905918b8282ed3a3db71f694f056335a4"
+   },
+   "TRPC_THEMA_Chan_2017.pgdata": {
+    "size": 20015603,
+    "oid": "ecbdd1bd0f4b4e437423b91041d7bdb5f68559ea2954fe576ed90b188cc9de53"
+   },
+   "UBC9_HUMAN_Weile_2017.pgdata": {
+    "size": 11935094,
+    "oid": "82b00046197df9171046f328a4730d3cf8f35cbc28dcf3ca3dcbd6bcfb24c578"
+   },
+   "UBE4B_HUMAN_Tsuboyama_2023_3L1X.pgdata": {
+    "size": 1221544,
+    "oid": "969587659fe99051e309edacbe8cd97c2075408500460f7feb7d11914891c78d"
+   },
+   "UBE4B_MOUSE_Starita_2013.pgdata": {
+    "size": 8739635,
+    "oid": "5c9becba8d02df479b0d0d025700c06d27783fd1029784c8f1f59b6af931c3fa"
+   },
+   "UBR5_HUMAN_Tsuboyama_2023_1I2T.pgdata": {
+    "size": 556063,
+    "oid": "e4ceac8cf986fc91ecf7d206ee4dfbf2fb7dbde9ad1f627e565caa02a2d3070e"
+   },
+   "VG08_BPP22_Tsuboyama_2023_2GP8.pgdata": {
+    "size": 257625,
+    "oid": "dfe454ad93f37f30b35c3394519983be6c102b629b4b70c756af45c80790ecdf"
+   },
+   "VILI_CHICK_Tsuboyama_2023_1YU5.pgdata": {
+    "size": 927623,
+    "oid": "8f4250cec2d4e6924c58b1e6568f029c3f8ff930e5c7c68fb481795da32d52db"
+   },
+   "VKOR1_HUMAN_Chiasson_2020_abundance.pgdata": {
+    "size": 1600629,
+    "oid": "56a8d58a7c74fcd1d0b70147353253ccb7b661c6b5c81f37062813d92262be8a"
+   },
+   "VKOR1_HUMAN_Chiasson_2020_activity.pgdata": {
+    "size": 1562463,
+    "oid": "07a58f6e49b9ede48ccef27e09e8bb7c2631d18c36a9d0b4f38e98ff456a7aaf"
+   },
+   "VRPI_BPT7_Tsuboyama_2023_2WNM.pgdata": {
+    "size": 103246,
+    "oid": "95374b504bca30265877ce81e5489a4169fd0525e193289d4b72943ee378d143"
+   },
+   "YAIA_ECOLI_Tsuboyama_2023_2KVT.pgdata": {
+    "size": 149322,
+    "oid": "ecb6c208dbc229c0dfd154322e87c5cc47751132cddd4fde8e6ea8409fb27e1e"
+   },
+   "YAP1_HUMAN_Araya_2012.pgdata": {
+    "size": 7748538,
+    "oid": "b7f9fe34371f253b06c7aa2825f9964b0b9b84adb4c1a40b0b63169d0fafeab9"
+   },
+   "YNZC_BACSU_Tsuboyama_2023_2JVD.pgdata": {
+    "size": 349888,
+    "oid": "bdc4ca1c1322ce52e3a7f2c3db04f934d638792c0ff1db7269db452e685fba1b"
+   }
+  }
+ },
+ "reference_v1": {
+  "url": "https://raw.githubusercontent.com/OATML-Markslab/ProteinGym/main/reference_files/DMS_substitutions.csv",
+  "github_commit": "62eab5b3c83a3727b5b57bfbe377b24ef7545ccc",
+  "local_sha256": "a8f498011532a74aa9fe556a50555a75e928c5837d19c06a87592ae04049b308"
+ }
+}
