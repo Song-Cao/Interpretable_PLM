@@ -303,3 +303,28 @@ the prediction track needs 0 or 3 crosscoders.
   and loader arguments, with the verified reproduction chain and current directory map.
 - `[FINDING]` Repository onboarding preserved the remote MIT license and initial commit; the
   pre-Step-2 baseline remains green at 147 tests passing in 73.15 seconds.
+
+---
+
+## Step 2 — local implementation (2026-10-16)
+
+- `[DECISION]` Corrected project claim: Gate 1 drift is only a precondition. The scientific
+  claim concerns the feature-level structure of adaptation in a shared dictionary: reuse,
+  re-weighting, rotation, abandonment/evolution-only structure, emergence, and conservation.
+  Conserved structure is a substantive outcome; Gate 1 passing is not a finding.
+- `[DECISION]` The 31,700-row layer-freeze reserve is the only valid dataset for Gate 1
+  representational-drift measurements as well as analysis-layer selection. It remains excluded
+  from all adapter training; training-set drift is inflated and invalid.
+- `[FINDING]` Implementation blocked before code changes by a sign inconsistency in the fixed
+  difference-model censoring likelihood. With `Delta_y = y_u - y_v`, a floor-censored `u`
+  implies the latent difference is at most the observed difference, requiring
+  `-log Phi((Delta_y - d_hat) / sigma)`. The plan instead specifies
+  `-log Phi((d_hat - Delta_y) / sigma)`, which assigns low loss in the impossible direction.
+  A ruling on which convention is authoritative is required before the composite objective can
+  be implemented without changing a fixed formulation.
+- `[FINDING]` The 19-channel AAIndex representation is not reproducibly specified: the plan
+  fixes its output shape but not the AAIndex1 release, incomplete-record filtering,
+  per-property normalization, or PCA basis. These choices change every encoded value. Proposed
+  resolution: pin AAIndex1, retain complete nonconstant indices, z-score each index across the
+  20 amino acids, fit the full 19-component PCA once, freeze the 20 x 19 score table, and encode
+  each mutation as `PC(mutant) - PC(wild_type)` at its sequence position.
