@@ -15,6 +15,9 @@ loss:
   residual_scale:
     initial: 1.0
     floor: 0.0001
+  magnitude_uncertainty_weighting:
+    enabled: false
+    min_assay_coverage: 0.8
   weights:
     rank: 1.0
     magnitude: 1.0
@@ -46,3 +49,18 @@ representations:
 optimizer_contract:
   weight_decay: 0.01
   gradient_clip_norm: 1.0
+  min_assays_per_step: 2
+  pooled_validation_early_stopping: false
+  report_per_assay_validation_curves: true
+
+rank_aggregation:
+  atol: 1.0e-10
+  btol: 1.0e-10
+
+conformal:
+  alpha: 0.1
+
+pair_distance_audit:
+  epochs: 5
+  removal_threshold: 0.01
+  output: Reports/step2/pair_distance_audit.csv

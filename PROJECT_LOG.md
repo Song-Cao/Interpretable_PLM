@@ -366,3 +366,50 @@ the prediction track needs 0 or 3 crosscoders.
 - `[FINDING]` Step 2 local implementation added 34 tests; the full suite is 181 passing in
   70.94 seconds. The exact interfaces, realized assay shares, representation dimensions,
   provenance, and deliberately unbuilt work are in `Reports/step2/step2_handoff.md`.
+
+### Step 2 local corrections and prerequisites (2026-10-17)
+
+- `[ADJUST]` Superseded the default magnitude weighting above. Curated `sigma_v` is now
+  ignored by the magnitude term unless `loss.magnitude_uncertainty_weighting.enabled` is
+  explicitly true; the default is false and every pair has weight one. If enabled, the
+  implementation requires the configured minimum sigma coverage in every participating assay,
+  uses inverse-pair-variance weights where both values are finite and positive, leaves other
+  raw weights at one, and normalizes weights to mean one separately within each assay.
+- `[FINDING]` Re-read over all 633,984 curated rows including the reserve: FecA is the only
+  assay with non-NaN `sigma_v`, at 1,886/1,886 (100%; 1,818 `mv_trend`, 68
+  `replicate_sd`). Each other assay has 0% coverage. Corpus coverage is 1,886/633,984
+  (0.2975%); 632,098 values are NaN. Thus uncertainty weighting is unusable for the joint
+  default objective.
+- `[FINDING]` Square-root weights are inert at the default `epoch_size: capped_pool`. The
+  allocation is exactly `min(n_assay, 11,944)` because the epoch exhausts every capped
+  capacity. CcdB contributes all 1,117 usable rows every epoch; GB1 contributes 11,944 of
+  510,114 (2.3414%), so a CcdB row receives about 42.71 times the per-epoch exposure of a
+  GB1 row. Keep the full capped pool rather than discarding GB1 rows merely to make square-root
+  weights bind.
+- `[DECISION]` GPU predictor training must record validation curves separately for every
+  assay and must not early-stop on a pooled validation loss. If small assays overfit before
+  large assays, record the result for Steps 9 and 10; do not modify the run in response.
+- `[FINDING]` The added Hamming constraint is strongly active, not vacuous. Across five
+  deterministic default capped-pool epochs, after the censoring and `|Delta_y| > 0.25` gates
+  and before the distance constraint, `delta <= 2` removes FecA 50.4656%, Gcn4 99.9752%,
+  GFP 99.9443%, KRAS 95.6687%, and GB1 99.6291% of within-batch gated pairs. It removes 0%
+  in CcdB, EstA, DAAO, Ubiquitin, and TPMT. Exact per-assay distance distributions and pair
+  counts are in `Reports/step2/pair_distance_audit.csv`.
+- `[DECISION]` Per the >1% ruling, retain `pairs.max_hamming_distance: 2` and stop before the
+  GPU run so its large effect on the training distribution can be reviewed. The audit covers
+  the actual deterministic sampled training stream (five epochs of single-assay batches),
+  not an infeasible all-pairs Cartesian product of the 602,284 usable variants.
+- `[DECISION]` One optimizer update accumulates equally averaged gradients from at least two
+  distinct single-assay batches and calls `step()` only once afterward. The shared helper
+  rejects a single assay or repeated assay id within an accumulation group; gradient clipping
+  occurs after accumulation.
+- `[DECISION]` Difference-head predictions are converted to per-variant scores by an anchored
+  graph-Laplacian least-squares solve of `s_u - s_v = d_hat_uv`, with the wild-type score fixed
+  at zero. Disconnected graphs are rejected because their component offsets are unidentified.
+- `[DECISION]` Split conformal intervals use exact Mondrian strata `(mutation_count,
+  mutates_unseen_position)` and the finite-sample corrected absolute-residual quantile. There
+  is no pooled fallback for an absent calibration stratum.
+- `[DECISION]` The Step 2 readout L1 term applies only to predictor readout parameters. It must
+  never enter the Step 7 crosscoder objective, which uses BatchTopK and no L1 term anywhere.
+- `[FINDING]` The corrected Step 2 CPU prerequisites bring the full suite to 191 passing tests
+  in 83.82 seconds: the original 147 plus 44 Step 2 tests. No GPU work was performed.

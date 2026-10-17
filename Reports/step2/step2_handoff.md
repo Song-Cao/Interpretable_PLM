@@ -1,14 +1,15 @@
 # CROSSFIT Step 2 — Local CPU Handoff
 
-**Scope.** This handoff covers only the four authorized local items: the composite fitness
-objective, assay-balanced sampler, representation module, and tests. No predictor model,
-embedding extraction, hyperparameter search, or bake-off was run.
+**Scope.** This handoff covers the local composite objective, assay-balanced sampler,
+representation module, rank aggregation, Mondrian conformal calibration, cross-assay gradient
+accumulation contract, real-data diagnostics, and tests. No predictor model, embedding
+extraction, hyperparameter search, or bake-off was run.
 
 **Repo root.** `/Users/songcao/workdir/Interpretable_PLM`
 
 **Environment.** Python 3.11; local CPU PyTorch 2.2.2; NumPy 1.26.4.
 
-**Test status.** `python3 -m pytest Code/tests -q` -> **181 passed in 70.94 s** on 2026-10-17.
+**Test status.** `python3 -m pytest Code/tests -q` -> **191 passed in 83.82 s** on 2026-10-17.
 
 ## 1. Files built
 
@@ -19,12 +20,25 @@ embedding extraction, hyperparameter search, or bake-off was run.
 | `Code/crossfit/losses.py` | Pair construction, censoring rules, learned per-assay residual scales, one composite objective |
 | `Code/crossfit/sampling.py` | Capped square-root allocation, without-replacement epoch draws, single-assay batches, realized-share records |
 | `Code/crossfit/representations.py` | Mutation indicator, positional Georgiev/AAIndex, and adapters for precomputed ESM activations |
-| `Code/tests/test_losses.py` | 18 loss and pair-construction tests |
+| `Code/crossfit/evaluation.py` | Anchored graph-Laplacian rank aggregation and Mondrian conformal calibration |
+| `Code/crossfit/optimization.py` | One optimizer step after cross-assay gradient accumulation |
+| `Code/crossfit/pair_analysis.py` | Mutation-space Hamming distances and gated-pair audit logic |
+| `Code/scripts/analyze_pair_distances.py` | Reproducible real-data pair-distance audit entry point |
+| `Reports/step2/pair_distance_audit.csv` | Per-assay Hamming distributions and counts with/without the constraint |
+| `Code/tests/test_losses.py` | Loss and pair-construction tests, including sigma-weighting safeguards |
 | `Code/tests/test_sampling.py` | 5 allocation and epoch-sampling tests |
 | `Code/tests/test_representations.py` | 11 representation tests |
+| `Code/tests/test_evaluation.py` | Rank recovery and per-stratum conformal coverage tests |
+| `Code/tests/test_optimization.py` | Cross-assay accumulation and rejection tests |
+| `Code/tests/test_pair_analysis.py` | Mutation Hamming and audit-gate tests |
 
-`step2.yaml` sha256:
-`5fb4ec3408b705764c9c8e810a008a38845db107e3a17537252ac4312169cac0`.
+Final artifact hashes:
+
+```text
+step2.yaml                  78de9193e49658c4834856db7dcf86c85db5297e62a9412e45d454c61777ac01
+pair_distance_audit.csv     8d2fc377708a228fc94f0d3759d5cd7bf5717520491bd998dd33a387dc469604
+georgiev_2009_standardized  ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463e0fa17b161b4
+```
 
 ## 2. Composite objective
 
@@ -88,9 +102,31 @@ lambda_rank * sum softplus(-sign(Delta_y) * d_hat / T)
 + lambda_reg * readout L1
 ```
 
-Magnitude is either Huber or squared error. Where both variants have finite positive `sigma_v`,
-the per-pair magnitude term is weighted by `1 / (sigma_u^2 + sigma_v^2)`; otherwise its weight
-is one. Optimizer weight decay is separate and recorded in `step2.yaml`.
+Magnitude is either Huber or squared error. Its default weight is exactly one for every pair;
+`sigma_v` is not used. The retained uncertainty-weighting path is guarded by
+`loss.magnitude_uncertainty_weighting.enabled: false`. If explicitly enabled, it requires the
+configured minimum assay-level coverage in every participating assay, uses inverse-pair-variance
+weights where both pair members have finite positive sigma, leaves other raw pair weights at
+one, and normalizes all pair weights to mean one within each assay. Optimizer weight decay is
+separate and recorded in `step2.yaml`.
+
+Coverage re-read over all curated rows including the layer-freeze reserve:
+
+| Assay | Non-NaN / total | Rate |
+|---|---:|---:|
+| CcdB | 0 / 1,176 | 0% |
+| EstA | 0 / 2,172 | 0% |
+| FecA | 1,886 / 1,886 | 100% |
+| Gcn4 | 0 / 2,638 | 0% |
+| GFP | 0 / 51,714 | 0% |
+| DAAO | 0 / 6,396 | 0% |
+| KRAS | 0 / 26,012 | 0% |
+| Ubiquitin | 0 / 1,380 | 0% |
+| GB1 | 0 / 536,962 | 0% |
+| TPMT | 0 / 3,648 | 0% |
+
+Only FecA has values: 1,818 `mv_trend` and 68 `replicate_sd`. Corpus coverage is
+1,886/633,984 (0.2975%); 632,098 values are NaN.
 
 `CompositeLossOutput` also returns the four unweighted component tensors and pair/constraint
 counts for logging. These diagnostics do not define separate training objectives.
@@ -131,7 +167,11 @@ Numbers re-read from the default loader:
 
 Median usable size is 2,986; the `4x` cap is 11,944; the capped epoch contains 54,163 variants.
 For an epoch budget below 54,163, the realized counts follow the square-root weights until a cap
-binds. At the full capped pool, all capacities are necessarily exhausted.
+binds. At the full capped pool, all capacities are necessarily exhausted, so square-root
+weighting does not shape the realized default epoch: the counts are purely `min(n_assay, cap)`.
+CcdB exposes every one of its 1,117 usable rows each epoch; GB1 exposes 11,944/510,114 =
+2.3414%. A CcdB row therefore receives about 42.71 times the per-epoch exposure of a GB1 row.
+The epoch was not reduced merely to make square-root weighting active.
 
 ## 4. Representations
 
@@ -173,7 +213,73 @@ published values were not perturbed to make the plan's “19 nonzero” shorthan
 The ESM functions consume already-computed arrays only. They do not load a PLM or create an
 activation cache.
 
-## 5. Tests
+## 5. Rank aggregation and conformal calibration
+
+`aggregate_pairwise_scores` constructs the oriented comparison incidence matrix and solves
+
+```text
+min_s sum_uv (s_u - s_v - d_hat_uv)^2  subject to s_wild_type = 0.
+```
+
+It returns the anchored scores, residual norm, and sparse least-squares iteration count. The
+comparison graph must be connected; otherwise it raises because each disconnected component
+has an unidentified additive constant. A synthetic cyclic graph test recovers known scores to
+numerical precision with the wild-type score exactly zero.
+
+`MondrianConformal(alpha)` calibrates absolute residual quantiles independently in exact strata
+`(mutation_count, mutates_unseen_position)`. It uses finite-sample rank
+`ceil((n + 1) * (1 - alpha))`; when that rank exceeds the calibration-stratum size, its interval
+is infinite rather than anti-conservative. A prediction stratum absent from calibration raises;
+there is no pooled fallback. Tests obtain approximately 90% evaluation coverage separately in
+all four synthetic strata, not only marginally.
+
+## 6. Cross-assay optimizer contract
+
+`step_across_assays` receives scalar losses from distinct single-assay batches. It zeroes once,
+backpropagates each loss divided by the number of participating assays, clips the accumulated
+gradient if configured, and calls `optimizer.step()` exactly once. It requires at least
+`optimizer_contract.min_assays_per_step: 2` and rejects duplicate assay ids within a step. A
+closed-form SGD test verifies the update is the mean of two assay gradients, rather than two
+alternating steps.
+
+The GPU training loop must use this helper (or preserve its exact contract). Per-assay
+validation curves are mandatory and pooled validation loss must not control early stopping, as
+recorded in `step2.yaml`. The predictor readout L1 accepted by `CompositeFitnessLoss` applies
+only to predictor readouts; it must never be passed into the Step 7 BatchTopK crosscoder.
+
+## 7. Hamming-constraint audit
+
+Reproduce with:
+
+```bash
+.venv/bin/python Code/scripts/analyze_pair_distances.py
+```
+
+The audit uses five deterministic epochs from the configured default sampler. It counts the
+actual within-batch training pairs after same-bound double-censor removal and the strict
+`abs(Delta_y) > 0.25` gate, first without a distance filter and then with `delta <= 2`.
+
+| Assay | Without constraint | With constraint | Removed |
+|---|---:|---:|---:|
+| CcdB | 145,428 | 145,428 | 0.0000% |
+| EstA | 276,852 | 276,852 | 0.0000% |
+| FecA | 243,582 | 120,657 | 50.4656% |
+| Gcn4 | 330,844 | 82 | 99.9752% |
+| GFP | 1,215,991 | 677 | 99.9443% |
+| DAAO | 810,310 | 810,310 | 0.0000% |
+| KRAS | 1,621,540 | 70,234 | 95.6687% |
+| Ubiquitin | 126,582 | 126,582 | 0.0000% |
+| GB1 | 1,522,402 | 5,646 | 99.6291% |
+| TPMT | 457,756 | 457,756 | 0.0000% |
+
+The complete per-assay distributions are in `Reports/step2/pair_distance_audit.csv`; Hamming
+distances extend to 4 for FecA/GB1/KRAS, 24 for GFP, and 44 for Gcn4. This audit is over the
+realized training stream, not the all-pairs Cartesian product across 602,284 rows. Since five
+assays exceed the 1% removal threshold, `max_hamming_distance: 2` remains in config under the
+user's ruling. Its effect is large enough that GPU work must not start until these numbers are
+reviewed.
+
+## 8. Tests and integrity
 
 New tests cover:
 
@@ -187,30 +293,36 @@ New tests cover:
   deterministic replay, and single-assay batches;
 - frozen-table normalization, sparse positional encoding, exact conv reshape, mutation
   indicators, non-canonical rejection, precomputed ESM pooling, and early/late fusion.
+- default-off sigma weighting, coverage enforcement, and within-assay weight normalization;
+- synthetic anchored rank recovery and disconnected-graph rejection;
+- per-stratum Mondrian conformal coverage and absent-stratum rejection;
+- one-step cross-assay gradient averaging and invalid accumulation rejection;
+- mutation-space Hamming calculation and pair-audit censor/margin gates.
 
-Full suite: **181 passed**, comprising the original 147 plus 34 Step 2 tests.
+Full suite: **191 passed in 83.82 s**, comprising the original 147 plus 44 Step 2 tests.
 
-## 6. Incomplete, uncertain, or intentionally out of scope
+## 9. Incomplete, uncertain, or intentionally out of scope
 
 1. **No GPU work was performed.** ESM-C embeddings and per-residue activation tensors do not
    exist yet.
-2. **No predictor architectures or bake-off were built.** The authorized scope explicitly
-   stopped after objective, sampler, representations, and tests.
+2. **No predictor architectures or bake-off were built.** They require GPU representations.
 3. **No hyperparameter search or result grid exists.** The config records default values and
    sweep candidates; none has been selected from test performance.
 4. **No tuned baseline artifacts, architecture shortlist, uncertainty estimates, or answer to
    the all-residue versus mutated-position pooling question exists.** Those require the bake-off.
-5. **Rank aggregation and Mondrian conformal calibration were not built.** They are part of the
-   full Step 2 plan but were outside the four authorized local items; they remain CPU work, not
-   GPU work.
+5. **The Hamming constraint changes the training distribution substantially.** It remains
+   configured under the explicit >1% rule, but GPU work is blocked pending review of Section 7.
 6. **Full-pool epochs exhaust all assay capacities.** Square-root weighting affects count
    allocation only when a smaller explicit epoch budget is requested. The full-pool default is
    what yields the planned approximately 22% GB1 share.
 
-## 7. Remaining GPU portion of Step 2
+## 10. Remaining GPU portion of Step 2
 
 The next GPU allocation must generate ESM-C residue activations/pooled embeddings, build the
 authorized predictor architectures, run validation-only hyperparameter search for every required
 representation/architecture pairing and objective arm, evaluate all metrics over the ten low-N
 seeds, save tuned baseline artifacts, report per-assay mean and SD, and settle the pooling-domain
 comparison. It must use the sampler records above and must not read the layer-freeze reserve.
+It must also accumulate across distinct assays before every optimizer step, emit per-assay
+validation curves, and never early-stop from pooled validation loss. **Do not start this GPU
+portion until the retained Hamming constraint and Section 7 pair losses have been reviewed.**

@@ -191,6 +191,9 @@ class CompositeFitnessLoss(nn.Module):
         magnitude_weight: float,
         censoring_weight: float,
         regularization_weight: float,
+        use_sigma_magnitude_weights: bool = False,
+        min_sigma_coverage: float | None = None,
+        sigma_coverage_by_assay: Sequence[float] | torch.Tensor | None = None,
     ) -> None:
         super().__init__()
         if prediction_mode not in {"difference", "score"}:
@@ -202,6 +205,21 @@ class CompositeFitnessLoss(nn.Module):
         weights = (rank_weight, magnitude_weight, censoring_weight, regularization_weight)
         if any(weight < 0 for weight in weights):
             raise ValueError("loss weights must be non-negative")
+        if use_sigma_magnitude_weights and min_sigma_coverage is None:
+            raise ValueError("a high sigma-coverage threshold is required when weighting is enabled")
+        coverage_threshold = 0.0 if min_sigma_coverage is None else float(min_sigma_coverage)
+        if not 0.0 <= coverage_threshold <= 1.0:
+            raise ValueError("minimum sigma coverage must lie in [0, 1]")
+        if use_sigma_magnitude_weights and sigma_coverage_by_assay is None:
+            raise ValueError("sigma coverage is required when magnitude weighting is enabled")
+        if sigma_coverage_by_assay is None:
+            coverage = torch.empty(0, dtype=torch.float32)
+        else:
+            coverage = torch.as_tensor(sigma_coverage_by_assay, dtype=torch.float32)
+            if coverage.shape != (n_assays,):
+                raise ValueError("sigma coverage must contain one value per assay")
+            if not torch.isfinite(coverage).all() or torch.any((coverage < 0) | (coverage > 1)):
+                raise ValueError("sigma coverage values must be finite and lie in [0, 1]")
         self.prediction_mode = prediction_mode
         self.temperature = float(temperature)
         self.magnitude_mode = magnitude_mode
@@ -210,6 +228,9 @@ class CompositeFitnessLoss(nn.Module):
         self.magnitude_weight = float(magnitude_weight)
         self.censoring_weight = float(censoring_weight)
         self.regularization_weight = float(regularization_weight)
+        self.use_sigma_magnitude_weights = bool(use_sigma_magnitude_weights)
+        self.min_sigma_coverage = coverage_threshold
+        self.register_buffer("sigma_coverage_by_assay", coverage)
         self.residual_scale = LearnedResidualScale(
             n_assays, residual_scale_initial, residual_scale_floor
         )
@@ -225,16 +246,29 @@ class CompositeFitnessLoss(nn.Module):
         else:
             per_pair = (predicted_difference - pairs.target_difference).square()
 
-        have_variance = (
-            torch.isfinite(pairs.sigma_u)
-            & torch.isfinite(pairs.sigma_v)
-            & (pairs.sigma_u > 0)
-            & (pairs.sigma_v > 0)
-        )
         pair_weight = torch.ones_like(per_pair)
-        pair_weight[have_variance] = 1.0 / (
-            pairs.sigma_u[have_variance].square() + pairs.sigma_v[have_variance].square()
-        )
+        if self.use_sigma_magnitude_weights:
+            used_assays = torch.unique(pairs.assay_index)
+            coverage = self.sigma_coverage_by_assay[used_assays]
+            if torch.any(coverage < self.min_sigma_coverage):
+                failed = used_assays[coverage < self.min_sigma_coverage].tolist()
+                raise ValueError(
+                    "sigma magnitude weighting requires configured coverage in every used "
+                    f"assay; below threshold for assay indices {failed}"
+                )
+            have_variance = (
+                torch.isfinite(pairs.sigma_u)
+                & torch.isfinite(pairs.sigma_v)
+                & (pairs.sigma_u > 0)
+                & (pairs.sigma_v > 0)
+            )
+            raw_weight = torch.ones_like(per_pair)
+            raw_weight[have_variance] = 1.0 / (
+                pairs.sigma_u[have_variance].square() + pairs.sigma_v[have_variance].square()
+            )
+            for assay in used_assays:
+                selected = pairs.assay_index == assay
+                pair_weight[selected] = raw_weight[selected] / raw_weight[selected].mean()
         return (pair_weight * per_pair).sum()
 
     def _difference_censoring(
