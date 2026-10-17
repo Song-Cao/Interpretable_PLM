@@ -1,0 +1,3 @@
+assay_id,representation,margin_sd,regularization_weight,weight_decay,epochs,mean_validation_spearman,finite_folds,feature_dim
+SPG1_STRSG_Olson_2014,aaindex_flat,0.25,1e-05,0.0,4,0.7302282773949197,3,8512
+SPG1_STRSG_Olson_2014,mutation_indicator,0.5,0.0001,0.001,30,0.504867057903804,3,1045

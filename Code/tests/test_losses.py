@@ -16,11 +16,9 @@ def make_pairs(censor_u: str, censor_v: str, y_u: float, y_v: float):
     return construct_pairs(
         torch.tensor([y_u, y_v]),
         torch.tensor([0, 0]),
-        ["AAAA", "AAAT"],
         [censor_u, censor_v],
         torch.tensor([float("nan"), float("nan")]),
         margin_sd=0.0,
-        max_hamming_distance=1,
     )
 
 
@@ -94,17 +92,15 @@ def test_difference_censoring_rewards_only_the_allowed_direction(
     assert allowed_loss < forbidden_loss
 
 
-def test_pair_gate_is_strict_and_enforces_assay_and_hamming_strata():
+def test_pair_gate_is_strict_and_enforces_assay_strata():
     pairs = construct_pairs(
         torch.tensor([0.0, 0.25, 1.0, 2.0]),
         torch.tensor([0, 0, 1, 0]),
-        ["AAAA", "AAAT", "AAAG", "AATT"],
         ["none"] * 4,
         torch.full((4,), float("nan")),
         margin_sd=0.25,
-        max_hamming_distance=1,
     )
-    assert list(zip(pairs.u.tolist(), pairs.v.tolist())) == [(1, 3)]
+    assert list(zip(pairs.u.tolist(), pairs.v.tolist())) == [(0, 3), (1, 3)]
 
 
 def test_composite_objective_sums_weighted_terms_and_l1():
@@ -163,11 +159,9 @@ def test_score_head_uses_standard_tobit_for_all_used_variants():
     pairs = construct_pairs(
         targets,
         torch.zeros(3, dtype=torch.long),
-        ["AAAA", "AAAT", "AAAG"],
         ["floor", "none", "ceiling"],
         torch.full((3,), float("nan")),
         margin_sd=0.1,
-        max_hamming_distance=1,
     )
     scores = torch.tensor([-3.0, 0.5, 3.0], requires_grad=True)
     module = CompositeFitnessLoss(
@@ -209,11 +203,9 @@ def test_magnitude_sigma_weighting_is_off_by_default():
     pairs = construct_pairs(
         torch.tensor([2.0, 0.0]),
         torch.zeros(2, dtype=torch.long),
-        ["AAAA", "AAAT"],
         ["none", "none"],
         torch.tensor([0.1, 0.1]),
         margin_sd=0.0,
-        max_hamming_distance=1,
     )
     module = CompositeFitnessLoss(
         n_assays=1,
@@ -235,11 +227,9 @@ def test_enabled_sigma_weighting_requires_coverage_and_normalizes_within_assay()
     pairs = construct_pairs(
         torch.tensor([3.0, 1.0, 0.0]),
         torch.zeros(3, dtype=torch.long),
-        ["AAAA", "AAAT", "AAAG"],
         ["none"] * 3,
         torch.tensor([0.1, 0.2, 0.4]),
         margin_sd=0.0,
-        max_hamming_distance=1,
     )
     kwargs = dict(
         n_assays=1,
@@ -272,11 +262,9 @@ def test_enabled_sigma_weighting_requires_coverage_and_normalizes_within_assay()
     pairs_with_missing = construct_pairs(
         torch.tensor([3.0, 1.0, 0.0]),
         torch.zeros(3, dtype=torch.long),
-        ["AAAA", "AAAT", "AAAG"],
         ["none"] * 3,
         torch.tensor([0.1, 0.2, float("nan")]),
         margin_sd=0.0,
-        max_hamming_distance=1,
     )
     mixed = CompositeFitnessLoss(**kwargs, sigma_coverage_by_assay=[0.9])
     mixed_raw = torch.tensor([1 / 0.05, 1.0, 1.0])

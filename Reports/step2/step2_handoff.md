@@ -2,14 +2,14 @@
 
 **Scope.** This handoff covers the local composite objective, assay-balanced sampler,
 representation module, rank aggregation, Mondrian conformal calibration, cross-assay gradient
-accumulation contract, real-data diagnostics, and tests. No predictor model, embedding
-extraction, hyperparameter search, or bake-off was run.
+accumulation contract, real-data diagnostics, and tests. It also covers the GB1-only classical
+additive baseline pilot and the preregistered stop it triggered. No GPU or ESM work was run.
 
 **Repo root.** `/Users/songcao/workdir/Interpretable_PLM`
 
 **Environment.** Python 3.11; local CPU PyTorch 2.2.2; NumPy 1.26.4.
 
-**Test status.** `python3 -m pytest Code/tests -q` -> **191 passed in 83.82 s** on 2026-10-17.
+**Test status.** `python3 -m pytest Code/tests -q` -> **199 passed in 79.80 s** on 2026-10-17.
 
 ## 1. Files built
 
@@ -23,8 +23,15 @@ extraction, hyperparameter search, or bake-off was run.
 | `Code/crossfit/evaluation.py` | Anchored graph-Laplacian rank aggregation and Mondrian conformal calibration |
 | `Code/crossfit/optimization.py` | One optimizer step after cross-assay gradient accumulation |
 | `Code/crossfit/pair_analysis.py` | Mutation-space Hamming distances and gated-pair audit logic |
+| `Code/crossfit/models.py` | Bias-free additive model and composite-objective CPU fitting |
+| `Code/crossfit/metrics.py` | Per-variant, pair, campaign, and Hamming-stratified metrics |
 | `Code/scripts/analyze_pair_distances.py` | Reproducible real-data pair-distance audit entry point |
-| `Reports/step2/pair_distance_audit.csv` | Per-assay Hamming distributions and counts with/without the constraint |
+| `Code/scripts/run_additive_baselines.py` | Validation tuning, low-N evaluation, and artifact serialization |
+| `Reports/step2/pair_distance_audit.csv` | Per-assay Hamming distributions; no distance is filtered |
+| `Reports/step2/margin_gate_audit.csv` | Gated-pair counts at all three registered margins |
+| `Reports/step2/gcn4_mutation_count_distribution.csv` | Curated and reserve-excluded Gcn4 mutation loads |
+| `Reports/step2/additive_*.csv` | GB1-only tuning, run, summary, sanity, and distance-stratified results |
+| `Reports/step2/additive_models/*.npz` | GB1 coefficients and residual scales for all N/seed fits |
 | `Code/tests/test_losses.py` | Loss and pair-construction tests, including sigma-weighting safeguards |
 | `Code/tests/test_sampling.py` | 5 allocation and epoch-sampling tests |
 | `Code/tests/test_representations.py` | 11 representation tests |
@@ -32,12 +39,15 @@ extraction, hyperparameter search, or bake-off was run.
 | `Code/tests/test_optimization.py` | Cross-assay accumulation and rejection tests |
 | `Code/tests/test_pair_analysis.py` | Mutation Hamming and audit-gate tests |
 
-Final artifact hashes:
+Selected final hashes:
 
 ```text
-step2.yaml                  78de9193e49658c4834856db7dcf86c85db5297e62a9412e45d454c61777ac01
-pair_distance_audit.csv     8d2fc377708a228fc94f0d3759d5cd7bf5717520491bd998dd33a387dc469604
-georgiev_2009_standardized  ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463e0fa17b161b4
+step2.yaml                       65e7065a5b4ef87ed3b7db90302082d65f0e4ffe8bd63a85b8012fe5380410ca
+pair_distance_audit.csv          bbf0faa7b703613dde72066f60d20ccf47edcdfdd1ecb294fe33d7426250bb7e
+margin_gate_audit.csv            c2031f58dc66490537e743af70428b2e4751008029567b29d2e949a03dfc85bc
+gcn4_mutation_count_distribution c18496ace3caada6a0741dc8d14f2372ac2928a73c619ef3b84926befb67d4c8
+additive_gb1_sanity.csv           b5aca177f237b557fae6d97990d4f0e84fb45b2e518105e027f10aa7900f6f76
+georgiev_2009_standardized        ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463e0fa17b161b4
 ```
 
 ## 2. Composite objective
@@ -48,9 +58,8 @@ georgiev_2009_standardized  ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463
 from crossfit.losses import construct_pairs
 
 pairs = construct_pairs(
-    targets, assay_index, mutant_sequences, censored, sigma_v,
+    targets, assay_index, censored, sigma_v,
     margin_sd=cfg["pairs"]["margin_sd"],
-    max_hamming_distance=cfg["pairs"]["max_hamming_distance"],
 )
 ```
 
@@ -66,10 +75,9 @@ pairs = construct_pairs(
 | `sigma_u`, `sigma_v` | Curated per-variant uncertainty; NaN means unavailable |
 | `censor_u`, `censor_v` | Encoded `none`, `floor`, or `ceiling` states |
 
-The gate is strict: `abs(y_u - y_v) > margin_sd`. Pairs must also be from the same assay
-and have full-sequence Hamming distance no greater than the configured delta. The constructor
-returns an empty batch when nothing passes; the loss raises rather than silently ranking all
-pairs.
+The gate is strict: `abs(y_u - y_v) > margin_sd`, and pairs must share an assay. There is no
+Hamming argument, filtering branch, or Hamming config entry. The constructor returns an empty
+batch when nothing passes; the loss raises rather than silently ranking all pairs.
 
 ### 2.2 Censoring rule
 
@@ -247,7 +255,7 @@ validation curves are mandatory and pooled validation loss must not control earl
 recorded in `step2.yaml`. The predictor readout L1 accepted by `CompositeFitnessLoss` applies
 only to predictor readouts; it must never be passed into the Step 7 BatchTopK crosscoder.
 
-## 7. Hamming-constraint audit
+## 7. Pair diagnostics and Hamming ruling
 
 Reproduce with:
 
@@ -255,35 +263,74 @@ Reproduce with:
 .venv/bin/python Code/scripts/analyze_pair_distances.py
 ```
 
-The audit uses five deterministic epochs from the configured default sampler. It counts the
-actual within-batch training pairs after same-bound double-censor removal and the strict
-`abs(Delta_y) > 0.25` gate, first without a distance filter and then with `delta <= 2`.
+The audit uses five deterministic epochs from the configured default sampler. It counts actual
+within-batch training pairs after same-bound double-censor removal and the strict margin gate.
+`pair_distance_audit.csv` retains the exact Hamming distribution as a diagnostic, but no
+distance is excluded. Maximum observed distance is 4 for FecA/GB1/KRAS, 24 for GFP, and 44 for
+Gcn4. No delta is safe and informative: delta 4 is inert for eight assays while retaining only
+about 6.1% of GFP and 0.4% of Gcn4. The constraint and its config entry were therefore removed.
+GPU bake-off metrics must be reported by exact pair Hamming distance.
 
-| Assay | Without constraint | With constraint | Removed |
+The margin sweep was already present at `0.10, 0.25, 0.50`; it was not altered after inspection.
+Realized gated-pair counts are:
+
+| Assay | 0.10 | 0.25 | 0.50 |
 |---|---:|---:|---:|
-| CcdB | 145,428 | 145,428 | 0.0000% |
-| EstA | 276,852 | 276,852 | 0.0000% |
-| FecA | 243,582 | 120,657 | 50.4656% |
-| Gcn4 | 330,844 | 82 | 99.9752% |
-| GFP | 1,215,991 | 677 | 99.9443% |
-| DAAO | 810,310 | 810,310 | 0.0000% |
-| KRAS | 1,621,540 | 70,234 | 95.6687% |
-| Ubiquitin | 126,582 | 126,582 | 0.0000% |
-| GB1 | 1,522,402 | 5,646 | 99.6291% |
-| TPMT | 457,756 | 457,756 | 0.0000% |
+| CcdB | 156,954 | 145,428 | 116,729 |
+| EstA | 304,405 | 276,852 | 233,196 |
+| FecA | 266,675 | 243,582 | 206,186 |
+| Gcn4 | 368,185 | 330,844 | 271,742 |
+| GFP | 1,533,779 | 1,215,991 | 973,272 |
+| DAAO | 897,551 | 810,310 | 671,931 |
+| KRAS | 1,775,112 | 1,621,540 | 1,373,967 |
+| Ubiquitin | 164,635 | 126,582 | 100,225 |
+| GB1 | 1,676,117 | 1,522,402 | 1,299,483 |
+| TPMT | 509,436 | 457,756 | 376,427 |
 
-The complete per-assay distributions are in `Reports/step2/pair_distance_audit.csv`; Hamming
-distances extend to 4 for FecA/GB1/KRAS, 24 for GFP, and 44 for Gcn4. This audit is over the
-realized training stream, not the all-pairs Cartesian product across 602,284 rows. Since five
-assays exceed the 1% removal threshold, `max_hamming_distance: 2` remains in config under the
-user's ruling. Its effect is large enough that GPU work must not start until these numbers are
-reviewed.
+These are realized counts over five sampled epochs, not all possible corpus pairs. Exact rows
+are in `margin_gate_audit.csv`.
 
-## 8. Tests and integrity
+Gcn4 is two mutation-load populations: 1,631/2,638 curated variants (61.83%) have 1-6
+mutations, only 43 (1.63%) have 7-30, and 964 (36.54%) have 31-44. Reserve exclusion leaves the
+same structure: 61.57%, 1.60%, and 36.83%. No filtering or correction was applied.
+
+## 8. Classical additive baselines: GB1 stop
+
+Both implemented arms are bias-free linear scores on early-subtracted sparse representations:
+
+- one-hot additive on `mutation_indicator`;
+- AAIndex additive on `aaindex_flat`.
+
+Each uses the complete composite objective. Tuning is three-fold CV inside the N=512, seed=0
+training subset, over all 27 combinations of three margins, three readout-L1 values, and three
+AdamW weight decays. Early stopping uses validation composite loss; candidate selection uses
+mean validation variant Spearman. The selected hyperparameters and epoch count are then fixed
+across all six low-N sizes and ten seeds. Fold-0 test rows never enter tuning.
+
+The preregistered GB1 sanity stop fired:
+
+| Representation | N=16 | N=32 | N=64 | N=128 | N=256 | N=512 |
+|---|---:|---:|---:|---:|---:|---:|
+| One-hot | 0.0996±0.0160 | 0.1343±0.0149 | 0.1843±0.0165 | 0.2658±0.0195 | 0.3832±0.0204 | 0.5248±0.0185 |
+| AAIndex | 0.2920±0.0759 | 0.4041±0.0650 | 0.5153±0.0446 | 0.6360±0.0299 | 0.7247±0.0152 | 0.7782±0.0083 |
+
+Across the preregistered N=16,32,64 selection range, AAIndex exceeds one-hot by 0.26434 mean
+Spearman, above the 0.05 bug threshold. No other assay was run.
+
+The encoding itself passes the immediate rank check: at every one of GB1's 55 mutable
+positions, the 19x19 one-hot-to-Georgiev contrast matrix has rank 19 and condition number
+4.51-4.76. The likely protocol-level cause is low-N identifiability plus coordinate-dependent
+regularization: N=16 observes only 31.4/1,045 one-hot features on average, and N=512 still only
+654.9. AAIndex shares across residues at an observed position while unseen one-hot coefficients
+stay at zero. This explains how minimum-norm/penalized fits can differ despite isomorphic full
+feature spaces, but per the preregistration it is recorded as a bug signal, not a model win. No
+model or threshold was changed in response.
+
+## 9. Tests and integrity
 
 New tests cover:
 
-- strict margin gating, assay and Hamming strata;
+- strict margin gating and assay strata, with no distance-filter branch;
 - all four single-censor sign cases and both double-censor cases;
 - allowed versus forbidden censoring directions;
 - learned residual-scale gradients;
@@ -298,25 +345,30 @@ New tests cover:
 - per-stratum Mondrian conformal coverage and absent-stratum rejection;
 - one-step cross-assay gradient averaging and invalid accumulation rejection;
 - mutation-space Hamming calculation and pair-audit censor/margin gates.
+- exact early-subtraction linear scoring, composite-objective fitting, zero-pair failure, and
+  deterministic CV folds;
+- variant, pair, campaign, and exact-Hamming-stratified predictor metrics.
 
-Full suite: **191 passed in 83.82 s**, comprising the original 147 plus 44 Step 2 tests.
+Full suite: **199 passed in 79.80 s**, comprising the original 147 plus 52 Step 2 tests.
 
-## 9. Incomplete, uncertain, or intentionally out of scope
+## 10. Incomplete, uncertain, or intentionally out of scope
 
 1. **No GPU work was performed.** ESM-C embeddings and per-residue activation tensors do not
    exist yet.
-2. **No predictor architectures or bake-off were built.** They require GPU representations.
-3. **No hyperparameter search or result grid exists.** The config records default values and
-   sweep candidates; none has been selected from test performance.
-4. **No tuned baseline artifacts, architecture shortlist, uncertainty estimates, or answer to
-   the all-residue versus mutated-position pooling question exists.** Those require the bake-off.
-5. **The Hamming constraint changes the training distribution substantially.** It remains
-   configured under the explicit >1% rule, but GPU work is blocked pending review of Section 7.
+2. **The two additive arms are implemented, but the result suite is GB1-only.** The
+   preregistered bug stop prevented the other nine assays from being tuned or evaluated.
+3. **The full additive mean/SD grid is incomplete.** GB1 artifacts are saved and loadable; no
+   result is reported for an assay that was not run.
+4. **No ESM predictor architectures, uncertainty estimates, or pooling comparison exist.**
+   Those require the GPU bake-off.
+5. **The GB1 gap is unresolved.** Full-space rank and conditioning are sound, but low-N
+   coordinate-dependent identifiability invalidates the expected empirical equivalence under
+   the current fitting protocol. No unapproved correction was attempted.
 6. **Full-pool epochs exhaust all assay capacities.** Square-root weighting affects count
    allocation only when a smaller explicit epoch budget is requested. The full-pool default is
    what yields the planned approximately 22% GB1 share.
 
-## 10. Remaining GPU portion of Step 2
+## 11. Remaining GPU portion of Step 2
 
 The next GPU allocation must generate ESM-C residue activations/pooled embeddings, build the
 authorized predictor architectures, run validation-only hyperparameter search for every required
@@ -324,5 +376,6 @@ representation/architecture pairing and objective arm, evaluate all metrics over
 seeds, save tuned baseline artifacts, report per-assay mean and SD, and settle the pooling-domain
 comparison. It must use the sampler records above and must not read the layer-freeze reserve.
 It must also accumulate across distinct assays before every optimizer step, emit per-assay
-validation curves, and never early-stop from pooled validation loss. **Do not start this GPU
-portion until the retained Hamming constraint and Section 7 pair losses have been reviewed.**
+validation curves, never early-stop from pooled validation loss, and report pair performance by
+Hamming distance. The additive suite must not be resumed or altered until the GB1 stop in
+Section 8 is ruled on.

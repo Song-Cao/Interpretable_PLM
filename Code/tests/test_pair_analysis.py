@@ -33,7 +33,5 @@ def test_pair_distance_audit_applies_margin_and_same_bound_censor_gate():
     )
     audit = audit_epoch_pair_distances({"a": frame}, [epoch], margin_sd=0.25)
     assert audit.counts["a"] == {1: 1, 2: 2, 3: 2}
-    result = audit.to_frame(max_hamming_distance=2).drop_duplicates("assay_id").iloc[0]
-    assert result["pairs_without_constraint"] == 5
-    assert result["pairs_with_constraint"] == 3
-    assert result["removed_fraction"] == 0.4
+    result = audit.to_frame().drop_duplicates("assay_id").iloc[0]
+    assert result["total_gated_pairs"] == 5

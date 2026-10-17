@@ -38,26 +38,20 @@ class PairDistanceAudit:
 
     counts: dict[str, Counter[int]]
 
-    def to_frame(self, max_hamming_distance: int) -> pd.DataFrame:
-        """Return a long-form distribution with constrained and total pair counts."""
+    def to_frame(self) -> pd.DataFrame:
+        """Return the long-form Hamming distribution of all gated pairs."""
         rows: list[dict[str, int | float | str]] = []
         for assay_id in sorted(self.counts):
             distribution = self.counts[assay_id]
-            unconstrained = sum(distribution.values())
-            constrained = sum(value for distance, value in distribution.items()
-                              if distance <= max_hamming_distance)
-            removed = unconstrained - constrained
+            total = sum(distribution.values())
             for distance in sorted(distribution):
                 rows.append(
                     {
                         "assay_id": assay_id,
                         "hamming_distance": distance,
                         "gated_pairs": distribution[distance],
-                        "gated_pair_fraction": distribution[distance] / unconstrained,
-                        "pairs_without_constraint": unconstrained,
-                        "pairs_with_constraint": constrained,
-                        "removed_pairs": removed,
-                        "removed_fraction": removed / unconstrained,
+                        "gated_pair_fraction": distribution[distance] / total,
+                        "total_gated_pairs": total,
                     }
                 )
         return pd.DataFrame(rows)

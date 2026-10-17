@@ -6,7 +6,6 @@ paths:
 
 pairs:
   margin_sd: 0.25
-  max_hamming_distance: 2
 
 loss:
   temperature: 1.0
@@ -60,7 +59,47 @@ rank_aggregation:
 conformal:
   alpha: 0.1
 
+evaluation_contract:
+  report_pair_metrics_by_hamming_distance: true
+
 pair_distance_audit:
   epochs: 5
-  removal_threshold: 0.01
   output: Reports/step2/pair_distance_audit.csv
+  margin_output: Reports/step2/margin_gate_audit.csv
+  gcn4_output: Reports/step2/gcn4_mutation_count_distribution.csv
+
+additive_baselines:
+  representations: [mutation_indicator, aaindex_flat]
+  low_n_sizes: [16, 32, 64, 128, 256, 512]
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  tuning:
+    n_train: 512
+    source_seed: 0
+    folds: 3
+    margin_sd: [0.1, 0.25, 0.5]
+    regularization_weight: [0.00001, 0.0001, 0.001]
+    weight_decay: [0.0, 0.0001, 0.001]
+  optimization:
+    learning_rate: 0.03
+    max_epochs: 60
+    patience: 8
+    early_stopping_min_delta: 0.00001
+    scheduler_factor: 0.5
+    scheduler_patience: 3
+    gradient_clip_norm: 1.0
+    seed: 20261017
+    cpu_threads: 1
+  evaluation:
+    max_pairs_per_run: 20000
+    top_k: [10, 50]
+    hamming_stratified: true
+    gb1_substantial_spearman_gap: 0.05
+    selection_sizes: [16, 32, 64]
+  artifacts:
+    models: Reports/step2/additive_models
+    tuning_grid: Reports/step2/additive_tuning_grid.csv
+    selected_hyperparameters: Reports/step2/additive_selected_hyperparameters.csv
+    runs: Reports/step2/additive_baseline_runs.csv
+    summary: Reports/step2/additive_baseline_summary.csv
+    pair_hamming: Reports/step2/additive_pair_hamming_metrics.csv
+    gb1_sanity: Reports/step2/additive_gb1_sanity.csv

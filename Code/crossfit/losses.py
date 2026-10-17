@@ -22,7 +22,7 @@ _CENSOR_CODES = {
 
 @dataclass(frozen=True)
 class PairBatch:
-    """A batch of within-assay, distance-filtered, margin-gated pairs."""
+    """A batch of within-assay, margin-gated pairs."""
 
     u: torch.Tensor
     v: torch.Tensor
@@ -50,13 +50,6 @@ class CompositeLossOutput:
     regularization: torch.Tensor
     n_pairs: int
     n_censor_constraints: int
-
-
-def hamming_distance(left: str, right: str) -> int:
-    """Return the Hamming distance between equal-length amino-acid sequences."""
-    if len(left) != len(right):
-        raise ValueError("Hamming distance requires equal-length sequences")
-    return sum(a != b for a, b in zip(left, right))
 
 
 def encode_censoring(censored: Sequence[str], device: torch.device | None = None) -> torch.Tensor:
@@ -88,18 +81,16 @@ def censor_constraint_sign(censor_u: int, censor_v: int) -> int:
 def construct_pairs(
     targets: torch.Tensor,
     assay_index: torch.Tensor,
-    sequences: Sequence[str],
     censored: Sequence[str],
     sigma_v: torch.Tensor,
     *,
     margin_sd: float,
-    max_hamming_distance: int,
 ) -> PairBatch:
     """Construct all valid pairs within a batch.
 
-    Pairs must share an assay, lie within the configured Hamming distance, and
-    have an observed target difference whose magnitude is strictly greater than
-    the within-assay-SD margin. Rows are never removed merely for being censored.
+    Pairs must share an assay and have an observed target difference whose
+    magnitude is strictly greater than the within-assay-SD margin. Rows are
+    never removed merely for being censored.
     """
     targets = torch.as_tensor(targets)
     assay_index = torch.as_tensor(assay_index, device=targets.device)
@@ -107,10 +98,10 @@ def construct_pairs(
     n = int(targets.numel())
     if targets.ndim != 1 or assay_index.shape != targets.shape or sigma_v.shape != targets.shape:
         raise ValueError("targets, assay_index, and sigma_v must be aligned one-dimensional tensors")
-    if len(sequences) != n or len(censored) != n:
-        raise ValueError("sequence and censoring labels must align with targets")
-    if margin_sd < 0 or max_hamming_distance < 0:
-        raise ValueError("pair thresholds must be non-negative")
+    if len(censored) != n:
+        raise ValueError("censoring labels must align with targets")
+    if margin_sd < 0:
+        raise ValueError("pair margin must be non-negative")
     if not torch.isfinite(targets).all():
         raise ValueError("pair targets must be finite")
     finite_sigma = torch.isfinite(sigma_v)
@@ -123,8 +114,6 @@ def construct_pairs(
     censor_signs: list[int] = []
     for u, v in itertools.combinations(range(n), 2):
         if int(assay_index[u]) != int(assay_index[v]):
-            continue
-        if hamming_distance(sequences[u], sequences[v]) > max_hamming_distance:
             continue
         cu, cv = int(censor_codes[u]), int(censor_codes[v])
         if cu == cv and cu != CENSOR_NONE:

@@ -1,0 +1,2 @@
+assay_id,selection_sizes,one_hot_mean_spearman,aaindex_mean_spearman,aaindex_minus_one_hot,bug_threshold,passes
+SPG1_STRSG_Olson_2014,"16,32,64",0.13943833993973234,0.4037767570707555,0.26433841713102313,0.05,False

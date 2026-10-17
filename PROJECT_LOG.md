@@ -413,3 +413,53 @@ the prediction track needs 0 or 3 crosscoders.
   never enter the Step 7 crosscoder objective, which uses BatchTopK and no L1 term anywhere.
 - `[FINDING]` The corrected Step 2 CPU prerequisites bring the full suite to 191 passing tests
   in 83.82 seconds: the original 147 plus 44 Step 2 tests. No GPU work was performed.
+
+### Step 2 additive-baseline preregistration (2026-10-17)
+
+- `[FINDING]` No Hamming threshold is both informative and safe: `delta=4` is inert for eight
+  assays but retains only about 6.1% of GFP and 0.4% of Gcn4 gated pairs, while smaller values
+  also remove most pairs from complete single/double libraries.
+- `[ADJUST]` Drop the pair Hamming constraint and its config entry entirely, superseding the
+  temporary `delta=2` retention above. Pair distance becomes a reported performance stratum,
+  not a training filter.
+- `[DECISION]` Before fitting the classical baselines: per-position mutation indicators and
+  the 19 Georgiev differences span the same linear amino-acid contrast space when all residues
+  are observed. Their difference is the regularization geometry and AAIndex's ability to share
+  strength when a one-hot coefficient is unidentified. Expect similar GB1 performance because
+  its single/double library has complete coverage, with divergence confined mainly to sparse
+  assays. A mean low-N GB1 AAIndex Spearman advantage greater than 0.05 is preregistered as a
+  bug signal and stops the remaining baseline run.
+- `[DECISION]` Tune each assay/representation once by three-fold validation internal to the
+  `N=512, seed=0` training subset, selecting mean validation variant-level Spearman. Reuse the
+  selected margin, L1, weight decay, and epoch count for every low-N size and all ten seeds;
+  no test row participates in tuning. This avoids hyperparameter luck changing the
+  sample-efficiency curve, including at N=16 where a validation carve is not defensible.
+- `[FINDING]` Gcn4 is a sharply separated mixture by mutation load, confirming the pair-distance
+  bimodality is compositional rather than a Hamming implementation artifact. Of 2,638 curated
+  variants, 1,631 (61.83%) have 1-6 mutations, only 43 (1.63%) have 7-30, and 964 (36.54%)
+  have 31-44. The reserve-excluded distribution is nearly identical: 1,543/2,506 (61.57%),
+  40/2,506 (1.60%), and 923/2,506 (36.83%). Preserve both populations and take no corrective
+  action before Step 9. Exact counts are in
+  `Reports/step2/gcn4_mutation_count_distribution.csv`.
+- `[FINDING]` The Step 2 margin sweep was already registered at 0.10, 0.25, and 0.50. Across
+  the same five deterministic capped-pool epochs, total gated pairs across assays are
+  7,652,849, 6,751,287, and 5,623,158 respectively. Per-assay counts are recorded in
+  `Reports/step2/margin_gate_audit.csv`; no candidate was added or removed after seeing them.
+- `[FINDING]` The preregistered GB1 stop condition fired before any other additive baseline was
+  run. Across N=16,32,64 and ten seeds, mean held-out variant Spearman was 0.13944 for the
+  mutation indicator and 0.40378 for AAIndex, an AAIndex advantage of 0.26434 versus the 0.05
+  bug threshold. At N=512 the means were 0.52485 and 0.77821. The selected one-hot setting was
+  margin 0.50, L1 1e-4, weight decay 1e-3, 30 epochs; AAIndex selected margin 0.25, L1 1e-5,
+  no weight decay, 4 epochs. All 120 fits per arm completed without a zero-pair failure.
+- `[FINDING]` The GB1 diagnostic does not indicate a rank-deficient Georgiev table: at each of
+  55 mutable positions, the 19 by 19 matrix mapping non-wild-type residue indicators to
+  Georgiev differences has rank 19 and condition number 4.51-4.76. It does expose a low-N
+  identifiability mismatch in the preregistered expectation. Although the full assay contains
+  all 1,045 position/residue features, an N=16 training subset observes only 31.4 on average;
+  even N=512 observes 654.9. AAIndex therefore shares across unobserved residues at an observed
+  position, while zero-initialized one-hot coefficients remain unidentified. Coordinate-
+  dependent explicit and implicit regularization can differ even though the full feature spaces
+  are isomorphic. Per instruction this remains classified as a bug signal, not a finding about
+  model superiority; the other nine assays were not run and no corrective change was made.
+- `[FINDING]` After removing Hamming filtering and adding the additive/metric interfaces, the
+  full suite passes 199 tests in 79.80 seconds. No GPU work was performed.
