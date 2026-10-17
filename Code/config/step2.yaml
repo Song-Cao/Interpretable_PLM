@@ -1,0 +1,48 @@
+# CROSSFIT Step 2 — CPU-side objective, sampling, and representations.
+
+paths:
+  georgiev_table: Code/config/georgiev_2009_standardized.csv
+  reports: Reports/step2
+
+pairs:
+  margin_sd: 0.25
+  max_hamming_distance: 2
+
+loss:
+  temperature: 1.0
+  magnitude_mode: huber
+  huber_delta: 1.0
+  residual_scale:
+    initial: 1.0
+    floor: 0.0001
+  weights:
+    rank: 1.0
+    magnitude: 1.0
+    censoring: 1.0
+    regularization: 0.0001
+  sweeps:
+    margin_sd: [0.1, 0.25, 0.5]
+    temperature: [0.5, 1.0, 2.0]
+    magnitude_mode: [huber, squared]
+    huber_delta: [0.5, 1.0, 2.0]
+    rank_weight: [0.5, 1.0, 2.0]
+    magnitude_weight: [0.25, 0.5, 1.0]
+    censoring_weight: [0.5, 1.0, 2.0]
+    regularization_weight: [0.00001, 0.0001, 0.001]
+
+sampling:
+  seed: 20261017
+  cap_median_multiplier: 4.0
+  batch_size: 64
+  epoch_size: capped_pool
+  assay_weight: sqrt_n
+  without_replacement_within_epoch: true
+
+representations:
+  canonical_amino_acids: ACDEFGHIKLMNPQRSTVWY
+  georgiev_channels: 19
+  standardization_ddof: 0
+
+optimizer_contract:
+  weight_decay: 0.01
+  gradient_clip_norm: 1.0

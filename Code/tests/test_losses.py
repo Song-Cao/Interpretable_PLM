@@ -1,0 +1,205 @@
+from __future__ import annotations
+
+import math
+
+import pytest
+import torch
+
+from crossfit.losses import (
+    CompositeFitnessLoss,
+    censor_constraint_sign,
+    construct_pairs,
+)
+
+
+def make_pairs(censor_u: str, censor_v: str, y_u: float, y_v: float):
+    return construct_pairs(
+        torch.tensor([y_u, y_v]),
+        torch.tensor([0, 0]),
+        ["AAAA", "AAAT"],
+        [censor_u, censor_v],
+        torch.tensor([float("nan"), float("nan")]),
+        margin_sd=0.0,
+        max_hamming_distance=1,
+    )
+
+
+@pytest.mark.parametrize(
+    "censor_u,censor_v,y_u,y_v,expected",
+    [
+        ("floor", "none", -2.0, 0.0, 1),
+        ("ceiling", "none", 2.0, 0.0, -1),
+        ("none", "floor", 0.0, -2.0, -1),
+        ("none", "ceiling", 0.0, 2.0, 1),
+    ],
+)
+def test_single_censored_pair_sign_rule(censor_u, censor_v, y_u, y_v, expected):
+    pairs = make_pairs(censor_u, censor_v, y_u, y_v)
+    assert len(pairs) == 1
+    assert int(pairs.censor_sign[0]) == expected
+
+
+def test_same_bound_double_censored_pair_is_dropped():
+    pairs = make_pairs("floor", "floor", -2.0, -2.0)
+    assert len(pairs) == 0
+
+
+@pytest.mark.parametrize(
+    "censor_u,censor_v,y_u,y_v,expected",
+    [
+        ("floor", "ceiling", -2.0, 2.0, 1),
+        ("ceiling", "floor", 2.0, -2.0, -1),
+    ],
+)
+def test_opposite_bound_double_censored_pair_is_kept(
+    censor_u, censor_v, y_u, y_v, expected
+):
+    pairs = make_pairs(censor_u, censor_v, y_u, y_v)
+    assert len(pairs) == 1
+    assert int(pairs.censor_sign[0]) == expected
+
+
+@pytest.mark.parametrize(
+    "censor_u,censor_v,y_u,y_v",
+    [
+        ("floor", "none", -2.0, 0.0),
+        ("ceiling", "none", 2.0, 0.0),
+        ("none", "floor", 0.0, -2.0),
+        ("none", "ceiling", 0.0, 2.0),
+    ],
+)
+def test_difference_censoring_rewards_only_the_allowed_direction(
+    censor_u, censor_v, y_u, y_v
+):
+    pairs = make_pairs(censor_u, censor_v, y_u, y_v)
+    module = CompositeFitnessLoss(
+        n_assays=1,
+        prediction_mode="difference",
+        temperature=1.0,
+        magnitude_mode="squared",
+        huber_delta=1.0,
+        residual_scale_initial=1.0,
+        residual_scale_floor=0.0001,
+        rank_weight=0.0,
+        magnitude_weight=0.0,
+        censoring_weight=1.0,
+        regularization_weight=0.0,
+    )
+    observed = pairs.target_difference
+    sign = pairs.censor_sign.to(dtype=observed.dtype)
+    allowed = observed - sign
+    forbidden = observed + sign
+    allowed_loss = module(allowed, pairs).total
+    forbidden_loss = module(forbidden, pairs).total
+    assert allowed_loss < forbidden_loss
+
+
+def test_pair_gate_is_strict_and_enforces_assay_and_hamming_strata():
+    pairs = construct_pairs(
+        torch.tensor([0.0, 0.25, 1.0, 2.0]),
+        torch.tensor([0, 0, 1, 0]),
+        ["AAAA", "AAAT", "AAAG", "AATT"],
+        ["none"] * 4,
+        torch.full((4,), float("nan")),
+        margin_sd=0.25,
+        max_hamming_distance=1,
+    )
+    assert list(zip(pairs.u.tolist(), pairs.v.tolist())) == [(1, 3)]
+
+
+def test_composite_objective_sums_weighted_terms_and_l1():
+    pairs = make_pairs("none", "none", 1.0, -1.0)
+    readout = torch.tensor([-1.0, 2.0], requires_grad=True)
+    prediction = torch.tensor([0.5], requires_grad=True)
+    module = CompositeFitnessLoss(
+        n_assays=1,
+        prediction_mode="difference",
+        temperature=1.0,
+        magnitude_mode="squared",
+        huber_delta=1.0,
+        residual_scale_initial=1.0,
+        residual_scale_floor=0.0001,
+        rank_weight=2.0,
+        magnitude_weight=3.0,
+        censoring_weight=4.0,
+        regularization_weight=5.0,
+    )
+    output = module(prediction, pairs, readout_parameters=[readout])
+    expected_rank = torch.nn.functional.softplus(torch.tensor(-0.5))
+    expected = 2.0 * expected_rank + 3.0 * (0.5 - 2.0) ** 2 + 5.0 * 3.0
+    assert torch.allclose(output.total, expected)
+    assert output.n_pairs == 1
+    assert output.n_censor_constraints == 0
+    output.total.backward()
+    assert prediction.grad is not None
+    assert readout.grad is not None
+
+
+def test_difference_censoring_learns_residual_scale():
+    pairs = make_pairs("floor", "none", -2.0, 0.0)
+    prediction = torch.tensor([0.0], requires_grad=True)
+    module = CompositeFitnessLoss(
+        n_assays=1,
+        prediction_mode="difference",
+        temperature=1.0,
+        magnitude_mode="huber",
+        huber_delta=1.0,
+        residual_scale_initial=1.0,
+        residual_scale_floor=0.0001,
+        rank_weight=0.0,
+        magnitude_weight=0.0,
+        censoring_weight=1.0,
+        regularization_weight=0.0,
+    )
+    output = module(prediction, pairs)
+    output.total.backward()
+    assert module.residual_scale.raw_scale.grad is not None
+    assert torch.isfinite(module.residual_scale.raw_scale.grad).all()
+    assert not torch.all(module.residual_scale.raw_scale.grad == 0)
+
+
+def test_score_head_uses_standard_tobit_for_all_used_variants():
+    targets = torch.tensor([-2.0, 0.0, 2.0])
+    pairs = construct_pairs(
+        targets,
+        torch.zeros(3, dtype=torch.long),
+        ["AAAA", "AAAT", "AAAG"],
+        ["floor", "none", "ceiling"],
+        torch.full((3,), float("nan")),
+        margin_sd=0.1,
+        max_hamming_distance=1,
+    )
+    scores = torch.tensor([-3.0, 0.5, 3.0], requires_grad=True)
+    module = CompositeFitnessLoss(
+        n_assays=1,
+        prediction_mode="score",
+        temperature=1.0,
+        magnitude_mode="squared",
+        huber_delta=1.0,
+        residual_scale_initial=1.0,
+        residual_scale_floor=0.0001,
+        rank_weight=0.0,
+        magnitude_weight=0.0,
+        censoring_weight=1.0,
+        regularization_weight=0.0,
+    )
+    output = module(
+        scores,
+        pairs,
+        variant_targets=targets,
+        variant_assay_index=torch.zeros(3, dtype=torch.long),
+        variant_censoring=["floor", "none", "ceiling"],
+    )
+    expected = (
+        -torch.special.log_ndtr(torch.tensor(1.0))
+        + 0.5 * math.log(2.0 * math.pi)
+        + 0.5 * 0.5**2
+        - torch.special.log_ndtr(torch.tensor(1.0))
+    )
+    assert torch.allclose(output.censoring, expected, atol=1e-6)
+    assert output.n_censor_constraints == 2
+
+
+def test_constraint_sign_rejects_conflicting_codes():
+    with pytest.raises(ValueError):
+        censor_constraint_sign(1, 1 + 2)

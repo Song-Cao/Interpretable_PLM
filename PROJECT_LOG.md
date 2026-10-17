@@ -328,3 +328,41 @@ the prediction track needs 0 or 3 crosscoders.
   resolution: pin AAIndex1, retain complete nonconstant indices, z-score each index across the
   20 amino acids, fit the full 19-component PCA once, freeze the 20 x 19 score table, and encode
   each mutation as `PC(mutant) - PC(wild_type)` at its sequence position.
+- `[ADJUST]` Censoring ruling supersedes the erroneous single-sign formula above. For
+  `Delta_y = y_u - y_v`, the implemented constraint is
+  `-log Phi(s * (Delta_y - d_hat) / sigma)`: `s=+1` for `u` floor or `v` ceiling,
+  and `s=-1` for `u` ceiling or `v` floor. Same-bound double-censored pairs are dropped;
+  opposite-bound pairs are retained. `sigma` is one learned positive residual scale per assay.
+- `[ADJUST]` AAIndex PCA proposal above was rejected. The representation now uses Georgiev's
+  published 19 descriptors (Georgiev, J Comput Biol 2009, DOI `10.1089/cmb.2008.0173`,
+  Table 3). The numerical transcription was cross-checked from
+  `andreas-wagner-uzh/fitness_landscape_sampling` commit
+  `d227fd63c763c6673ed19192b595797b9e6cf26a`; each column was centered and divided by its
+  population SD across the 20 canonical amino acids. Frozen artifact:
+  `Code/config/georgiev_2009_standardized.csv`, sha256
+  `ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463e0fa17b161b4`.
+- `[DECISION]` AAIndex encodes `G(mutant) - G(wild_type)` at the mutated sequence position.
+  `aaindex_flat` is CSR with shape `N x (L*19)`; the convolutional form is the exact same
+  matrix reshaped to `N x L x 19`. Non-canonical residues raise; none are imputed.
+- `[FINDING]` The plan's statement that every single mutant has 19 nonzero AAIndex entries is
+  not literally true for the mandated published table: 8 of 380 ordered substitutions have
+  one exactly equal descriptor value (`A<->V` channel 4, `M<->W` channel 1, `P<->W` channel
+  10, `S<->W` channel 16). They therefore have 18 mathematical nonzeros. The values are not
+  perturbed; every mutation still occupies a fixed 19-channel positional block.
+- `[DECISION]` Epoch allocation is proportional to `sqrt(n_assay)` for a requested epoch
+  budget, with water-filling at `min(n_assay, 4 * median(n))` and no replacement. The config's
+  default `capped_pool` epoch consumes every assay's available capped quota. On the 602,284
+  usable rows, median `n=2,986`, cap `11,944`, epoch size `54,163`; GB1, GFP, and KRAS each
+  contribute 11,944 rows (22.0520%), while no small assay is repeated.
+- `[ADJUST]` Added PyTorch as the differentiable objective dependency and constrained NumPy to
+  `<2`; the available macOS x86 PyTorch 2.2.2 wheel was compiled against NumPy 1.x and emitted
+  an initialization warning under the prior NumPy 2.4.6 environment. Local CPU validation uses
+  NumPy 1.26.4.
+- `[DECISION]` `CompositeFitnessLoss` is the sole training objective. It returns one weighted
+  scalar plus unweighted diagnostics. Ranking, magnitude, censoring, and readout-L1 terms are
+  summed over the gated batch; optimizer weight decay remains separate. Magnitude uses pair
+  variance `sigma_u^2 + sigma_v^2` only when both curated sigmas are finite and positive,
+  otherwise that pair is unweighted.
+- `[FINDING]` Step 2 local implementation added 34 tests; the full suite is 181 passing in
+  70.94 seconds. The exact interfaces, realized assay shares, representation dimensions,
+  provenance, and deliberately unbuilt work are in `Reports/step2/step2_handoff.md`.
