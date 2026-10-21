@@ -60,8 +60,15 @@ def test_superseded_config_keys_stay_absent():
     assert not any("sigma_v" in key for key in keys)
 
 
-def test_frozen_georgiev_table_matches_recorded_hash():
+def test_frozen_aaindex_table_matches_recorded_hash():
     config = yaml.safe_load((REPO_ROOT / "Code" / "config" / "step2.yaml").read_text())
-    path = REPO_ROOT / config["paths"]["georgiev_table"]
+    path = REPO_ROOT / config["paths"]["aaindex_table"]
     observed = hashlib.sha256(path.read_bytes()).hexdigest()
-    assert observed == config["representations"]["georgiev_sha256"]
+    assert observed == config["representations"]["aaindex_sha256"]
+
+
+def test_v12_excluded_architectures_stay_absent():
+    config = yaml.safe_load((REPO_ROOT / "Code" / "config" / "step2.yaml").read_text())
+    text = _production_text() + "\n" + str(config)
+    assert "gradient_boosted_trees" not in text
+    assert "attention_pooling" not in text

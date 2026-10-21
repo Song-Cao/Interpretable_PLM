@@ -31,7 +31,6 @@ def test_augmented_ridge_uses_explicit_near_unpenalized_density_column():
         ("ridge", (12,), {}, (3,)),
         ("mlp", (12,), {"hidden_dims": [16, 8], "dropout": 0.2}, (3,)),
         ("conv_residual", (20, 5), {"width": 16, "depth": 2, "kernel_size": 3, "dropout": 0.1}, (3,)),
-        ("attention_pooling", (20, 5), {"attention_dim": 8, "hidden_dim": 12, "dropout": 0.1}, (3,)),
     ],
 )
 def test_neural_model_factory_returns_direct_variant_scores(name, input_shape, parameters, shape):
@@ -40,7 +39,7 @@ def test_neural_model_factory_returns_direct_variant_scores(name, input_shape, p
     assert model(features).shape == shape
 
 
-@pytest.mark.parametrize("name", ["random_forest", "gradient_boosted_trees"])
+@pytest.mark.parametrize("name", ["random_forest"])
 def test_tree_model_factory_uses_published_sklearn_regressors(name):
     model = build_model(name, (4,), {"n_estimators": 10, "random_state": 3})
     features = np.arange(40, dtype=float).reshape(10, 4)

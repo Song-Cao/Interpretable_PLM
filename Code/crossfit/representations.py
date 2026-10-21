@@ -11,7 +11,7 @@ from .qc import TOKEN_RE
 
 
 AMINO_ACIDS = "ACDEFGHIKLMNPQRSTVWY"
-GEORGIEV_CHANNELS = 19
+AAINDEX_CHANNELS = 19
 
 
 def _validated_sequences(sequences: Sequence[str]) -> list[str]:
@@ -27,10 +27,10 @@ def _validated_sequences(sequences: Sequence[str]) -> list[str]:
     return values
 
 
-def load_georgiev_table(path: str | Path) -> pd.DataFrame:
+def load_aaindex_table(path: str | Path) -> pd.DataFrame:
     """Load the frozen, standardized Georgiev 20 by 19 descriptor table."""
     table = pd.read_csv(path).set_index("amino_acid")
-    if table.shape != (len(AMINO_ACIDS), GEORGIEV_CHANNELS):
+    if table.shape != (len(AMINO_ACIDS), AAINDEX_CHANNELS):
         raise ValueError(f"expected a 20 x 19 Georgiev table, found {table.shape}")
     if set(table.index) != set(AMINO_ACIDS):
         raise ValueError("Georgiev table must contain exactly the canonical amino acids")
@@ -61,13 +61,13 @@ def onehot(sequences: Sequence[str]) -> np.ndarray:
     return encoded.reshape(len(encoded), -1)
 
 
-def aaindex_flat(sequences: Sequence[str], georgiev_table: pd.DataFrame) -> np.ndarray:
+def aaindex_flat(sequences: Sequence[str], aaindex_table: pd.DataFrame) -> np.ndarray:
     """Return dense absolute Georgiev values at every position, flattened to 19L."""
     values = _validated_sequences(sequences)
-    if georgiev_table.shape != (len(AMINO_ACIDS), GEORGIEV_CHANNELS):
+    if aaindex_table.shape != (len(AMINO_ACIDS), AAINDEX_CHANNELS):
         raise ValueError("Georgiev table must have shape 20 by 19")
     lookup = {
-        amino_acid: georgiev_table.loc[amino_acid].to_numpy(dtype=np.float32)
+        amino_acid: aaindex_table.loc[amino_acid].to_numpy(dtype=np.float32)
         for amino_acid in AMINO_ACIDS
     }
     encoded = np.stack([[lookup[residue] for residue in sequence] for sequence in values])
@@ -132,13 +132,13 @@ def esm_mutpool(activations: np.ndarray, mutations: str | Sequence[str]) -> np.n
 
 
 def encode_representation(name: str, **inputs: object) -> np.ndarray:
-    """Select a v10 representation by its config name."""
+    """Select a v12 representation by its config name."""
     if name == "onehot":
         return onehot(inputs["sequences"])
     if name == "onehot_positional":
         return onehot_positional(inputs["sequences"])
     if name == "aaindex_flat":
-        return aaindex_flat(inputs["sequences"], inputs["georgiev_table"])
+        return aaindex_flat(inputs["sequences"], inputs["aaindex_table"])
     if name == "esm_residue":
         return esm_residue(inputs["activations"])
     if name == "esm_residue_delta":

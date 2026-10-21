@@ -1,33 +1,26 @@
-# CROSSFIT v10 Step 2 — independent direct-fitness pipelines.
+# CROSSFIT v12 Step 2 — IRED architecture search and baseline suite.
 
 datasets: [IRED, SPG1_STRSG_Olson_2014, GFP_AEQVI_Sarkisyan_2016, RASK_HUMAN_Weng_2022_abundance, OXDA_RHOTO_Vanella_2023_activity]
-
 paths:
-  georgiev_table: Code/config/georgiev_2009_standardized.csv
+  aaindex_table: Code/config/aaindex_georgiev_2009_standardized.csv
   ired_campaign: Data/processed/IRED_data/data_processed.csv
   ired_plate: Data/processed/IRED_data/plate_dataset.csv
   ired_variants: Data/processed/ired_variants.parquet
   ired_plate_curated: Data/processed/ired_plate.csv
   ired_pg_kfold: Data/processed/splits/ired_pg_kfold.csv
   ired_round_held_out: Data/processed/splits/ired_round_held_out.csv
+  representations: Cache/step2/IRED/representations
+  density_cache: Cache/step2/IRED/dpll.csv
   reports: Reports/step2
   models: Models/step2
-  density_cache: Cache/step2/dpll
-
+  preflight_report: Reports/step2/ired_preflight.json
 objective:
   margin_sd: 0.25
   temperature: 1.0
   magnitude_mode: huber
   huber_delta: 1.0
-  residual_scale:
-    initial: 1.0
-    floor: 0.0001
-  weights:
-    rank: 1.0
-    magnitude: 1.0
-    censoring: 1.0
-    regularization: 0.0001
-
+  residual_scale: {initial: 1.0, floor: 0.0001}
+  weights: {rank: 1.0, magnitude: 1.0, censoring: 1.0, regularization: 0.0001}
 ired_curation:
   dataset_id: IRED
   mutation_delimiter: "-"
@@ -40,62 +33,84 @@ ired_curation:
   layer_freeze_seed: 424242
   round_train: [1, 2, 3, 4]
   round_test: [5]
-
 representations:
-  vector: [onehot, aaindex_flat, esm_mean, esm_mutpool]
-  sequence: [onehot_positional, esm_residue, esm_residue_delta]
+  aaindex_channels: 19
+  aaindex_sha256: ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463e0fa17b161b4
   esm_mutpool_role: pooling_domain_diagnostic
-  georgiev_channels: 19
-  georgiev_sha256: ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463e0fa17b161b4
-
-architectures:
-  vector: [ridge, mlp, random_forest, gradient_boosted_trees]
-  sequence: [conv_residual, attention_pooling]
-  ridge:
-    site_penalty: [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
-    density_penalty: 1.0e-8
-  mlp:
-    hidden_dims: [[256, 128], [512, 256], [512, 256, 128]]
-    dropout: [0.1, 0.25, 0.4]
-  random_forest:
-    n_estimators: [300, 600]
-    max_depth: [null, 12, 24]
-    min_samples_leaf: [1, 2, 5]
-    max_features: [sqrt, 0.5, 1.0]
-  gradient_boosted_trees:
-    n_estimators: [100, 300, 600]
-    learning_rate: [0.01, 0.05, 0.1]
-    max_depth: [2, 3, 5]
-    min_samples_leaf: [1, 2, 5]
-    subsample: [0.7, 1.0]
-  conv_residual:
-    width: [128, 256]
-    depth: [3, 5]
-    kernel_size: [3, 5, 7]
-    dropout: [0.1, 0.25]
-  attention_pooling:
-    attention_dim: [64, 128]
-    hidden_dim: [128, 256]
-    dropout: [0.1, 0.25]
-
+arms:
+  onehot_ridge:
+    representation: onehot
+    model: diagonal_ridge
+    variants: [unaugmented, augmented]
+  aaindex_ridge:
+    representation: aaindex_flat
+    model: diagonal_ridge
+    variants: [unaugmented, augmented]
+  esm_mean_ridge: {representation: esm_mean, model: ridge}
+  esm_mean_mlp: {representation: esm_mean, model: mlp}
+  esm_mean_random_forest: {representation: esm_mean, model: random_forest}
+  esm_mutpool_ridge: {representation: esm_mutpool, model: ridge, role: diagnostic}
+  esm_residue_conv: {representation: esm_residue, model: conv_residual}
+  esm_residue_delta_conv: {representation: esm_residue_delta, model: conv_residual}
+  onehot_positional_conv: {representation: onehot_positional, model: conv_residual, optional: true}
+search:
+  method: random
+  sampling_seed: 20261212
+  maximum_configurations_per_arm: 60
+  minimum_configurations_per_arm: 30
+  timing_fits: 10
+  cv_folds: 5
+  cv_seed: 20261213
+  selection_metric: validation_spearman
+  report_boundary_selection: true
+  spaces:
+    diagonal_ridge:
+      site_penalty: {distribution: log_uniform, low: 0.0001, high: 10000.0, include: [0.0001, 1000.0, 10000.0]}
+      density_penalty: [1.0e-8]
+    ridge:
+      learning_rate: [0.0001, 0.0003, 0.001, 0.003]
+      weight_decay: [0.0001, 0.001, 0.01, 0.1]
+      batch_size: [32, 64, 128]
+    mlp:
+      hidden_dims: [[256, 128], [512, 256], [512, 256, 128]]
+      dropout: [0.1, 0.25, 0.4]
+      learning_rate: [0.0001, 0.0003, 0.001]
+      weight_decay: [0.0001, 0.001, 0.01]
+      batch_size: [32, 64, 128]
+    random_forest:
+      n_estimators: [300, 600, 1000]
+      max_depth: [null, 12, 24]
+      min_samples_leaf: [1, 2, 5]
+      max_features: [sqrt, 0.5, 1.0]
+    conv_residual:
+      width: [128, 256]
+      depth: [3, 5]
+      kernel_size: [3, 5, 7]
+      dropout: [0.1, 0.25]
+      learning_rate: [0.0001, 0.0003, 0.001]
+      weight_decay: [0.0001, 0.001, 0.01]
+      batch_size: [16, 32, 64]
 optimization:
   ensemble_seeds: [0, 1, 2, 3, 4]
-  validation_fraction: 0.15
-  validation_seed: 20261021
-  batch_size: [32, 64, 128]
-  learning_rate: [0.0001, 0.0003, 0.001]
-  weight_decay: [0.0001, 0.001, 0.01]
   max_epochs: 300
   early_stopping_patience: 25
   early_stopping_min_delta: 0.0001
   scheduler_factor: 0.5
   scheduler_patience: 8
   gradient_clip_norm: 1.0
-
 evaluation:
-  selection_metric: pg_kfold_test_spearman
+  primary_test_fold: 0
   top_k: [24, 48, 96]
   conformal_alpha: 0.1
+  calibration_fraction: 0.15
+  calibration_seed: 20261214
   ensemble_members: 5
+  bootstrap_samples: 2000
+  bootstrap_seed: 20261215
+  confidence_level: 0.95
   report: [spearman, pearson, mse, top_k_precision, test_hit_rate, ndcg, mondrian_coverage]
   plate_report: [spearman, ndcg]
+budget:
+  step2_estimated_gpu_hours: 5.0
+  session_hard_ceiling_gpu_hours: 9.0
+  estimate_tolerance_fraction: 0.25

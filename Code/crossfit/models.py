@@ -138,25 +138,6 @@ class ConvResidualRegressor(nn.Module):
         return self.readout(hidden.mean(dim=-1)).squeeze(-1)
 
 
-class AttentionPoolingRegressor(nn.Module):
-    """Learned attention pooling over N by L by d residue activations."""
-
-    def __init__(self, input_dim: int, attention_dim: int, hidden_dim: int, dropout: float) -> None:
-        super().__init__()
-        self.attention = nn.Sequential(
-            nn.Linear(input_dim, attention_dim), nn.Tanh(), nn.Linear(attention_dim, 1)
-        )
-        self.readout = nn.Sequential(
-            nn.LayerNorm(input_dim), nn.Linear(input_dim, hidden_dim), nn.GELU(),
-            nn.Dropout(dropout), nn.Linear(hidden_dim, 1),
-        )
-
-    def forward(self, features: torch.Tensor) -> torch.Tensor:
-        weights = torch.softmax(self.attention(features).squeeze(-1), dim=-1)
-        pooled = torch.sum(features * weights.unsqueeze(-1), dim=1)
-        return self.readout(pooled).squeeze(-1)
-
-
 def build_model(name: str, input_shape: Sequence[int], parameters: Mapping[str, Any]) -> Any:
     """Build one configured architecture without changing representation shape."""
     if name == "ridge":
@@ -169,18 +150,9 @@ def build_model(name: str, input_shape: Sequence[int], parameters: Mapping[str, 
         from sklearn.ensemble import RandomForestRegressor
 
         return RandomForestRegressor(**dict(parameters))
-    if name == "gradient_boosted_trees":
-        from sklearn.ensemble import GradientBoostingRegressor
-
-        return GradientBoostingRegressor(**dict(parameters))
     if name == "conv_residual":
         return ConvResidualRegressor(
             int(input_shape[-1]), int(parameters["width"]), int(parameters["depth"]),
             int(parameters["kernel_size"]), float(parameters["dropout"]),
-        )
-    if name == "attention_pooling":
-        return AttentionPoolingRegressor(
-            int(input_shape[-1]), int(parameters["attention_dim"]),
-            int(parameters["hidden_dim"]), float(parameters["dropout"]),
         )
     raise KeyError(f"unknown model architecture: {name}")

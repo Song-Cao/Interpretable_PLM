@@ -1,11 +1,11 @@
-# Step 2 handoff: v10 migration and IRED curation
+# Step 2 handoff: v12 preflight and IRED curation
 
 Date: 2026-10-21
 Status: stopped at the required post-curation review boundary; no model training or ESM-C inference has run.
 
 ## Plan and standing contract
 
-`CROSSFIT_Implementation_Plan_v10.docx` is the sole plan. Root `AGENTS.md` carries its standing invariants. Each dataset now has an independent direct-fitness pipeline; nothing pools labels, models, gradients, or results across datasets. `pg_kfold` is the only model-selection split. The layer-freeze reserve, round-held-out split, and external plate set cannot enter fitting or tuning.
+`CROSSFIT_Implementation_Plan_v12.docx` is the sole plan. Root `AGENTS.md` carries its standing invariants. Each dataset has an independent direct-fitness pipeline; nothing pools labels, models, gradients, or results across datasets. `pg_kfold` is the only model-selection split. Five-fold validation is formed strictly inside its training pool. The layer-freeze reserve, pg_kfold test, round-held-out split, and external plate set cannot enter fitting or tuning.
 
 `Code/tests/test_invariants.py` fails if the removed assay sampler, cross-dataset optimizer, grouped folds, pairwise score aggregation, difference-censoring path, pair-dataset constructors, prohibited config keys, or superseded mutation-indicator symbol return. It also verifies the frozen Georgiev table hash.
 
@@ -37,7 +37,7 @@ Non-canonical residues and unaligned sequence lengths raise. `aaindex_positional
 
 ### Models
 
-`Code/crossfit/models.py` exposes `build_model(name, input_shape, parameters)` for ridge, MLP, random forest, gradient-boosted regression trees, residual 1-D convolution, and attention pooling. The tree arm is included because published supervised protein-fitness work uses GBT regression. Neural arms return one score per variant and preserve sequence shape for convolution/attention.
+`Code/crossfit/models.py` exposes `build_model(name, input_shape, parameters)` for ridge, MLP, random forest, and residual 1-D convolution. v12 explicitly removes gradient-boosted trees and attention pooling. Neural arms return one score per variant and preserve sequence shape for convolution.
 
 `DiagonalRidgeRegressor` is the exact augmented classical solver. It constructs the normal equations with an explicit diagonal penalty: intercept 0, each site feature lambda, and dPLL `1e-8`. It does not use a scalar-alpha approximation or dPLL rescaling.
 
@@ -45,7 +45,7 @@ Non-canonical residues and unaligned sequence lengths raise. `aaindex_positional
 
 `Code/crossfit/evaluation.py` provides direct-score Spearman, Pearson, MSE, NDCG, wild-type-cutoff top-k precision, test-set hit rate, exactly five-member ensemble aggregation, and split Mondrian conformal intervals by `(mutation_count, unseen_position)`. Supplying top-k budgets without a wild-type cutoff raises. This is how the plate set is prevented from receiving an invented cutoff.
 
-`Code/config/step2.yaml` names only the five v10 datasets, registers the representation/model pairings and tuning grids, fixes objective constants, and records every IRED curation seed, split, path, and threshold. It contains no balancing, pair-distance, low-N selection, or uncertainty-weighting controls.
+`Code/config/step2.yaml` names the five v12 datasets, registers exactly nine arm families and random-search spaces, fixes objective constants, and records every IRED curation seed, split, path, and threshold. It contains no balancing, pair-distance, low-N selection, or uncertainty-weighting controls.
 
 ## IRED curated data
 
@@ -87,7 +87,7 @@ Each selected dataset is checked at load time for zero ceiling-censored rows. IR
 
 ## Superseded artifacts
 
-Invalid pre-v10 GB1 fits are isolated at `Reports/archive/step2_pre_v10_gb1_additive/`. Old pair/Hamming diagnostics are isolated at `Reports/archive/step2_pre_v10_pair_diagnostics/`. No v10 config or loader points to either directory. The obsolete modules, scripts, tests, grouped split table, and prior handoff were deleted or replaced; exact names are recorded in `PROJECT_LOG.md`.
+Invalid pre-v10 GB1 fits are isolated at `Reports/archive/step2_pre_v10_gb1_additive/`. Old pair/Hamming diagnostics are isolated at `Reports/archive/step2_pre_v10_pair_diagnostics/`. No active config or loader points to either directory. The obsolete modules, scripts, tests, grouped split table, and prior handoff were deleted or replaced; exact names are recorded in `PROJECT_LOG.md`.
 
 ## Verification
 
@@ -99,6 +99,6 @@ Invalid pre-v10 GB1 fits are isolated at `Reports/archive/step2_pre_v10_gb1_addi
 
 ## Incomplete, uncertain, or deviating
 
-No deviation from the user-overridden v10 design is known. The one plate duplicate is intentionally averaged and explicitly reported rather than counted twice in evaluation.
+No deviation from the user-overridden v12 design is known. The one plate duplicate is intentionally averaged and explicitly reported rather than counted twice in evaluation.
 
 The following are deliberately incomplete pending review: ESM-C residue extraction, wild-type masked-term caching, variant dPLL computation, hyperparameter search, five-seed ensembles, conformal calibration, the four classical augmented/unaugmented fits, architecture comparison, three result tables, pooling-domain answer, shortlist, and saved tuned artifacts. Consequently there are no Step 2 performance results yet. Training on IRED must not begin until this curation handoff is accepted.

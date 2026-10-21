@@ -534,3 +534,27 @@ the prediction track needs 0 or 3 crosscoders.
 - `[FINDING]` The post-migration full suite passes 186 tests in 93.74 seconds. A test-process
   thread cap prevents a reproducible macOS x86 Accelerate/OpenMP race when PyTorch is loaded
   before the first Arrow import; it changes no training or numerical configuration.
+
+### v12 compute-bounded IRED run (2026-10-21)
+
+- `[ADJUST]` Replaced v10 with `CROSSFIT_Implementation_Plan_v12.docx` (SHA-256
+  `06e88344d02bd0adf8b132779f1fadfaffb74c8cc6fd301cd50802604cfab4ca`). v12 is the sole
+  plan and root `AGENTS.md` now carries its 30-60-configuration random-search and one-dataset
+  architecture-search budget rules.
+- `[ADJUST]` The prior `selection_metric: pg_kfold_test_spearman` key was a leakage bug in
+  naming, although no Step 2 training/search entry point existed yet and therefore no model
+  had selected on test. Replaced it with validation Spearman from deterministic five-fold CV
+  entirely inside the pg_kfold training pool; the pg_kfold test is reporting-only.
+- `[ADJUST]` Replaced the 15% validation slice with five-fold internal CV. Registered random
+  search at seed 20261212 with 60 configurations per arm initially and a budget floor of 30.
+  Ridge site penalties now span `1e-4` through `1e4` and explicitly include `1e3` and `1e4`.
+- `[ADJUST]` Registered exactly the nine v12 arm families. Removed gradient-boosted trees,
+  attention pooling, their model-factory branches and grids, MLPs on classical encodings, and
+  all but ridge on `esm_mutpool`. Renamed active Georgiev config/code identifiers to AAIndex;
+  the frozen published table bytes and hash are unchanged.
+- `[FINDING]` IRED pg_kfold fold 0 contains 228 test variants. Against the standardized
+  wild-type cutoff 0.3217626895, 113 are hits, for a test hit rate of 0.4956140351.
+- `[FINDING]` The 54-variant plate set has `1/s` mean 0.66115548, SD 0.84847707, median
+  0.33893789, range -0.02174366 to 4.45589763, and 5th/95th percentiles 0.04373442/2.01776129.
+  Mutation counts 1-8 have counts 5, 16, 15, 9, 6, 1, 1, 1. Seven variants mutate at least
+  one position absent from the campaign; the unseen positions are 106, 116, 123, 137, 233.

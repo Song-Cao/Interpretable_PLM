@@ -1,6 +1,6 @@
 # CROSSFIT repository rules
 
-`CROSSFIT_Implementation_Plan_v10.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
+`CROSSFIT_Implementation_Plan_v12.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
 
 - Run one independent pipeline per dataset and report every result per dataset. Never pool fitness values, training data, or metrics across datasets.
 - Use `pg_kfold` as the only model-selection split. Low-N, unseen-position, mutation-count, round-held-out, and external data are evaluation conditions only.
@@ -14,3 +14,4 @@
 - Treat a failed gate as a result. Do not change an architecture, statistic, threshold, or grid to make a gate pass.
 - Keep all thresholds, seeds, paths, and hyperparameters in the step YAML. Put library logic in `Code/crossfit/`, entry points in `Code/scripts/`, tests in `Code/tests/`, and result artifacts in `Reports/stepN/`.
 - Append decisions, adjustments, findings, and GPU cost to `PROJECT_LOG.md` as they occur. Preserve inconvenient or negative results in each step handoff.
+- Respect the compute budget: random-search 30-60 configurations per Step 2 arm, tune architectures once on IRED, and report GPU-hours against each step estimate.

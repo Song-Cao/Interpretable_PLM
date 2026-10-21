@@ -2,7 +2,7 @@
 
 CROSSFIT measures the feature-level structure of representation change when a protein language model is adapted from evolutionary sequence modelling to measured fitness. Each dataset has an independent pipeline. A shared BatchTopK dictionary within that pipeline identifies evolutionary features the fitness model conserves, re-weights, rotates, abandons, or creates. Gate 1 drift is a precondition for this measurement, not the result itself.
 
-`CROSSFIT_Implementation_Plan_v10.docx` is the only implementation plan. IRED runs first, followed by GB1, GFP, KRAS, and DAAO. Models predict per-variant fitness directly; ranking comparisons exist only transiently inside a training batch.
+`CROSSFIT_Implementation_Plan_v12.docx` is the only implementation plan. IRED runs first, followed by GB1, GFP, KRAS, and DAAO. Models predict per-variant fitness directly; ranking comparisons exist only transiently inside a training batch. Step 2 searches exactly the nine registered arm families by random search with five-fold validation inside the pg_kfold training pool; the test fold is reporting-only.
 
 ## Reproduce curation
 

@@ -1,0 +1,48 @@
+# CROSSFIT v12 Step 3 — IRED ESM-C adaptation and Gate 1.
+
+dataset: IRED
+paths:
+  reports: Reports/step3
+  checkpoints: Models/step3/IRED
+  cache: Cache/step3/IRED
+backbone:
+  name: esmc_300m
+  repository: EvolutionaryScale/esmc-300m-2024-12
+adapter:
+  rank: 16
+  alpha: 32
+  dropout: 0.05
+  target: all_linear_layers
+  freeze_embeddings: true
+  head: linear
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  batch_size: 4
+  gradient_accumulation_steps: 8
+  max_epochs: 80
+  early_stopping_patience: 12
+  scheduler_factor: 0.5
+  scheduler_patience: 4
+  gradient_clip_norm: 1.0
+  seed: 20261216
+  shuffled_label_seed: 20261217
+selection:
+  cv_folds: 5
+  cv_seed: 20261218
+  metric: validation_spearman
+extraction:
+  dtype: float16
+  full_dataset_batch_size: 8
+  reserve_batch_size: 2
+  store_all_layers_for_reserve_only: true
+  store_selected_layer_for_full_dataset_only: true
+gate1:
+  task_gain_data: cross_validation
+  drift_data: layer_freeze_reserve
+  separation_data: layer_freeze_reserve
+  layer_selection_dataset: IRED
+  sensitivity_offsets: [-4, -2, 2, 4]
+budget:
+  estimated_gpu_hours: 2.0
+  session_hard_ceiling_gpu_hours: 9.0
+  estimate_tolerance_fraction: 0.25
