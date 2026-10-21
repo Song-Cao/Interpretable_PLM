@@ -42,6 +42,9 @@ gate1:
   separation_data: layer_freeze_reserve
   layer_selection_dataset: IRED
   sensitivity_offsets: [-4, -2, 2, 4]
+  bootstrap_samples: 2000
+  bootstrap_seed: 20261219
+  confidence_level: 0.95
 budget:
   estimated_gpu_hours: 2.0
   session_hard_ceiling_gpu_hours: 9.0
