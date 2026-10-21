@@ -74,6 +74,62 @@ def score_metrics(
     return result
 
 
+def bootstrap_metric_intervals(
+    prediction: Iterable[float],
+    target: Iterable[float],
+    *,
+    samples: int,
+    seed: int,
+    confidence_level: float,
+    top_k: Iterable[int] = (),
+    wild_type_fitness: float | None = None,
+    rank_only: bool = False,
+) -> dict[str, dict[str, float]]:
+    """Return nonparametric row-bootstrap metric estimates and percentile intervals."""
+    prediction_array, target_array = _aligned(prediction, target)
+    if samples < 1 or not 0.0 < confidence_level < 1.0:
+        raise ValueError("bootstrap samples and confidence level must be valid")
+    rng = np.random.default_rng(seed)
+    draws: dict[str, list[float]] = {}
+    for _ in range(samples):
+        indices = rng.integers(0, len(target_array), size=len(target_array))
+        if rank_only:
+            values = {
+                "spearman": float(spearmanr(prediction_array[indices], target_array[indices]).statistic),
+                "ndcg": ndcg(prediction_array[indices], target_array[indices]),
+            }
+        else:
+            values = score_metrics(
+                prediction_array[indices],
+                target_array[indices],
+                top_k=top_k,
+                wild_type_fitness=wild_type_fitness,
+            )
+        for name, value in values.items():
+            if np.isfinite(value):
+                draws.setdefault(name, []).append(float(value))
+    point = (
+        {"spearman": float(spearmanr(prediction_array, target_array).statistic),
+         "ndcg": ndcg(prediction_array, target_array)}
+        if rank_only
+        else score_metrics(
+            prediction_array,
+            target_array,
+            top_k=top_k,
+            wild_type_fitness=wild_type_fitness,
+        )
+    )
+    tail = (1.0 - confidence_level) / 2.0
+    return {
+        name: {
+            "estimate": float(value),
+            "lower": float(np.quantile(draws[name], tail)),
+            "upper": float(np.quantile(draws[name], 1.0 - tail)),
+        }
+        for name, value in point.items()
+    }
+
+
 @dataclass(frozen=True)
 class EnsemblePrediction:
     """Deep-ensemble mean and epistemic spread for each variant."""

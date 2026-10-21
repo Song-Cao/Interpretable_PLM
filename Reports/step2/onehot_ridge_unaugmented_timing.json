@@ -1,0 +1,7 @@
+{
+  "arm": "onehot_ridge_unaugmented",
+  "representative_fits": 10,
+  "mean_fit_seconds": 0.10253060529794311,
+  "projected_search_seconds": 30.759181589382933,
+  "configuration_count": 60
+}

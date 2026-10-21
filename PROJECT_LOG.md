@@ -558,3 +558,14 @@ the prediction track needs 0 or 3 crosscoders.
   0.33893789, range -0.02174366 to 4.45589763, and 5th/95th percentiles 0.04373442/2.01776129.
   Mutation counts 1-8 have counts 5, 16, 15, 9, 6, 1, 1, 1. Seven variants mutate at least
   one position absent from the campaign; the unseen positions are 106, 116, 123, 137, 233.
+- `[DECISION]` The exact diagonal-ridge baselines solve the explicitly penalized normal
+  equations through their algebraically equivalent centered dual system. This preserves an
+  unpenalized intercept, the selected site penalty, and the `1e-8` dPLL penalty while avoiding
+  a 5,800-by-5,800 factorization for IRED one-hot. Ten representative CPU fits averaged
+  0.10-0.11 seconds, projecting 31-33 seconds for each 60-configuration, five-fold search.
+- `[FINDING]` The unaugmented one-hot and AAIndex ridge arms are effectively tied, as expected
+  from their shared linear column space. Five-fold validation Spearman was 0.61514 for one-hot
+  and 0.61504 for AAIndex; pg_kfold test Spearman was 0.53197 and 0.53224, respectively. The
+  selected site penalties were 425.82 and 8326.54; neither is exactly on the registered
+  `1e-4`/`1e4` boundary. Exact convex fits are seed-invariant, so their five-member ensemble
+  means are identical and ensemble SD is zero.

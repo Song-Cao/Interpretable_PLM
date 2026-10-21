@@ -5,6 +5,7 @@ import pytest
 
 from crossfit.evaluation import (
     MondrianConformal,
+    bootstrap_metric_intervals,
     combine_deep_ensemble,
     coverage_by_stratum,
     interval_coverage,
@@ -31,6 +32,24 @@ def test_external_metrics_do_not_improvise_precision_without_wild_type():
     assert set(metrics) == {"spearman", "pearson", "mse", "ndcg"}
     with pytest.raises(ValueError, match="wild-type"):
         score_metrics([0.0, 1.0], [0.0, 1.0], top_k=[1])
+
+
+def test_bootstrap_rank_only_never_adds_scale_or_cutoff_metrics():
+    prediction = np.arange(12, dtype=float)
+    target = prediction + np.sin(prediction)
+    intervals = bootstrap_metric_intervals(
+        prediction,
+        target,
+        samples=50,
+        seed=3,
+        confidence_level=0.9,
+        rank_only=True,
+    )
+    assert set(intervals) == {"spearman", "ndcg"}
+    assert all(
+        value["lower"] <= value["estimate"] <= value["upper"]
+        for value in intervals.values()
+    )
 
 
 def test_ndcg_uses_full_direct_ranking():

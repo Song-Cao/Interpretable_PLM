@@ -30,8 +30,8 @@ class DiagonalRidgeRegressor:
         response = np.asarray(target, dtype=np.float64)
         if matrix.ndim != 2 or response.shape != (len(matrix),) or len(matrix) == 0:
             raise ValueError("features and target must be aligned and non-empty")
-        if self.site_penalty < 0 or self.density_penalty < 0:
-            raise ValueError("diagonal penalties must be non-negative")
+        if self.site_penalty <= 0 or self.density_penalty <= 0:
+            raise ValueError("diagonal penalties must be positive")
         penalties = np.full(matrix.shape[1], self.site_penalty, dtype=np.float64)
         if density is not None:
             density_column = np.asarray(density, dtype=np.float64)
@@ -42,13 +42,21 @@ class DiagonalRidgeRegressor:
         if not np.isfinite(matrix).all() or not np.isfinite(response).all():
             raise ValueError("linear baseline inputs must be finite")
 
-        design = np.column_stack((np.ones(len(matrix)), matrix))
-        penalty = np.diag(np.concatenate(([0.0], penalties)))
-        normal_matrix = design.T @ design + penalty
-        normal_rhs = design.T @ response
-        solution = np.linalg.solve(normal_matrix, normal_rhs)
-        self.intercept_ = float(solution[0])
-        self.coefficient_ = solution[1:]
+        # Centering eliminates the unpenalized intercept.  The dual identity
+        # solves the same explicitly diagonal-penalized normal equations while
+        # avoiding a 20L by 20L factorization for the published one-hot arm.
+        feature_mean = matrix.mean(axis=0)
+        response_mean = float(response.mean())
+        centered = matrix - feature_mean
+        centered_response = response - response_mean
+        inverse_penalty = 1.0 / penalties
+        weighted_transpose = inverse_penalty[:, None] * centered.T
+        dual = np.linalg.solve(
+            np.eye(len(centered), dtype=np.float64) + centered @ weighted_transpose,
+            centered_response,
+        )
+        self.coefficient_ = weighted_transpose @ dual
+        self.intercept_ = response_mean - float(feature_mean @ self.coefficient_)
         return self
 
     def predict(self, features: np.ndarray, *, density: np.ndarray | None = None) -> np.ndarray:

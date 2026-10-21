@@ -1,0 +1,7 @@
+{
+  "arm": "aaindex_flat_ridge_unaugmented",
+  "representative_fits": 10,
+  "mean_fit_seconds": 0.11025008719880133,
+  "projected_search_seconds": 33.0750261596404,
+  "configuration_count": 60
+}
