@@ -1,0 +1,142 @@
+{
+  "dataset": "IRED",
+  "arm": "onehot_ridge_augmented",
+  "selection_split": "five-fold CV within pg_kfold fold-0 training pool",
+  "selected_configuration": {
+    "site_penalty": 39.89484434913667,
+    "density_penalty": 1e-08
+  },
+  "boundary_hyperparameters": {
+    "density_penalty": "both"
+  },
+  "validation_spearman_mean": 0.6116813908886508,
+  "pg_kfold_test": {
+    "spearman": {
+      "estimate": 0.5440932151473513,
+      "lower": 0.432855680288247,
+      "upper": 0.6484914914498482
+    },
+    "pearson": {
+      "estimate": 0.3905375908721428,
+      "lower": 0.27482231067524965,
+      "upper": 0.5048298292382293
+    },
+    "mse": {
+      "estimate": 0.7323628594371496,
+      "lower": 0.5716634649983341,
+      "upper": 0.9059811490097375
+    },
+    "ndcg": {
+      "estimate": 0.9483088672021427,
+      "lower": 0.9252416949990384,
+      "upper": 0.9655487899919986
+    },
+    "test_hit_rate": {
+      "estimate": 0.4956140350877193,
+      "lower": 0.4298245614035088,
+      "upper": 0.5570175438596491
+    },
+    "top_24_precision": {
+      "estimate": 0.875,
+      "lower": 0.6666666666666666,
+      "upper": 0.9583333333333334
+    },
+    "top_48_precision": {
+      "estimate": 0.7708333333333334,
+      "lower": 0.6666666666666666,
+      "upper": 0.8958333333333334
+    },
+    "top_96_precision": {
+      "estimate": 0.7395833333333334,
+      "lower": 0.6458333333333334,
+      "upper": 0.8229166666666666
+    }
+  },
+  "round_held_out": {
+    "spearman": {
+      "estimate": 0.5394256379599278,
+      "lower": 0.4566516658286762,
+      "upper": 0.6134428262160725
+    },
+    "pearson": {
+      "estimate": 0.3671995517121472,
+      "lower": 0.2725104211976334,
+      "upper": 0.4620557058221761
+    },
+    "mse": {
+      "estimate": 0.9739066585783784,
+      "lower": 0.7614223631546765,
+      "upper": 1.1811643112273291
+    },
+    "ndcg": {
+      "estimate": 0.9403136730221815,
+      "lower": 0.919682784887169,
+      "upper": 0.9626456314576968
+    },
+    "test_hit_rate": {
+      "estimate": 0.6356164383561644,
+      "lower": 0.5862328767123289,
+      "upper": 0.684931506849315
+    },
+    "top_24_precision": {
+      "estimate": 0.875,
+      "lower": 0.7083333333333334,
+      "upper": 1.0
+    },
+    "top_48_precision": {
+      "estimate": 0.8958333333333334,
+      "lower": 0.7916666666666666,
+      "upper": 0.9791666666666666
+    },
+    "top_96_precision": {
+      "estimate": 0.8854166666666666,
+      "lower": 0.8125,
+      "upper": 0.9479166666666666
+    }
+  },
+  "plate": {
+    "spearman": {
+      "estimate": 0.530017152658662,
+      "lower": 0.28009717294423747,
+      "upper": 0.7242342364586632
+    },
+    "ndcg": {
+      "estimate": 0.682687274344354,
+      "lower": 0.468951217002886,
+      "upper": 0.9649134993433601
+    }
+  },
+  "ensemble_members": 5,
+  "ensemble_sd_note": "zero: the exact convex ridge solution is seed-invariant",
+  "calibration_rows": 134,
+  "fit_rows": 761,
+  "mondrian_conformal": {
+    "calibration_counts": {
+      "(1, False)": 19,
+      "(1, True)": 1,
+      "(2, False)": 32,
+      "(2, True)": 2,
+      "(3, False)": 42,
+      "(3, True)": 2,
+      "(4, False)": 23,
+      "(4, True)": 3,
+      "(5, False)": 7,
+      "(5, True)": 2,
+      "(6, False)": 1
+    },
+    "unsupported_test_rows": 0,
+    "coverage_by_stratum": {
+      "(1, False)": 0.8461538461538461,
+      "(1, True)": 1.0,
+      "(2, False)": 1.0,
+      "(2, True)": 1.0,
+      "(3, False)": 0.9090909090909091,
+      "(3, True)": 1.0,
+      "(4, False)": 1.0,
+      "(4, True)": 1.0,
+      "(5, False)": 1.0,
+      "(5, True)": 1.0,
+      "(6, False)": 1.0
+    }
+  }
+}
