@@ -61,6 +61,16 @@ class TorchFit:
     history: list[dict[str, float]]
 
 
+@dataclass
+class FixedEpochFit:
+    """A Torch predictor refit for a validation-selected epoch count."""
+
+    model: nn.Module
+    loss: CompositeFitnessLoss
+    normalizer: FeatureNormalizer
+    epochs: int
+
+
 def _loss_from_config(config: dict) -> CompositeFitnessLoss:
     residual = config["residual_scale"]
     weights = config["weights"]
@@ -177,3 +187,57 @@ def fit_torch_predictor(
     model.load_state_dict(best_model)
     objective.residual_scale.load_state_dict(best_scale)
     return TorchFit(model, objective, normalizer, best_epoch, best_score, history)
+
+
+def fit_torch_fixed_epochs(
+    model: nn.Module,
+    features: np.ndarray,
+    target: np.ndarray,
+    censoring: Sequence[str],
+    *,
+    objective_config: dict,
+    optimization_config: dict,
+    parameters: dict,
+    epochs: int,
+    seed: int,
+    device: str | torch.device,
+) -> FixedEpochFit:
+    """Refit a selected configuration without consulting evaluation or calibration labels."""
+    if epochs < 1:
+        raise ValueError("fixed refit requires at least one epoch")
+    seed_everything(seed)
+    device = torch.device(device)
+    normalizer = FeatureNormalizer.fit(features)
+    x = torch.from_numpy(normalizer.transform(features))
+    y = torch.as_tensor(target, dtype=torch.float32)
+    censor_codes = {"none": 0, "floor": 1, "ceiling": 2}
+    c = torch.tensor([censor_codes[str(value)] for value in censoring])
+    loader = DataLoader(
+        TensorDataset(x, y, c),
+        batch_size=int(parameters["batch_size"]),
+        shuffle=True,
+        generator=torch.Generator().manual_seed(seed),
+    )
+    model = model.to(device)
+    objective = _loss_from_config(objective_config).to(device)
+    trainable = list(model.parameters()) + list(objective.residual_scale.parameters())
+    optimizer = torch.optim.AdamW(
+        trainable,
+        lr=float(parameters["learning_rate"]),
+        weight_decay=float(parameters["weight_decay"]),
+    )
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+    for _ in range(epochs):
+        model.train()
+        for batch_x, batch_y, batch_c in loader:
+            batch_x, batch_y, batch_c = batch_x.to(device), batch_y.to(device), batch_c.to(device)
+            optimizer.zero_grad(set_to_none=True)
+            output = objective(
+                model(batch_x), batch_y, batch_c,
+                regularized_parameters=model.parameters(),
+            )
+            output.total.backward()
+            torch.nn.utils.clip_grad_norm_(trainable, float(optimization_config["gradient_clip_norm"]))
+            optimizer.step()
+        scheduler.step()
+    return FixedEpochFit(model, objective, normalizer, epochs)
