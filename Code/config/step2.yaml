@@ -1,105 +1,101 @@
-# CROSSFIT Step 2 — CPU-side objective, sampling, and representations.
+# CROSSFIT v10 Step 2 — independent direct-fitness pipelines.
+
+datasets: [IRED, SPG1_STRSG_Olson_2014, GFP_AEQVI_Sarkisyan_2016, RASK_HUMAN_Weng_2022_abundance, OXDA_RHOTO_Vanella_2023_activity]
 
 paths:
   georgiev_table: Code/config/georgiev_2009_standardized.csv
+  ired_campaign: Data/processed/IRED_data/data_processed.csv
+  ired_plate: Data/processed/IRED_data/plate_dataset.csv
+  ired_variants: Data/processed/ired_variants.parquet
+  ired_plate_curated: Data/processed/ired_plate.csv
+  ired_pg_kfold: Data/processed/splits/ired_pg_kfold.csv
+  ired_round_held_out: Data/processed/splits/ired_round_held_out.csv
   reports: Reports/step2
+  models: Models/step2
+  density_cache: Cache/step2/dpll
 
-pairs:
+objective:
   margin_sd: 0.25
-
-loss:
   temperature: 1.0
   magnitude_mode: huber
   huber_delta: 1.0
   residual_scale:
     initial: 1.0
     floor: 0.0001
-  magnitude_uncertainty_weighting:
-    enabled: false
-    min_assay_coverage: 0.8
   weights:
     rank: 1.0
     magnitude: 1.0
     censoring: 1.0
     regularization: 0.0001
-  sweeps:
-    margin_sd: [0.1, 0.25, 0.5]
-    temperature: [0.5, 1.0, 2.0]
-    magnitude_mode: [huber, squared]
-    huber_delta: [0.5, 1.0, 2.0]
-    rank_weight: [0.5, 1.0, 2.0]
-    magnitude_weight: [0.25, 0.5, 1.0]
-    censoring_weight: [0.5, 1.0, 2.0]
-    regularization_weight: [0.00001, 0.0001, 0.001]
 
-sampling:
-  seed: 20261017
-  cap_median_multiplier: 4.0
-  batch_size: 64
-  epoch_size: capped_pool
-  assay_weight: sqrt_n
-  without_replacement_within_epoch: true
+ired_curation:
+  dataset_id: IRED
+  mutation_delimiter: "-"
+  campaign_columns: {sequence: aa_seq, mutations: mut, fitness: fitness, round: start_round}
+  plate_columns: [aa_seq, mut, "1/s"]
+  pg_kfold_folds: 5
+  primary_test_fold: 0
+  split_seed: 20260827
+  layer_freeze_fraction: 0.05
+  layer_freeze_seed: 424242
+  round_train: [1, 2, 3, 4]
+  round_test: [5]
 
 representations:
-  canonical_amino_acids: ACDEFGHIKLMNPQRSTVWY
+  vector: [onehot, aaindex_flat, esm_mean, esm_mutpool]
+  sequence: [onehot_positional, esm_residue, esm_residue_delta]
+  esm_mutpool_role: pooling_domain_diagnostic
   georgiev_channels: 19
-  standardization_ddof: 0
+  georgiev_sha256: ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463e0fa17b161b4
 
-optimizer_contract:
-  weight_decay: 0.01
+architectures:
+  vector: [ridge, mlp, random_forest, gradient_boosted_trees]
+  sequence: [conv_residual, attention_pooling]
+  ridge:
+    site_penalty: [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+    density_penalty: 1.0e-8
+  mlp:
+    hidden_dims: [[256, 128], [512, 256], [512, 256, 128]]
+    dropout: [0.1, 0.25, 0.4]
+  random_forest:
+    n_estimators: [300, 600]
+    max_depth: [null, 12, 24]
+    min_samples_leaf: [1, 2, 5]
+    max_features: [sqrt, 0.5, 1.0]
+  gradient_boosted_trees:
+    n_estimators: [100, 300, 600]
+    learning_rate: [0.01, 0.05, 0.1]
+    max_depth: [2, 3, 5]
+    min_samples_leaf: [1, 2, 5]
+    subsample: [0.7, 1.0]
+  conv_residual:
+    width: [128, 256]
+    depth: [3, 5]
+    kernel_size: [3, 5, 7]
+    dropout: [0.1, 0.25]
+  attention_pooling:
+    attention_dim: [64, 128]
+    hidden_dim: [128, 256]
+    dropout: [0.1, 0.25]
+
+optimization:
+  ensemble_seeds: [0, 1, 2, 3, 4]
+  validation_fraction: 0.15
+  validation_seed: 20261021
+  batch_size: [32, 64, 128]
+  learning_rate: [0.0001, 0.0003, 0.001]
+  weight_decay: [0.0001, 0.001, 0.01]
+  max_epochs: 300
+  early_stopping_patience: 25
+  early_stopping_min_delta: 0.0001
+  scheduler_factor: 0.5
+  scheduler_patience: 8
   gradient_clip_norm: 1.0
-  min_assays_per_step: 2
-  pooled_validation_early_stopping: false
-  report_per_assay_validation_curves: true
 
-rank_aggregation:
-  atol: 1.0e-10
-  btol: 1.0e-10
-
-conformal:
-  alpha: 0.1
-
-evaluation_contract:
-  report_pair_metrics_by_hamming_distance: true
-
-pair_distance_audit:
-  epochs: 5
-  output: Reports/step2/pair_distance_audit.csv
-  margin_output: Reports/step2/margin_gate_audit.csv
-  gcn4_output: Reports/step2/gcn4_mutation_count_distribution.csv
-
-additive_baselines:
-  representations: [mutation_indicator, aaindex_flat]
-  low_n_sizes: [16, 32, 64, 128, 256, 512]
-  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-  tuning:
-    n_train: 512
-    source_seed: 0
-    folds: 3
-    margin_sd: [0.1, 0.25, 0.5]
-    regularization_weight: [0.00001, 0.0001, 0.001]
-    weight_decay: [0.0, 0.0001, 0.001]
-  optimization:
-    learning_rate: 0.03
-    max_epochs: 60
-    patience: 8
-    early_stopping_min_delta: 0.00001
-    scheduler_factor: 0.5
-    scheduler_patience: 3
-    gradient_clip_norm: 1.0
-    seed: 20261017
-    cpu_threads: 1
-  evaluation:
-    max_pairs_per_run: 20000
-    top_k: [10, 50]
-    hamming_stratified: true
-    gb1_substantial_spearman_gap: 0.05
-    selection_sizes: [16, 32, 64]
-  artifacts:
-    models: Reports/step2/additive_models
-    tuning_grid: Reports/step2/additive_tuning_grid.csv
-    selected_hyperparameters: Reports/step2/additive_selected_hyperparameters.csv
-    runs: Reports/step2/additive_baseline_runs.csv
-    summary: Reports/step2/additive_baseline_summary.csv
-    pair_hamming: Reports/step2/additive_pair_hamming_metrics.csv
-    gb1_sanity: Reports/step2/additive_gb1_sanity.csv
+evaluation:
+  selection_metric: pg_kfold_test_spearman
+  top_k: [24, 48, 96]
+  conformal_alpha: 0.1
+  ensemble_members: 5
+  report: [spearman, pearson, mse, top_k_precision, test_hit_rate, ndcg, mondrian_coverage]
+  plate_report: [spearman, ndcg]

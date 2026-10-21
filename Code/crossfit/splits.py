@@ -26,12 +26,8 @@ Schemes
     pg_kfold training portion. Nested means the N=16 subset is a subset of
     N=32, so the low-N curve is monotone in information rather than in luck.
 
-Reservations (carved out BEFORE any of the above)
--------------------------------------------------
-``layer_freeze``  - within-assay variant subset used only to pick the crosscoder
-                    layer; excluded from every reported analysis.
-``pred_group``    - K grouped assay folds for the prediction track only. This is
-                    an assay-level label, not a variant-level one.
+The layer-freeze reserve is carved out before all schemes and excluded from every
+reported analysis.
 """
 from __future__ import annotations
 
@@ -179,16 +175,3 @@ def nested_low_n(
     rng = _rng(assay_id, "low_n", seed)
     order = rng.permutation(train_idx)
     return {int(N): order[: int(N)] for N in sizes if int(N) <= len(order)}
-
-
-def grouped_assay_folds(assay_ids: list[str], K: int, seed: int) -> dict[str, int]:
-    """K grouped assay folds for the prediction track.
-
-    Assays are sorted by identity (not by any data property) and dealt into K
-    folds after a seeded permutation, so the assignment is reproducible and
-    independent of the order assays were curated in.
-    """
-    ids = sorted(assay_ids)
-    rng = np.random.default_rng(stable_hash("pred_group", seed) % (2**32))
-    perm = rng.permutation(len(ids))
-    return {ids[i]: int(perm[i] % K) for i in range(len(ids))}

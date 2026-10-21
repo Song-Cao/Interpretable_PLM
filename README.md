@@ -1,40 +1,38 @@
 # CROSSFIT
 
-CROSSFIT measures how a protein language model's internal representation changes when its objective shifts from evolutionary sequence likelihood to measured engineered fitness. A shared BatchTopK crosscoder encodes aligned residue activations from a frozen base model and a LoRA-adapted copy, while separate decoders expose features that are emergent, evolution-only, rotated, re-weighted, or conserved. Representational change is the primary measurement; whether changed features improve few-shot fitness prediction is tested separately.
+CROSSFIT measures the feature-level structure of representation change when a protein language model is adapted from evolutionary sequence modelling to measured fitness. Each dataset has an independent pipeline. A shared BatchTopK dictionary within that pipeline identifies evolutionary features the fitness model conserves, re-weights, rotates, abandons, or creates. Gate 1 drift is a precondition for this measurement, not the result itself.
 
-Step 1 curated 633,984 variants from ten ProteinGym 2.0 DMS assays. The default loader exposes 602,284 variants and excludes the 31,700-row layer-freeze reserve. Training code must use `crossfit.datasets` rather than reading split files directly, and must never train on the reserve or on an active split's test indices.
+`CROSSFIT_Implementation_Plan_v10.docx` is the only implementation plan. IRED runs first, followed by GB1, GFP, KRAS, and DAAO. Models predict per-variant fitness directly; ranking comparisons exist only transiently inside a training batch.
 
-## Reproduce Step 1
+## Reproduce curation
 
-Python 3.10 or newer is required. The source revisions are already fixed in `Data/raw/reference/sources_lock.json` and `Code/config/step1.yaml`.
+Python 3.10 or newer is required. ProteinGym source revisions are pinned in `Data/raw/reference/sources_lock.json`; IRED source tables live in `Data/processed/IRED_data/`.
 
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -e '.[dev]'
 .venv/bin/python Code/scripts/fetch_assays.py
 .venv/bin/python Code/scripts/build_dataset.py
+.venv/bin/python Code/scripts/curate_ired.py
 .venv/bin/python -m pytest Code/tests -q
 ```
 
-`fetch_assays.py` downloads and verifies the ten pinned `.pgdata` bundles (about 195 MB). `build_dataset.py` reconstructs the unified tables, QC artifacts, reservations, and split assignments. `pin_sources.py` deliberately refreshes upstream pins and is therefore not part of exact reproduction; `build_candidates.py` rebuilds the assay-selection audit when needed.
+The default loader excludes every dataset's layer-freeze reserve. Use `crossfit.datasets.load_assay`, `get_split`, and `load_plate_dataset`; do not read split tables directly in training code. `pg_kfold` is the only selection protocol. IRED's round-held-out and plate sets are evaluation-only, and the plate set exposes only `aa_seq`, `mut`, and `1/s`.
 
 ## Directory map
 
 ```text
-Code/
-  crossfit/          Library modules: loading, QC, labels, splits, selection
-  scripts/           Reproducible command-line entry points
-  tests/             Pytest suite
-  config/step1.yaml  Step 1 paths, thresholds, and seeds
-Data/
-  raw/reference/     Pinned source metadata and reference table
-  raw/proteingym2/   Downloaded assay bundles (gitignored)
-  interim/           Candidate-selection audit table
-  processed/         Curated manifests, QC, reports, and split metadata
-Reports/step1/       Step 1 report, figures, rationale, and handoff
-Cache/               Activation caches (gitignored)
-Models/              Model checkpoints (gitignored)
+Code/crossfit/       Library modules: curation, direct-score loss, encodings, models, evaluation
+Code/scripts/        Reproducible entry points
+Code/tests/          Unit, leakage, and design-invariant tests
+Code/config/         Step YAML and frozen Georgiev descriptor table
+Data/raw/            Pinned ProteinGym sources (large bundles gitignored)
+Data/processed/      Curated tables, manifests, QC, and split metadata
+Reports/step1/       ProteinGym and IRED curation reports
+Reports/step2/       Step 2 reports; pre-v10 fits are isolated under Reports/archive/
+Cache/               Activation and dPLL caches (gitignored)
+Models/              Tuned artifacts and checkpoints (gitignored)
 PROJECT_LOG.md       Decisions, adjustments, findings, and compute costs
 ```
 
-The large variant tables and large regenerable split CSVs are gitignored; small result artifacts and provenance files are versioned.
+Large or regenerable tables, caches, and checkpoints remain outside git; compact provenance, splits, tests, and reports are versioned.

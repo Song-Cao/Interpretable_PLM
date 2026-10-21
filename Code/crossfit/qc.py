@@ -113,6 +113,8 @@ def apply_mutations(wt: str, stripped: str, check_reference: bool = True) -> str
 def check_mutation_strings(table: pd.DataFrame, wt: str, qc: AssayQC) -> None:
     """Validate every token against the reference sequence. Critical check."""
     for m in table["mutant"].astype(str):
+        if m == "WT":
+            continue
         for t in m.split(":"):
             g = TOKEN_RE.match(t)
             if g is None:

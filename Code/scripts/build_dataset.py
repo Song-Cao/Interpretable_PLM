@@ -254,15 +254,6 @@ def main() -> int:
     # per fold into train / test / dropped-straddling.
     pd.DataFrame(up_rows).to_csv(split_dir / "unseen_position.csv", index=False)
 
-    # reservation (b): grouped assay folds for the prediction track
-    groups = splitmod.grouped_assay_folds(
-        assay_ids, cfg["reservations"]["prediction_folds"]["K"],
-        cfg["reservations"]["prediction_folds"]["seed"],
-    )
-    pd.DataFrame(
-        [dict(assay_id=k, pred_group=v) for k, v in sorted(groups.items())]
-    ).to_csv(split_dir / "prediction_groups.csv", index=False)
-
     (out_dir / "unseen_position_report.json").write_text(json.dumps(up_reports, indent=2))
 
     print(f"variants: {len(variants):,} rows across {variants.assay_id.nunique()} assays")

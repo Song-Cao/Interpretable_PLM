@@ -1,4 +1,4 @@
-"""Rank aggregation and Mondrian conformal calibration for Step 2."""
+"""Direct-score metrics, deep ensembles, and Mondrian conformal intervals."""
 from __future__ import annotations
 
 import math
@@ -6,69 +6,88 @@ from dataclasses import dataclass
 from typing import Iterable
 
 import numpy as np
-from scipy import sparse
-from scipy.sparse import csgraph
-from scipy.sparse.linalg import lsqr
+from scipy.stats import pearsonr, spearmanr
+
+
+def _aligned(prediction: Iterable[float], target: Iterable[float]) -> tuple[np.ndarray, np.ndarray]:
+    prediction_array = np.asarray(tuple(prediction), dtype=np.float64)
+    target_array = np.asarray(tuple(target), dtype=np.float64)
+    if prediction_array.ndim != 1 or target_array.shape != prediction_array.shape or not len(target_array):
+        raise ValueError("predictions and targets must be aligned non-empty vectors")
+    if not np.isfinite(prediction_array).all() or not np.isfinite(target_array).all():
+        raise ValueError("predictions and targets must be finite")
+    return prediction_array, target_array
+
+
+def ndcg(prediction: Iterable[float], target: Iterable[float], k: int | None = None) -> float:
+    """Compute NDCG from direct scores, shifting relevance to be non-negative."""
+    prediction_array, target_array = _aligned(prediction, target)
+    limit = len(target_array) if k is None else min(int(k), len(target_array))
+    if limit < 1:
+        raise ValueError("NDCG cutoff must be positive")
+    relevance = target_array - target_array.min()
+    discount = np.log2(np.arange(2, limit + 2))
+
+    def gain(order: np.ndarray) -> float:
+        return float(np.sum((np.exp2(relevance[order[:limit]]) - 1.0) / discount))
+
+    observed = gain(np.argsort(-prediction_array, kind="stable"))
+    ideal = gain(np.argsort(-target_array, kind="stable"))
+    return 1.0 if ideal == 0.0 else observed / ideal
+
+
+def top_k_precision(
+    prediction: Iterable[float], target: Iterable[float], *, k: int, wild_type_fitness: float
+) -> float:
+    """Return the fraction of the k predicted best variants that improve on wild type."""
+    prediction_array, target_array = _aligned(prediction, target)
+    limit = min(int(k), len(target_array))
+    if limit < 1 or not np.isfinite(wild_type_fitness):
+        raise ValueError("top-k precision needs positive k and a finite wild-type cutoff")
+    selected = np.argsort(-prediction_array, kind="stable")[:limit]
+    return float(np.mean(target_array[selected] > wild_type_fitness))
+
+
+def score_metrics(
+    prediction: Iterable[float],
+    target: Iterable[float],
+    *,
+    top_k: Iterable[int] = (),
+    wild_type_fitness: float | None = None,
+) -> dict[str, float]:
+    """Compute direct-score metrics, adding precision only when a WT cutoff is supplied."""
+    prediction_array, target_array = _aligned(prediction, target)
+    result = {
+        "spearman": float(spearmanr(prediction_array, target_array).statistic),
+        "pearson": float(pearsonr(prediction_array, target_array).statistic),
+        "mse": float(np.mean((prediction_array - target_array) ** 2)),
+        "ndcg": ndcg(prediction_array, target_array),
+    }
+    if wild_type_fitness is not None:
+        result["test_hit_rate"] = float(np.mean(target_array > wild_type_fitness))
+        for k in top_k:
+            result[f"top_{int(k)}_precision"] = top_k_precision(
+                prediction_array, target_array, k=int(k), wild_type_fitness=wild_type_fitness
+            )
+    elif tuple(top_k):
+        raise ValueError("top-k precision cannot be computed without a wild-type cutoff")
+    return result
 
 
 @dataclass(frozen=True)
-class RankAggregationResult:
-    """Anchored scores and least-squares solver diagnostics."""
+class EnsemblePrediction:
+    """Deep-ensemble mean and epistemic spread for each variant."""
 
-    scores: np.ndarray
-    residual_norm: float
-    iterations: int
+    mean: np.ndarray
+    standard_deviation: np.ndarray
 
 
-def aggregate_pairwise_scores(
-    n_variants: int,
-    pair_u: Iterable[int],
-    pair_v: Iterable[int],
-    predicted_difference: Iterable[float],
-    *,
-    wild_type_index: int,
-    atol: float = 1e-10,
-    btol: float = 1e-10,
-    iteration_limit: int | None = None,
-) -> RankAggregationResult:
-    """Solve the anchored graph-Laplacian least-squares score problem."""
-    if n_variants < 2 or not 0 <= wild_type_index < n_variants:
-        raise ValueError("variant count and wild-type index are inconsistent")
-    u = np.asarray(tuple(pair_u), dtype=np.int64)
-    v = np.asarray(tuple(pair_v), dtype=np.int64)
-    difference = np.asarray(tuple(predicted_difference), dtype=np.float64)
-    if u.ndim != 1 or v.shape != u.shape or difference.shape != u.shape or len(u) == 0:
-        raise ValueError("pair endpoints and predicted differences must be non-empty and aligned")
-    if np.any(u < 0) or np.any(v < 0) or np.any(u >= n_variants) or np.any(v >= n_variants):
-        raise ValueError("pair endpoint lies outside the variant range")
-    if np.any(u == v) or not np.isfinite(difference).all():
-        raise ValueError("pairs must join distinct variants and have finite differences")
-
-    edge_rows = np.repeat(np.arange(len(u)), 2)
-    incidence = sparse.coo_matrix(
-        (np.tile((1.0, -1.0), len(u)), (edge_rows, np.column_stack((u, v)).ravel())),
-        shape=(len(u), n_variants),
-    ).tocsr()
-    adjacency = sparse.coo_matrix(
-        (np.ones(2 * len(u)), (np.concatenate((u, v)), np.concatenate((v, u)))),
-        shape=(n_variants, n_variants),
-    ).tocsr()
-    n_components, labels = csgraph.connected_components(adjacency, directed=False)
-    if n_components != 1:
-        sizes = np.bincount(labels).tolist()
-        raise ValueError(f"comparison graph must be connected to the wild type; components={sizes}")
-
-    free = np.arange(n_variants) != wild_type_index
-    solution = lsqr(
-        incidence[:, free],
-        difference,
-        atol=atol,
-        btol=btol,
-        iter_lim=iteration_limit,
-    )
-    scores = np.zeros(n_variants, dtype=np.float64)
-    scores[free] = solution[0]
-    return RankAggregationResult(scores, float(solution[3]), int(solution[2]))
+def combine_deep_ensemble(member_predictions: np.ndarray, members: int = 5) -> EnsemblePrediction:
+    """Combine exactly M independently initialized model predictions."""
+    values = np.asarray(member_predictions, dtype=np.float64)
+    if values.ndim != 2 or values.shape[0] != members or not np.isfinite(values).all():
+        raise ValueError(f"deep ensemble requires a finite {members} by N array")
+    return EnsemblePrediction(values.mean(axis=0), values.std(axis=0, ddof=1))
 
 
 @dataclass(frozen=True)
@@ -80,7 +99,7 @@ class ConformalInterval:
 
 
 class MondrianConformal:
-    """Split conformal intervals stratified by mutation count and novelty."""
+    """Split conformal intervals stratified by mutation count and position novelty."""
 
     def __init__(self, alpha: float) -> None:
         if not 0.0 < alpha < 1.0:
@@ -99,7 +118,7 @@ class MondrianConformal:
             raise ValueError("mutation count and unseen-position labels must be aligned")
         if not np.issubdtype(count.dtype, np.integer) or np.any(count < 0):
             raise ValueError("mutation counts must be non-negative integers")
-        return [(int(c), bool(novel)) for c, novel in zip(count, unseen)]
+        return [(int(value), bool(novel)) for value, novel in zip(count, unseen)]
 
     def fit(
         self,
@@ -109,17 +128,10 @@ class MondrianConformal:
         unseen_position: Iterable[bool],
     ) -> "MondrianConformal":
         """Fit finite-sample residual quantiles independently in every stratum."""
-        prediction_array = np.asarray(tuple(prediction), dtype=np.float64)
-        target_array = np.asarray(tuple(target), dtype=np.float64)
+        prediction_array, target_array = _aligned(prediction, target)
         strata = self._strata(mutation_count, unseen_position)
-        if prediction_array.ndim != 1 or target_array.shape != prediction_array.shape:
-            raise ValueError("predictions and targets must be aligned one-dimensional arrays")
-        if len(strata) != len(prediction_array) or not np.isfinite(prediction_array).all() \
-                or not np.isfinite(target_array).all():
-            raise ValueError("calibration inputs must be aligned and finite")
-        if len(prediction_array) == 0:
-            raise ValueError("calibration data cannot be empty")
-
+        if len(strata) != len(prediction_array):
+            raise ValueError("calibration values and strata must align")
         residual = np.abs(target_array - prediction_array)
         grouped: dict[tuple[int, bool], list[float]] = {}
         for key, value in zip(strata, residual):
@@ -139,13 +151,13 @@ class MondrianConformal:
         mutation_count: Iterable[int],
         unseen_position: Iterable[bool],
     ) -> ConformalInterval:
-        """Return intervals, rejecting strata absent from calibration."""
+        """Return intervals and reject strata absent from calibration."""
         if not self.quantiles_:
             raise RuntimeError("fit must be called before interval prediction")
         prediction_array = np.asarray(tuple(prediction), dtype=np.float64)
         strata = self._strata(mutation_count, unseen_position)
         if prediction_array.ndim != 1 or len(strata) != len(prediction_array):
-            raise ValueError("prediction and stratum metadata must be aligned")
+            raise ValueError("prediction and stratum metadata must align")
         missing = sorted(set(strata) - set(self.quantiles_))
         if missing:
             raise KeyError(f"no calibration examples for strata {missing}")
@@ -159,14 +171,21 @@ def coverage_by_stratum(
     mutation_count: Iterable[int],
     unseen_position: Iterable[bool],
 ) -> dict[tuple[int, bool], float]:
-    """Calculate empirical interval coverage separately for each stratum."""
+    """Calculate empirical interval coverage separately for every Mondrian stratum."""
     target_array = np.asarray(tuple(target), dtype=np.float64)
     strata = MondrianConformal._strata(mutation_count, unseen_position)
     if interval.lower.shape != target_array.shape or interval.upper.shape != target_array.shape:
-        raise ValueError("intervals and targets must be aligned")
+        raise ValueError("intervals and targets must align")
     hit = (interval.lower <= target_array) & (target_array <= interval.upper)
-    output: dict[tuple[int, bool], float] = {}
-    for key in sorted(set(strata)):
-        selected = np.asarray([value == key for value in strata])
-        output[key] = float(hit[selected].mean())
-    return output
+    return {
+        key: float(hit[np.asarray([value == key for value in strata])].mean())
+        for key in sorted(set(strata))
+    }
+
+
+def interval_coverage(interval: ConformalInterval, target: Iterable[float]) -> float:
+    """Calculate overall empirical coverage alongside Mondrian-stratum coverage."""
+    target_array = np.asarray(tuple(target), dtype=np.float64)
+    if interval.lower.shape != target_array.shape or interval.upper.shape != target_array.shape:
+        raise ValueError("intervals and targets must align")
+    return float(np.mean((interval.lower <= target_array) & (target_array <= interval.upper)))

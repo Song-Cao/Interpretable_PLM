@@ -1,258 +1,186 @@
-"""Classical additive predictors and CPU training utilities for Step 2."""
+"""Step 2 predictor architectures and exact penalized linear baselines."""
 from __future__ import annotations
 
-import copy
-import math
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 import numpy as np
-from scipy import sparse, stats
 import torch
 from torch import nn
 
-from .losses import CompositeFitnessLoss, PairBatch, construct_pairs
+
+@dataclass
+class DiagonalRidgeRegressor:
+    """Linear regression with an explicit feature-wise diagonal penalty."""
+
+    site_penalty: float
+    density_penalty: float = 1e-8
+    coefficient_: np.ndarray | None = None
+    intercept_: float | None = None
+
+    def fit(
+        self,
+        features: np.ndarray,
+        target: np.ndarray,
+        *,
+        density: np.ndarray | None = None,
+    ) -> "DiagonalRidgeRegressor":
+        """Solve the penalized normal equations with an unpenalized intercept."""
+        matrix = np.asarray(features, dtype=np.float64)
+        response = np.asarray(target, dtype=np.float64)
+        if matrix.ndim != 2 or response.shape != (len(matrix),) or len(matrix) == 0:
+            raise ValueError("features and target must be aligned and non-empty")
+        if self.site_penalty < 0 or self.density_penalty < 0:
+            raise ValueError("diagonal penalties must be non-negative")
+        penalties = np.full(matrix.shape[1], self.site_penalty, dtype=np.float64)
+        if density is not None:
+            density_column = np.asarray(density, dtype=np.float64)
+            if density_column.shape != response.shape or not np.isfinite(density_column).all():
+                raise ValueError("density must be a finite scalar aligned to each row")
+            matrix = np.column_stack((matrix, density_column))
+            penalties = np.concatenate((penalties, [self.density_penalty]))
+        if not np.isfinite(matrix).all() or not np.isfinite(response).all():
+            raise ValueError("linear baseline inputs must be finite")
+
+        design = np.column_stack((np.ones(len(matrix)), matrix))
+        penalty = np.diag(np.concatenate(([0.0], penalties)))
+        normal_matrix = design.T @ design + penalty
+        normal_rhs = design.T @ response
+        solution = np.linalg.solve(normal_matrix, normal_rhs)
+        self.intercept_ = float(solution[0])
+        self.coefficient_ = solution[1:]
+        return self
+
+    def predict(self, features: np.ndarray, *, density: np.ndarray | None = None) -> np.ndarray:
+        """Predict direct per-variant scores from a fitted linear baseline."""
+        if self.coefficient_ is None or self.intercept_ is None:
+            raise RuntimeError("fit must be called before predict")
+        matrix = np.asarray(features, dtype=np.float64)
+        if density is not None:
+            matrix = np.column_stack((matrix, np.asarray(density, dtype=np.float64)))
+        if matrix.ndim != 2 or matrix.shape[1] != len(self.coefficient_):
+            raise ValueError("prediction features do not match fitted coefficients")
+        return self.intercept_ + matrix @ self.coefficient_
 
 
-class AdditiveLinear(nn.Module):
-    """A bias-free linear score whose pair prediction is an early subtraction."""
+class RidgeHead(nn.Module):
+    """Direct linear score head trained with the composite objective and L2 decay."""
 
-    def __init__(self, n_features: int) -> None:
+    def __init__(self, input_dim: int) -> None:
         super().__init__()
-        if n_features < 1:
-            raise ValueError("an additive model requires at least one feature")
-        self.weight = nn.Parameter(torch.zeros(n_features))
+        self.linear = nn.Linear(input_dim, 1)
 
     def forward(self, features: torch.Tensor) -> torch.Tensor:
-        return features @ self.weight
+        return self.linear(features).squeeze(-1)
 
 
-@dataclass(frozen=True)
-class AdditiveFit:
-    """A fitted additive predictor and its optimization diagnostics."""
+class MLPRegressor(nn.Module):
+    """Regularized multilayer score predictor for fixed-length representations."""
 
-    weight: np.ndarray
-    residual_scale: float
-    epochs: int
-    n_pairs: int
-    status: str
-    best_validation_spearman: float
+    def __init__(self, input_dim: int, hidden_dims: Sequence[int], dropout: float) -> None:
+        super().__init__()
+        if not hidden_dims or not 0 <= dropout < 1:
+            raise ValueError("MLP requires hidden layers and dropout in [0, 1)")
+        layers: list[nn.Module] = []
+        width = input_dim
+        for hidden in hidden_dims:
+            layers.extend((nn.Linear(width, hidden), nn.LayerNorm(hidden), nn.GELU(), nn.Dropout(dropout)))
+            width = hidden
+        layers.append(nn.Linear(width, 1))
+        self.network = nn.Sequential(*layers)
 
-
-@dataclass(frozen=True)
-class SavedAdditiveModel:
-    """One selected N/seed model loaded from a consolidated artifact."""
-
-    weight: np.ndarray
-    residual_scale: float
-    status: str
-    feature_metadata: str
-    selected_hyperparameters: str
+    def forward(self, features: torch.Tensor) -> torch.Tensor:
+        return self.network(features).squeeze(-1)
 
 
-def _loss_module(loss_config: Mapping, regularization_weight: float) -> CompositeFitnessLoss:
-    uncertainty = loss_config["magnitude_uncertainty_weighting"]
-    if uncertainty["enabled"]:
-        raise ValueError("joint additive baselines cannot use corpus-wide sigma weighting")
-    weights = loss_config["weights"]
-    return CompositeFitnessLoss(
-        n_assays=1,
-        prediction_mode="difference",
-        temperature=loss_config["temperature"],
-        magnitude_mode=loss_config["magnitude_mode"],
-        huber_delta=loss_config["huber_delta"],
-        residual_scale_initial=loss_config["residual_scale"]["initial"],
-        residual_scale_floor=loss_config["residual_scale"]["floor"],
-        rank_weight=weights["rank"],
-        magnitude_weight=weights["magnitude"],
-        censoring_weight=weights["censoring"],
-        regularization_weight=regularization_weight,
-    )
+class ResidualConvBlock(nn.Module):
+    """Two normalized convolutions with a residual connection."""
+
+    def __init__(self, channels: int, kernel_size: int, dropout: float) -> None:
+        super().__init__()
+        padding = kernel_size // 2
+        self.block = nn.Sequential(
+            nn.Conv1d(channels, channels, kernel_size, padding=padding),
+            nn.GroupNorm(1, channels),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Conv1d(channels, channels, kernel_size, padding=padding),
+            nn.GroupNorm(1, channels),
+        )
+        self.activation = nn.GELU()
+
+    def forward(self, features: torch.Tensor) -> torch.Tensor:
+        return self.activation(features + self.block(features))
 
 
-def _pairs_for_rows(
-    target: np.ndarray,
-    censored: Sequence[str],
-    sigma_v: np.ndarray,
-    margin_sd: float,
-) -> PairBatch:
-    return construct_pairs(
-        torch.as_tensor(target, dtype=torch.float32),
-        torch.zeros(len(target), dtype=torch.long),
-        list(censored),
-        torch.as_tensor(sigma_v, dtype=torch.float32),
-        margin_sd=margin_sd,
-    )
+class ConvResidualRegressor(nn.Module):
+    """One-dimensional residual convolutional stack over N by L by C inputs."""
+
+    def __init__(
+        self,
+        input_channels: int,
+        width: int,
+        depth: int,
+        kernel_size: int,
+        dropout: float,
+    ) -> None:
+        super().__init__()
+        if depth < 2 or kernel_size < 3 or kernel_size % 2 == 0:
+            raise ValueError("conv stack requires depth >= 2 and an odd kernel >= 3")
+        self.stem = nn.Conv1d(input_channels, width, kernel_size, padding=kernel_size // 2)
+        self.blocks = nn.Sequential(
+            *(ResidualConvBlock(width, kernel_size, dropout) for _ in range(depth))
+        )
+        self.readout = nn.Linear(width, 1)
+
+    def forward(self, features: torch.Tensor) -> torch.Tensor:
+        hidden = self.blocks(self.stem(features.transpose(1, 2)))
+        return self.readout(hidden.mean(dim=-1)).squeeze(-1)
 
 
-def _spearman(prediction: np.ndarray, target: np.ndarray) -> float:
-    if len(prediction) < 2 or np.ptp(prediction) == 0 or np.ptp(target) == 0:
-        return float("nan")
-    return float(stats.spearmanr(prediction, target).statistic)
+class AttentionPoolingRegressor(nn.Module):
+    """Learned attention pooling over N by L by d residue activations."""
 
-
-def fit_additive_model(
-    features: sparse.spmatrix,
-    target: np.ndarray,
-    censored: Sequence[str],
-    sigma_v: np.ndarray,
-    *,
-    margin_sd: float,
-    regularization_weight: float,
-    weight_decay: float,
-    learning_rate: float,
-    max_epochs: int,
-    patience: int,
-    early_stopping_min_delta: float,
-    scheduler_factor: float,
-    scheduler_patience: int,
-    gradient_clip_norm: float,
-    training_seed: int,
-    loss_config: Mapping,
-    validation: tuple[sparse.spmatrix, np.ndarray, Sequence[str], np.ndarray] | None = None,
-) -> AdditiveFit:
-    """Fit one additive model with the composite pair objective on CPU."""
-    matrix = sparse.csr_matrix(features, dtype=np.float32)
-    target = np.asarray(target, dtype=np.float32)
-    sigma_v = np.asarray(sigma_v, dtype=np.float32)
-    if matrix.shape[0] != len(target) or len(censored) != len(target) or len(sigma_v) != len(target):
-        raise ValueError("features and training metadata must align")
-    if (
-        max_epochs < 1
-        or patience < 1
-        or scheduler_patience < 1
-        or learning_rate <= 0
-        or weight_decay < 0
-        or early_stopping_min_delta < 0
-        or not 0 < scheduler_factor < 1
-    ):
-        raise ValueError("optimization settings are invalid")
-    pairs = _pairs_for_rows(target, censored, sigma_v, margin_sd)
-    if len(pairs) == 0:
-        return AdditiveFit(
-            np.zeros(matrix.shape[1], dtype=np.float32),
-            float(loss_config["residual_scale"]["initial"]),
-            0,
-            0,
-            "no_gated_pairs",
-            float("nan"),
+    def __init__(self, input_dim: int, attention_dim: int, hidden_dim: int, dropout: float) -> None:
+        super().__init__()
+        self.attention = nn.Sequential(
+            nn.Linear(input_dim, attention_dim), nn.Tanh(), nn.Linear(attention_dim, 1)
+        )
+        self.readout = nn.Sequential(
+            nn.LayerNorm(input_dim), nn.Linear(input_dim, hidden_dim), nn.GELU(),
+            nn.Dropout(dropout), nn.Linear(hidden_dim, 1),
         )
 
-    torch.manual_seed(training_seed)
-    model = AdditiveLinear(matrix.shape[1])
-    objective = _loss_module(loss_config, regularization_weight)
-    parameters = tuple(model.parameters()) + tuple(objective.parameters())
-    optimizer = torch.optim.AdamW(parameters, lr=learning_rate, weight_decay=weight_decay)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode="min", factor=scheduler_factor, patience=scheduler_patience
-    )
-    dense = torch.from_numpy(matrix.toarray())
-    validation_features = None
-    validation_target = None
-    validation_pairs = None
-    if validation is not None:
-        validation_features = torch.from_numpy(
-            sparse.csr_matrix(validation[0], dtype=np.float32).toarray()
+    def forward(self, features: torch.Tensor) -> torch.Tensor:
+        weights = torch.softmax(self.attention(features).squeeze(-1), dim=-1)
+        pooled = torch.sum(features * weights.unsqueeze(-1), dim=1)
+        return self.readout(pooled).squeeze(-1)
+
+
+def build_model(name: str, input_shape: Sequence[int], parameters: Mapping[str, Any]) -> Any:
+    """Build one configured architecture without changing representation shape."""
+    if name == "ridge":
+        return RidgeHead(int(input_shape[-1]))
+    if name == "mlp":
+        return MLPRegressor(
+            int(input_shape[-1]), parameters["hidden_dims"], float(parameters["dropout"])
         )
-        validation_target = np.asarray(validation[1], dtype=np.float64)
-        validation_pairs = _pairs_for_rows(
-            validation_target,
-            validation[2],
-            np.asarray(validation[3]),
-            margin_sd,
+    if name == "random_forest":
+        from sklearn.ensemble import RandomForestRegressor
+
+        return RandomForestRegressor(**dict(parameters))
+    if name == "gradient_boosted_trees":
+        from sklearn.ensemble import GradientBoostingRegressor
+
+        return GradientBoostingRegressor(**dict(parameters))
+    if name == "conv_residual":
+        return ConvResidualRegressor(
+            int(input_shape[-1]), int(parameters["width"]), int(parameters["depth"]),
+            int(parameters["kernel_size"]), float(parameters["dropout"]),
         )
-
-    best_score = float("nan")
-    best_loss = math.inf
-    best_epoch = 0
-    best_state = None
-    stale = 0
-    epochs_run = 0
-    for epoch in range(1, max_epochs + 1):
-        optimizer.zero_grad(set_to_none=True)
-        scores = model(dense)
-        difference = scores[pairs.u] - scores[pairs.v]
-        output = objective(difference, pairs, readout_parameters=(model.weight,))
-        output.total.backward()
-        torch.nn.utils.clip_grad_norm_(parameters, gradient_clip_norm)
-        optimizer.step()
-        epochs_run = epoch
-
-        if validation_features is None:
-            continue
-        with torch.no_grad():
-            validation_scores = model(validation_features)
-            prediction = validation_scores.numpy()
-        score = _spearman(prediction, validation_target)
-        if validation_pairs is not None and len(validation_pairs) > 0:
-            with torch.no_grad():
-                validation_difference = (
-                    validation_scores[validation_pairs.u] - validation_scores[validation_pairs.v]
-                )
-                validation_loss = float(
-                    objective(validation_difference, validation_pairs).total / len(validation_pairs)
-                )
-        else:
-            validation_loss = math.inf
-        scheduler.step(validation_loss)
-        if validation_loss < best_loss - early_stopping_min_delta:
-            best_loss = validation_loss
-            best_score = score
-            best_epoch = epoch
-            best_state = (copy.deepcopy(model.state_dict()), copy.deepcopy(objective.state_dict()))
-            stale = 0
-        else:
-            stale += 1
-        if stale >= patience:
-            break
-
-    if best_state is not None:
-        model.load_state_dict(best_state[0])
-        objective.load_state_dict(best_state[1])
-        epochs_run = best_epoch
-    scale = float(objective.residual_scale(torch.tensor([0]))[0].detach())
-    return AdditiveFit(
-        model.weight.detach().numpy().astype(np.float32),
-        scale,
-        epochs_run,
-        len(pairs),
-        "ok",
-        best_score,
-    )
-
-
-def predict_additive(features: sparse.spmatrix, weight: np.ndarray) -> np.ndarray:
-    """Predict variant scores from a fitted additive coefficient vector."""
-    matrix = sparse.csr_matrix(features)
-    coefficient = np.asarray(weight)
-    if matrix.shape[1] != coefficient.shape[0]:
-        raise ValueError("feature matrix and coefficient vector do not align")
-    return np.asarray(matrix @ coefficient, dtype=np.float64).ravel()
-
-
-def load_additive_model(
-    path: str | Path, *, n_train: int, seed: int
-) -> SavedAdditiveModel:
-    """Load one fitted model from a saved assay/representation bundle."""
-    with np.load(path, allow_pickle=False) as bundle:
-        selected = (bundle["n_train"] == n_train) & (bundle["seed"] == seed)
-        indices = np.flatnonzero(selected)
-        if len(indices) != 1:
-            raise KeyError(f"expected one model for N={n_train}, seed={seed}; found {len(indices)}")
-        index = int(indices[0])
-        return SavedAdditiveModel(
-            weight=bundle["weight"][index].copy(),
-            residual_scale=float(bundle["residual_scale"][index]),
-            status=str(bundle["status"][index]),
-            feature_metadata=str(bundle["feature_metadata"]),
-            selected_hyperparameters=str(bundle["selected_hyperparameters"]),
+    if name == "attention_pooling":
+        return AttentionPoolingRegressor(
+            int(input_shape[-1]), int(parameters["attention_dim"]),
+            int(parameters["hidden_dim"]), float(parameters["dropout"]),
         )
-
-
-def deterministic_folds(n_rows: int, n_folds: int, seed: int) -> tuple[np.ndarray, ...]:
-    """Create deterministic validation folds without touching test indices."""
-    if n_folds < 2 or n_rows < n_folds:
-        raise ValueError("cross-validation requires at least one row per fold")
-    permutation = np.random.default_rng(seed).permutation(n_rows)
-    return tuple(np.sort(fold) for fold in np.array_split(permutation, n_folds))
+    raise KeyError(f"unknown model architecture: {name}")

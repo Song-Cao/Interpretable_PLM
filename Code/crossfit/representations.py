@@ -1,147 +1,81 @@
-"""CPU-side Step 2 sequence and precomputed-embedding representations."""
+"""Published sequence encodings and precomputed ESM-C representations."""
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
 
 import numpy as np
 import pandas as pd
-from scipy import sparse
 
-from .qc import STANDARD_AA, TOKEN_RE
+from .qc import TOKEN_RE
 
+
+AMINO_ACIDS = "ACDEFGHIKLMNPQRSTVWY"
 GEORGIEV_CHANNELS = 19
 
 
-def _mutation_tokens(wild_type: str, mutation: str) -> list[tuple[int, str]]:
-    """Parse and validate one curated substitution string."""
-    if mutation == "WT":
-        return []
-    parsed: list[tuple[int, str]] = []
-    seen_positions: set[int] = set()
-    for token in str(mutation).split(":"):
-        match = TOKEN_RE.match(token)
-        if match is None:
-            raise ValueError(f"invalid mutation token: {token}")
-        source, position, target = match.group(1), int(match.group(2)), match.group(3)
-        if source not in STANDARD_AA or target not in STANDARD_AA:
-            raise ValueError(f"non-canonical residue in mutation token: {token}")
-        if position < 1 or position > len(wild_type):
-            raise ValueError(f"mutation position outside wild type: {token}")
-        if wild_type[position - 1] != source:
-            raise ValueError(f"mutation reference disagrees with wild type: {token}")
-        if position in seen_positions:
-            raise ValueError(f"multiple substitutions at one position: {mutation}")
-        if source == target:
-            raise ValueError(f"synonymous token must be stripped before encoding: {token}")
-        seen_positions.add(position)
-        parsed.append((position, target))
-    return parsed
+def _validated_sequences(sequences: Sequence[str]) -> list[str]:
+    values = [str(sequence) for sequence in sequences]
+    if not values:
+        raise ValueError("at least one sequence is required")
+    lengths = {len(sequence) for sequence in values}
+    if len(lengths) != 1:
+        raise ValueError("all sequences in one dataset must have the same length")
+    invalid = sorted(set("".join(values)) - set(AMINO_ACIDS))
+    if invalid:
+        raise ValueError(f"non-canonical residues: {invalid}")
+    return values
 
 
 def load_georgiev_table(path: str | Path) -> pd.DataFrame:
-    """Load the frozen standardized Georgiev 20 by 19 descriptor table."""
+    """Load the frozen, standardized Georgiev 20 by 19 descriptor table."""
     table = pd.read_csv(path).set_index("amino_acid")
-    if table.shape != (len(STANDARD_AA), GEORGIEV_CHANNELS):
+    if table.shape != (len(AMINO_ACIDS), GEORGIEV_CHANNELS):
         raise ValueError(f"expected a 20 x 19 Georgiev table, found {table.shape}")
-    if set(table.index) != STANDARD_AA:
+    if set(table.index) != set(AMINO_ACIDS):
         raise ValueError("Georgiev table must contain exactly the canonical amino acids")
-    if not np.isfinite(table.to_numpy(dtype=float)).all():
+    values = table.to_numpy(dtype=np.float64)
+    if not np.isfinite(values).all():
         raise ValueError("Georgiev table contains a non-finite value")
-    return table.sort_index()
+    if not np.allclose(values.mean(axis=0), 0.0, atol=1e-10):
+        raise ValueError("Georgiev columns are not centered across amino acids")
+    if not np.allclose(values.var(axis=0), 1.0, atol=1e-10):
+        raise ValueError("Georgiev columns do not have unit population variance")
+    return table.loc[list(AMINO_ACIDS)]
 
 
-@dataclass(frozen=True)
-class MutationVocabulary:
-    """Observed assay-specific (position, mutant amino acid) indicator columns."""
-
-    features: tuple[tuple[int, str], ...]
-
-    @classmethod
-    def from_mutations(
-        cls, wild_type: str, mutations: Sequence[str]
-    ) -> "MutationVocabulary":
-        observed = {
-            feature
-            for mutation in mutations
-            for feature in _mutation_tokens(wild_type, str(mutation))
-        }
-        return cls(tuple(sorted(observed)))
-
-    @property
-    def index(self) -> dict[tuple[int, str], int]:
-        return {feature: idx for idx, feature in enumerate(self.features)}
-
-
-def mutation_indicator(
-    wild_type: str,
-    mutations: Sequence[str],
-    vocabulary: MutationVocabulary,
-) -> sparse.csr_matrix:
-    """Return the sparse assay-specific mutation-indicator matrix."""
-    feature_index = vocabulary.index
-    rows: list[int] = []
-    cols: list[int] = []
-    for row, mutation in enumerate(mutations):
-        for feature in _mutation_tokens(wild_type, str(mutation)):
-            if feature not in feature_index:
-                raise ValueError(f"mutation feature absent from vocabulary: {feature}")
-            rows.append(row)
-            cols.append(feature_index[feature])
-    values = np.ones(len(rows), dtype=np.float32)
-    return sparse.csr_matrix(
-        (values, (rows, cols)), shape=(len(mutations), len(vocabulary.features))
-    )
-
-
-def aaindex_flat(
-    wild_type: str,
-    mutations: Sequence[str],
-    georgiev_table: pd.DataFrame,
-) -> sparse.csr_matrix:
-    """Return sparse flattened L x 19 Georgiev difference representations."""
-    if any(amino_acid not in STANDARD_AA for amino_acid in wild_type):
-        invalid = sorted(set(wild_type) - STANDARD_AA)
-        raise ValueError(f"non-canonical residues in wild type: {invalid}")
-    channels = georgiev_table.shape[1]
-    if channels != GEORGIEV_CHANNELS:
-        raise ValueError(f"Georgiev table must have {GEORGIEV_CHANNELS} channels")
-    values_by_amino_acid = {
-        amino_acid: georgiev_table.loc[amino_acid].to_numpy(dtype=np.float64)
-        for amino_acid in georgiev_table.index
-    }
-    rows: list[int] = []
-    cols: list[int] = []
-    data: list[float] = []
-    for row, mutation in enumerate(mutations):
-        for position, target in _mutation_tokens(wild_type, str(mutation)):
-            source = wild_type[position - 1]
-            difference = values_by_amino_acid[target] - values_by_amino_acid[source]
-            offset = (position - 1) * channels
-            rows.extend([row] * channels)
-            cols.extend(range(offset, offset + channels))
-            data.extend(difference.tolist())
-    encoded = sparse.csr_matrix(
-        (np.asarray(data), (rows, cols)),
-        shape=(len(mutations), len(wild_type) * channels),
-    )
-    encoded.eliminate_zeros()
+def onehot_positional(sequences: Sequence[str]) -> np.ndarray:
+    """Encode every residue as the published dense N by L by 20 binary matrix."""
+    values = _validated_sequences(sequences)
+    lookup = {amino_acid: index for index, amino_acid in enumerate(AMINO_ACIDS)}
+    encoded = np.zeros((len(values), len(values[0]), len(AMINO_ACIDS)), dtype=np.float32)
+    for row, sequence in enumerate(values):
+        positions = np.arange(len(sequence))
+        encoded[row, positions, [lookup[residue] for residue in sequence]] = 1.0
     return encoded
 
 
-def aaindex_positional(
-    wild_type: str,
-    mutations: Sequence[str],
-    georgiev_table: pd.DataFrame,
-) -> np.ndarray:
-    """Return the same Georgiev differences unflattened as N x L x 19."""
-    flat = aaindex_flat(wild_type, mutations, georgiev_table)
-    return flat.toarray().reshape(len(mutations), len(wild_type), GEORGIEV_CHANNELS)
+def onehot(sequences: Sequence[str]) -> np.ndarray:
+    """Flatten the whole-sequence N by L by 20 encoding without dropping a column."""
+    encoded = onehot_positional(sequences)
+    return encoded.reshape(len(encoded), -1)
+
+
+def aaindex_flat(sequences: Sequence[str], georgiev_table: pd.DataFrame) -> np.ndarray:
+    """Return dense absolute Georgiev values at every position, flattened to 19L."""
+    values = _validated_sequences(sequences)
+    if georgiev_table.shape != (len(AMINO_ACIDS), GEORGIEV_CHANNELS):
+        raise ValueError("Georgiev table must have shape 20 by 19")
+    lookup = {
+        amino_acid: georgiev_table.loc[amino_acid].to_numpy(dtype=np.float32)
+        for amino_acid in AMINO_ACIDS
+    }
+    encoded = np.stack([[lookup[residue] for residue in sequence] for sequence in values])
+    return encoded.reshape(len(values), -1)
 
 
 def esm_residue(activations: np.ndarray) -> np.ndarray:
-    """Validate and return precomputed per-residue activations."""
+    """Validate and return precomputed full per-residue ESM-C activations."""
     array = np.asarray(activations)
     if array.ndim not in {2, 3}:
         raise ValueError("ESM residue activations must have shape L x d or N x L x d")
@@ -150,40 +84,46 @@ def esm_residue(activations: np.ndarray) -> np.ndarray:
     return array
 
 
+def esm_residue_delta(variant: np.ndarray, wild_type: np.ndarray) -> np.ndarray:
+    """Subtract wild-type ESM-C residues from aligned variant residue activations."""
+    variant_array = esm_residue(variant)
+    wild_type_array = esm_residue(wild_type)
+    if wild_type_array.ndim != 2 or variant_array.shape[-2:] != wild_type_array.shape:
+        raise ValueError("wild-type activations must be one L x d tensor aligned to variants")
+    return variant_array - wild_type_array
+
+
 def esm_mean(activations: np.ndarray) -> np.ndarray:
-    """Mean-pool precomputed ESM activations over all residues."""
+    """Mean-pool precomputed ESM-C activations over every residue."""
     return esm_residue(activations).mean(axis=-2)
 
 
-def esm_mutpool(
-    activations: np.ndarray,
-    mutations: str | Sequence[str],
-) -> np.ndarray:
-    """Mean-pool precomputed ESM activations over mutated positions only."""
+def _mutation_positions(mutation: str, length: int) -> list[int]:
+    if mutation == "WT":
+        return []
+    positions: list[int] = []
+    for token in mutation.split(":"):
+        match = TOKEN_RE.match(token)
+        if match is None:
+            raise ValueError(f"invalid mutation token: {token}")
+        position = int(match.group(2))
+        if position < 1 or position > length:
+            raise ValueError(f"mutation position outside activation tensor: {token}")
+        positions.append(position - 1)
+    return positions
+
+
+def esm_mutpool(activations: np.ndarray, mutations: str | Sequence[str]) -> np.ndarray:
+    """Diagnostic only: mean-pool ESM-C activations over mutated positions."""
     array = esm_residue(activations)
     single = array.ndim == 2
-    if single:
-        array = array[None, ...]
-        mutation_list = [str(mutations)]
-    else:
-        if isinstance(mutations, str):
-            raise ValueError("batched activations require one mutation string per row")
-        mutation_list = [str(mutation) for mutation in mutations]
-    if len(mutation_list) != len(array):
+    rows = array[None, ...] if single else array
+    mutation_list = [str(mutations)] if single else [str(value) for value in mutations]
+    if len(mutation_list) != len(rows):
         raise ValueError("mutation strings must align with activation rows")
-
-    pooled: list[np.ndarray] = []
-    for row, mutation in zip(array, mutation_list):
-        positions: list[int] = []
-        if mutation != "WT":
-            for token in mutation.split(":"):
-                match = TOKEN_RE.match(token)
-                if match is None:
-                    raise ValueError(f"invalid mutation token: {token}")
-                position = int(match.group(2))
-                if position < 1 or position > row.shape[0]:
-                    raise ValueError(f"mutation position outside activation tensor: {token}")
-                positions.append(position - 1)
+    pooled = []
+    for row, mutation in zip(rows, mutation_list):
+        positions = _mutation_positions(mutation, len(row))
         if not positions:
             raise ValueError("mutated-position pooling is undefined for wild type")
         pooled.append(row[positions].mean(axis=0))
@@ -191,10 +131,20 @@ def esm_mutpool(
     return result[0] if single else result
 
 
-def pair_representation(left, right, fusion: str = "early"):
-    """Apply the fixed early-subtraction rule or return a late-fusion control pair."""
-    if fusion == "early":
-        return left - right
-    if fusion == "late":
-        return left, right
-    raise ValueError("fusion must be 'early' or 'late'")
+def encode_representation(name: str, **inputs: object) -> np.ndarray:
+    """Select a v10 representation by its config name."""
+    if name == "onehot":
+        return onehot(inputs["sequences"])
+    if name == "onehot_positional":
+        return onehot_positional(inputs["sequences"])
+    if name == "aaindex_flat":
+        return aaindex_flat(inputs["sequences"], inputs["georgiev_table"])
+    if name == "esm_residue":
+        return esm_residue(inputs["activations"])
+    if name == "esm_residue_delta":
+        return esm_residue_delta(inputs["activations"], inputs["wild_type_activations"])
+    if name == "esm_mean":
+        return esm_mean(inputs["activations"])
+    if name == "esm_mutpool":
+        return esm_mutpool(inputs["activations"], inputs["mutations"])
+    raise KeyError(f"unknown representation: {name}")

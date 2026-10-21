@@ -463,3 +463,74 @@ the prediction track needs 0 or 3 crosscoders.
   model superiority; the other nine assays were not run and no corrective change was made.
 - `[FINDING]` After removing Hamming filtering and adding the additive/metric interfaces, the
   full suite passes 199 tests in 79.80 seconds. No GPU work was performed.
+
+### v10 migration and IRED-first pipeline (2026-10-21)
+
+- `[ADJUST]` `CROSSFIT_Implementation_Plan_v10.docx` is now the sole implementation plan.
+  A repository inventory found no tracked earlier plan document and no `CODEX_HANDOFF.md`,
+  so no such files required deletion. Added root `AGENTS.md` to make the v10 standing rules
+  persistent across sessions. The committed plan SHA-256 is
+  `1552d61191b54aa4c7ee2ffc7d56bc803b41c31876c3f91c4ac24e1a7953b5ed`.
+- `[ADJUST]` Archived each invalid pre-v10 GB1 additive artifact under
+  `Reports/archive/step2_pre_v10_gb1_additive/`: `additive_baseline_runs.csv`,
+  `additive_baseline_summary.csv`, `additive_gb1_sanity.csv`, the `additive_models/`
+  directory and both model files, `additive_pair_hamming_metrics.csv`,
+  `additive_selected_hyperparameters.csv`, and `additive_tuning_grid.csv`. These fits use
+  pairwise early subtraction and low-N selection and must never be loaded by the v10 pipeline.
+- `[ADJUST]` Deleted superseded balancing modules `Code/crossfit/sampling.py` and
+  `Code/crossfit/optimization.py`, and tests `Code/tests/test_sampling.py` and
+  `Code/tests/test_optimization.py`. Independent dataset pipelines have neither assay
+  sampling nor cross-assay gradient accumulation.
+- `[ADJUST]` Deleted superseded pairwise modules `Code/crossfit/pair_analysis.py` and
+  `Code/crossfit/metrics.py`, scripts `Code/scripts/analyze_pair_distances.py` and
+  `Code/scripts/run_additive_baselines.py`, and tests `Code/tests/test_pair_analysis.py` and
+  `Code/tests/test_metrics.py`. v10 predicts variant fitness directly and forms ranking
+  comparisons only transiently inside a batch.
+- `[ADJUST]` Deleted `Data/processed/splits/prediction_groups.csv`; grouped assay folds are
+  invalid under independent per-dataset pipelines.
+- `[ADJUST]` Archived each superseded pair diagnostic under
+  `Reports/archive/step2_pre_v10_pair_diagnostics/`: `pair_distance_audit.csv`,
+  `margin_gate_audit.csv`, and `gcn4_mutation_count_distribution.csv`.
+- `[ADJUST]` Replaced the Step 2 objective and model interfaces rather than retaining v4
+  compatibility flags. Scores are per variant; ranking pairs are formed only inside a batch;
+  censoring is a standard per-variant Tobit likelihood with a learned dataset residual scale;
+  and predictor regularization is L2. The margin `c=0.25` SD and temperature `T=1.0` are fixed
+  config values and absent from every sweep.
+- `[ADJUST]` Replaced sparse mutation-difference encodings with the published dense forms:
+  whole-sequence 20-by-L one-hot, whole-sequence absolute 19-by-L Georgiev, full ESM-C
+  residues, residue deltas, all-residue mean pooling, and mutated-position pooling as a
+  diagnostic only. The frozen Georgiev CSV remains byte-identical at SHA-256
+  `ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463e0fa17b161b4`.
+- `[DECISION]` The Step 2 architecture factory contains ridge, MLP, random forest, gradient-
+  boosted regression trees, a residual 1-D convolutional stack, and attention pooling. The
+  optional boosted-tree condition is met by Sandhu et al. (Protein Science, 2025), which
+  evaluates scikit-learn GBTs for supervised protein-fitness prediction. Added scikit-learn
+  as a project dependency.
+- `[DECISION]` Augmented one-hot and AAIndex linear models use explicit normal equations with
+  an unpenalized intercept, the selected site penalty on every site coefficient, and `1e-8`
+  on the single dPLL coefficient. dPLL uses variant context and sums only mutated-position
+  masked-log-probability differences; wild-type terms are cached by position.
+- `[ADJUST]` Removed top-k recall. Evaluation now reports direct-score Spearman, Pearson, MSE,
+  NDCG, wild-type-cutoff top-k precision with test hit rate, five-member deep ensembles, and
+  overall/per-stratum Mondrian coverage. The IRED plate loader deliberately provides no
+  precision cutoff.
+- `[FINDING]` Load-time ceiling-censor assertions pass for all five v10 datasets: IRED, GB1,
+  GFP, KRAS, and DAAO each have zero ceiling-censored variants. The symmetric code branch is
+  unit-tested but remains inactive on real selected data.
+- `[FINDING]` IRED has 1,183 source rows: one wild type and 1,182 unique non-WT variants. All
+  290-residue sequences are canonical and reconstruct exactly; no mutation token or label is
+  invalid. The wild-type campaign fitness is -0.035637535033723. The curated variants contain
+  173 floor-censored and zero ceiling-censored rows.
+- `[DECISION]` The IRED layer-freeze reserve contains 59 variants, leaving 1,123 available by
+  default. Primary pg_kfold fold 0 has 228 usable test variants and a training pool of 895.
+  The evaluation-only rounds-1-4 versus round-5 split has 758 train and 365 test variants
+  after reserve exclusion.
+- `[FINDING]` The IRED plate source has 55 measurements and one duplicated sequence/mutation.
+  Its two `1/s` values were averaged, leaving 54 unique variants; all reconstruct from the
+  campaign wild type and none overlaps a campaign sequence. No wild-type kcat exists, so the
+  plate contract is Spearman and NDCG only.
+- `[COST]` This migration and IRED curation used 0 GPU-hours. Training and all ESM-C inference
+  stopped at the requested post-curation review boundary.
+- `[FINDING]` The post-migration full suite passes 186 tests in 93.74 seconds. A test-process
+  thread cap prevents a reproducible macOS x86 Accelerate/OpenMP race when PyTorch is loaded
+  before the first Arrow import; it changes no training or numerical configuration.

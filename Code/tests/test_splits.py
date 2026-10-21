@@ -20,7 +20,7 @@ from crossfit.utils import load_config, resolve, stable_hash
 CFG = load_config()
 SCFG = CFG["splits"]
 N_FOLDS = SCFG["unseen_position"]["n_folds"]
-ASSAYS = D.list_assays()
+ASSAYS = sorted(choice.assay_id for choice in selection.SELECTION)
 
 
 # ---------------------------------------------------------------- selection ---
@@ -37,7 +37,7 @@ def test_selection_frozen_list_verifies():
 
 
 def test_selection_matches_built_dataset():
-    assert sorted(c.assay_id for c in selection.SELECTION) == sorted(ASSAYS)
+    assert sorted(c.assay_id for c in selection.SELECTION) == ASSAYS
 
 
 # ------------------------------------------------------------------ schema ---
@@ -45,7 +45,7 @@ def test_selection_matches_built_dataset():
 
 def test_manifest_one_row_per_assay():
     m = D.manifest()
-    assert len(m) == len(ASSAYS)
+    assert len(m) == len(D.list_assays())
     assert m["assay_id"].is_unique
 
 
@@ -121,15 +121,6 @@ def test_no_scheme_returns_reserved_variants(assay_id, scheme):
     d = D.load_assay(assay_id)
     for idx in (tr, te):
         assert not d.iloc[idx]["is_layer_freeze_reserve"].any()
-
-
-def test_prediction_groups_cover_all_assays_and_are_balanced():
-    g = D.prediction_groups()
-    assert set(g) == set(ASSAYS)
-    K = CFG["reservations"]["prediction_folds"]["K"]
-    counts = pd.Series(list(g.values())).value_counts()
-    assert set(counts.index) == set(range(K))
-    assert counts.max() - counts.min() <= 1
 
 
 # ---------------------------------------------------------------- leakage ---
@@ -298,3 +289,31 @@ def test_apply_mutations_rejects_wrong_reference():
     assert apply_mutations("MKV", "A1G") is None
     assert apply_mutations("MKV", "M1G") == "GKV"
     assert apply_mutations("MKV", "M1G:V3A") == "GKA"
+
+
+def test_ired_pg_kfold_and_round_holdout_are_disjoint_and_exclude_reserve():
+    frame = D.load_assay("IRED")
+    for fold in range(5):
+        train, test = D.get_split("IRED", "pg_kfold", fold=fold)
+        assert not set(train) & set(test)
+    train, test = D.get_split("IRED", "round_held_out")
+    assert set(frame.iloc[train]["start_round"]) <= {1, 2, 3, 4}
+    assert set(frame.iloc[test]["start_round"]) == {5}
+    assert not set(train) & set(test)
+    assert not frame.iloc[np.concatenate((train, test))]["is_layer_freeze_reserve"].any()
+
+
+def test_ired_external_plate_is_schema_limited_and_disjoint():
+    plate = D.load_plate_dataset("IRED")
+    campaign = D.load_assay("IRED", with_sequences=True, include_reserve=True)
+    assert plate.columns.tolist() == ["aa_seq", "mut", "1/s"]
+    assert not set(plate["aa_seq"]) & set(campaign["mutant_sequence"])
+    assert len(plate) == plate["aa_seq"].nunique()
+
+
+def test_ired_wild_type_reference_is_derived_in_both_units():
+    raw = D.wild_type_fitness("IRED", standardized=False)
+    standardized = D.wild_type_fitness("IRED")
+    full = D.load_assay("IRED", include_reserve=True)
+    expected = (raw - full["y_raw"].mean()) / full["y_raw"].std(ddof=0)
+    assert standardized == pytest.approx(expected)

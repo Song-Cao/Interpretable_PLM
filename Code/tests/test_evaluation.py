@@ -5,26 +5,45 @@ import pytest
 
 from crossfit.evaluation import (
     MondrianConformal,
-    aggregate_pairwise_scores,
+    combine_deep_ensemble,
     coverage_by_stratum,
+    interval_coverage,
+    ndcg,
+    score_metrics,
+    top_k_precision,
 )
 
 
-def test_rank_aggregation_recovers_known_scores_with_wild_type_anchor():
-    scores = np.array([0.0, 1.5, -0.5, 2.0])
-    u = np.array([0, 0, 1, 1, 2, 2])
-    v = np.array([1, 2, 2, 3, 3, 0])
-    result = aggregate_pairwise_scores(
-        len(scores), u, v, scores[u] - scores[v], wild_type_index=0
-    )
-    np.testing.assert_allclose(result.scores, scores, atol=1e-9)
-    assert result.scores[0] == 0.0
-    assert result.residual_norm < 1e-9
+def test_direct_score_metrics_and_wild_type_precision_are_exact():
+    target = np.array([0.0, 3.0, 1.0, 2.0])
+    metrics = score_metrics(target, target, top_k=[2], wild_type_fitness=1.5)
+    assert metrics["spearman"] == pytest.approx(1.0)
+    assert metrics["pearson"] == pytest.approx(1.0)
+    assert metrics["mse"] == 0.0
+    assert metrics["ndcg"] == pytest.approx(1.0)
+    assert metrics["top_2_precision"] == 1.0
+    assert metrics["test_hit_rate"] == 0.5
+    assert top_k_precision(target, target, k=2, wild_type_fitness=1.5) == 1.0
 
 
-def test_rank_aggregation_rejects_disconnected_comparison_graph():
-    with pytest.raises(ValueError, match="connected"):
-        aggregate_pairwise_scores(4, [0, 2], [1, 3], [1.0, 1.0], wild_type_index=0)
+def test_external_metrics_do_not_improvise_precision_without_wild_type():
+    metrics = score_metrics([0.0, 1.0], [0.0, 1.0])
+    assert set(metrics) == {"spearman", "pearson", "mse", "ndcg"}
+    with pytest.raises(ValueError, match="wild-type"):
+        score_metrics([0.0, 1.0], [0.0, 1.0], top_k=[1])
+
+
+def test_ndcg_uses_full_direct_ranking():
+    assert ndcg([0.0, 1.0, 2.0], [0.0, 1.0, 2.0]) == pytest.approx(1.0)
+    assert ndcg([2.0, 1.0, 0.0], [0.0, 1.0, 2.0]) < 1.0
+
+
+def test_deep_ensemble_requires_exactly_five_members():
+    values = np.arange(15, dtype=float).reshape(5, 3)
+    combined = combine_deep_ensemble(values)
+    np.testing.assert_allclose(combined.mean, values.mean(axis=0))
+    with pytest.raises(ValueError):
+        combine_deep_ensemble(values[:4])
 
 
 def test_mondrian_conformal_has_nominal_coverage_in_every_stratum():
@@ -52,10 +71,7 @@ def test_mondrian_conformal_has_nominal_coverage_in_every_stratum():
             evaluation_unseen.extend([unseen] * evaluation_size)
 
     calibrator = MondrianConformal(alpha).fit(
-        calibration_prediction,
-        calibration_target,
-        calibration_count,
-        calibration_unseen,
+        calibration_prediction, calibration_target, calibration_count, calibration_unseen
     )
     interval = calibrator.predict_interval(
         evaluation_prediction, evaluation_count, evaluation_unseen
@@ -63,11 +79,5 @@ def test_mondrian_conformal_has_nominal_coverage_in_every_stratum():
     coverage = coverage_by_stratum(
         interval, evaluation_target, evaluation_count, evaluation_unseen
     )
-    assert set(coverage) == {(1, False), (1, True), (2, False), (2, True)}
     assert all(value == pytest.approx(0.9, abs=0.003) for value in coverage.values())
-
-
-def test_mondrian_conformal_rejects_uncalibrated_stratum():
-    calibrator = MondrianConformal(0.1).fit([0.0] * 10, [0.0] * 10, [1] * 10, [False] * 10)
-    with pytest.raises(KeyError, match="no calibration"):
-        calibrator.predict_interval([0.0], [2], [False])
+    assert interval_coverage(interval, evaluation_target) == pytest.approx(0.9, abs=0.003)

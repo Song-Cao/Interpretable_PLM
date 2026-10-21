@@ -1,0 +1,30 @@
+{
+  "dataset_id": "IRED",
+  "source_rows": 1183,
+  "curated_variants_excluding_wild_type": 1182,
+  "wild_type_length": 290,
+  "wild_type_fitness_raw": -0.035637535033723,
+  "layer_freeze_reserve": 59,
+  "usable_default": 1123,
+  "floor_censored": 173,
+  "ceiling_censored": 0,
+  "plate_source_rows": 55,
+  "plate_unique_variants": 54,
+  "plate_campaign_overlap": 0,
+  "round_counts": {
+    "1": 185,
+    "2": 149,
+    "3": 298,
+    "4": 165,
+    "5": 385
+  },
+  "mutation_count_distribution": {
+    "1": 189,
+    "2": 318,
+    "3": 375,
+    "4": 204,
+    "5": 72,
+    "6": 22,
+    "7": 2
+  }
+}

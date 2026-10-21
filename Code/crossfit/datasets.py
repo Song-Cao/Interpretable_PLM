@@ -5,7 +5,7 @@
     load_assay("CCDB_ECOLI_Adkar_2012")            -> DataFrame, one row/variant
     load_assay(aid, with_sequences=True)           -> adds mutant_sequence
     get_split(aid, "unseen_position", fold=0)      -> (train_idx, test_idx)
-    get_split(aid, "low_n", N=64, seed=3)          -> (train_idx, test_idx)
+    get_split("IRED", "round_held_out")            -> (train_idx, test_idx)
 
 Design notes
 ------------
@@ -41,7 +41,11 @@ def _processed_dir() -> Path:
 
 @functools.lru_cache(maxsize=1)
 def _variants() -> pd.DataFrame:
-    return pd.read_parquet(_processed_dir() / "variants.parquet")
+    primary = pd.read_parquet(_processed_dir() / "variants.parquet")
+    ired_path = _processed_dir() / "ired_variants.parquet"
+    if not ired_path.exists():
+        return primary
+    return pd.concat([primary, pd.read_parquet(ired_path)], ignore_index=True)
 
 
 @functools.lru_cache(maxsize=1)
@@ -65,7 +69,16 @@ def unseen_position_report_json() -> dict:
 @functools.lru_cache(maxsize=1)
 def _splits() -> dict[str, pd.DataFrame]:
     d = _processed_dir() / "splits"
-    return {s: pd.read_csv(d / f"{s}.csv") for s in _SCHEMES if (d / f"{s}.csv").exists()}
+    output = {s: pd.read_csv(d / f"{s}.csv") for s in _SCHEMES if (d / f"{s}.csv").exists()}
+    ired_pg = d / "ired_pg_kfold.csv"
+    if ired_pg.exists():
+        output["pg_kfold"] = pd.concat(
+            [output.get("pg_kfold", pd.DataFrame()), pd.read_csv(ired_pg)], ignore_index=True
+        )
+    round_path = d / "ired_round_held_out.csv"
+    if round_path.exists():
+        output["round_held_out"] = pd.read_csv(round_path)
+    return output
 
 
 def list_assays() -> list[str]:
@@ -80,6 +93,18 @@ def wt_sequence(assay_id: str) -> str:
     return str(row["wt_sequence"].iloc[0])
 
 
+def wild_type_fitness(assay_id: str, standardized: bool = True) -> float:
+    """Return the curated wild-type cutoff in raw or within-dataset SD units."""
+    row = manifest().loc[manifest()["assay_id"] == assay_id]
+    if row.empty or "wt_fitness_raw" not in row or pd.isna(row["wt_fitness_raw"].iloc[0]):
+        raise KeyError(f"wild-type fitness is unavailable for {assay_id}")
+    value = float(row["wt_fitness_raw"].iloc[0])
+    if not standardized:
+        return value
+    frame = load_assay(assay_id, include_reserve=True)
+    return (value - float(frame["y_raw"].mean())) / float(frame["y_raw"].std(ddof=0))
+
+
 def load_assay(
     assay_id: str,
     with_sequences: bool = False,
@@ -90,6 +115,13 @@ def load_assay(
     df = v.loc[v["assay_id"] == assay_id].copy()
     if df.empty:
         raise KeyError(f"unknown assay: {assay_id}")
+    step2_path = Path(__file__).resolve().parents[1] / "config" / "step2.yaml"
+    selected = set(load_config(step2_path)["datasets"])
+    n_ceiling = int((df["censored"] == "ceiling").sum())
+    if assay_id in selected and n_ceiling:
+        raise AssertionError(
+            f"{assay_id}: found {n_ceiling} ceiling-censored variants; validate the inactive Tobit branch"
+        )
     if not include_reserve:
         df = df.loc[~df["is_layer_freeze_reserve"]]
     if drop_censored:
@@ -140,6 +172,7 @@ def get_split(
     per-fold loss is in ``unseen_position_report.json``. This is what makes the
     B2 fold a real extrapolation test rather than a partially-seen one.
     ``mutation_count_extrapolation``: no fold argument; fold 0 is train, 1 test.
+    ``round_held_out``: IRED rounds 1-4 are train and round 5 is test.
     ``low_n``: requires ``N`` and ``seed``; the returned train set is the nested
     size-N subset and the test set is the pg_kfold fold-0 holdout.
     """
@@ -201,7 +234,7 @@ def get_split(
     if tab.empty:
         raise KeyError(f"scheme {scheme} not defined for {assay_id}")
 
-    if scheme == "mutation_count_extrapolation":
+    if scheme in {"mutation_count_extrapolation", "round_held_out"}:
         tr = tab.loc[tab["fold"] == 0, "variant_row"].to_numpy()
         te = tab.loc[tab["fold"] == 1, "variant_row"].to_numpy()
         return pos(tr), pos(te)
@@ -213,11 +246,12 @@ def get_split(
     return pos(tr), pos(te)
 
 
-def prediction_groups() -> dict[str, int]:
-    """Assay -> grouped fold id for the PREDICTION track only (K=3).
-
-    Never use this for the measurement track: measurement uses one donor
-    adapter, one dictionary, one tau (README standing rule 10).
-    """
-    t = pd.read_csv(_processed_dir() / "splits" / "prediction_groups.csv")
-    return dict(zip(t["assay_id"], t["pred_group"].astype(int)))
+def load_plate_dataset(dataset_id: str) -> pd.DataFrame:
+    """Load an external evaluation table without exposing it through training splits."""
+    if dataset_id != "IRED":
+        raise KeyError(f"no external plate dataset is registered for {dataset_id}")
+    frame = pd.read_csv(_processed_dir() / "ired_plate.csv")
+    expected = ["aa_seq", "mut", "1/s"]
+    if frame.columns.tolist() != expected:
+        raise ValueError(f"IRED plate schema must be exactly {expected}")
+    return frame

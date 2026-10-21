@@ -85,7 +85,3 @@ reservations:
     frac: 0.05
     seed: 424242
     stratify_on: [n_mutations, y_decile]
-  prediction_folds:
-    K: 3
-    balance_on: [phenotype_class, size_bin]
-    seed: 20260827
