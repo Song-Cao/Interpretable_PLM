@@ -41,11 +41,16 @@ def _processed_dir() -> Path:
 
 @functools.lru_cache(maxsize=1)
 def _variants() -> pd.DataFrame:
-    primary = pd.read_parquet(_processed_dir() / "variants.parquet")
+    primary_path = _processed_dir() / "variants.parquet"
     ired_path = _processed_dir() / "ired_variants.parquet"
-    if not ired_path.exists():
-        return primary
-    return pd.concat([primary, pd.read_parquet(ired_path)], ignore_index=True)
+    frames = [
+        pd.read_parquet(path)
+        for path in (primary_path, ired_path)
+        if path.exists()
+    ]
+    if not frames:
+        raise FileNotFoundError("no curated variant table is available")
+    return pd.concat(frames, ignore_index=True)
 
 
 @functools.lru_cache(maxsize=1)

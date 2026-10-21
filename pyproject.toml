@@ -10,7 +10,7 @@ requires-python = ">=3.10"
 dependencies = [
   "pandas>=2.0",
   "numpy>=1.24,<2",
-  "pyarrow>=14",
+  "pyarrow>=14,<18",
   "pyyaml>=6",
   "requests>=2.31",
   "scipy>=1.11",
