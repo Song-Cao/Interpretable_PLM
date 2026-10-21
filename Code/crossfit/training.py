@@ -89,6 +89,21 @@ def _loss_from_config(config: dict) -> CompositeFitnessLoss:
 
 
 @torch.no_grad()
+def _predict_normalized(
+    model: nn.Module,
+    array: torch.Tensor,
+    *,
+    device: str | torch.device,
+    batch_size: int = 256,
+) -> np.ndarray:
+    """Predict from a tensor already transformed by frozen training moments."""
+    model.eval()
+    loader = DataLoader(TensorDataset(array), batch_size=batch_size, shuffle=False)
+    output = [model(batch[0].to(device)).detach().cpu().numpy() for batch in loader]
+    return np.concatenate(output).astype(np.float64)
+
+
+@torch.no_grad()
 def predict_torch(
     model: nn.Module,
     normalizer: FeatureNormalizer,
@@ -98,11 +113,8 @@ def predict_torch(
     batch_size: int = 256,
 ) -> np.ndarray:
     """Predict direct fitness scores with a frozen training normalizer."""
-    model.eval()
     array = torch.from_numpy(normalizer.transform(features))
-    loader = DataLoader(TensorDataset(array), batch_size=batch_size, shuffle=False)
-    output = [model(batch[0].to(device)).detach().cpu().numpy() for batch in loader]
-    return np.concatenate(output).astype(np.float64)
+    return _predict_normalized(model, array, device=device, batch_size=batch_size)
 
 
 def fit_torch_predictor(
@@ -124,6 +136,7 @@ def fit_torch_predictor(
     device = torch.device(device)
     normalizer = FeatureNormalizer.fit(train_features)
     train_x = torch.from_numpy(normalizer.transform(train_features))
+    validation_x = torch.from_numpy(normalizer.transform(validation_features))
     train_y = torch.as_tensor(train_target, dtype=torch.float32)
     censor_codes = {"none": 0, "floor": 1, "ceiling": 2}
     train_c = torch.tensor([censor_codes[str(value)] for value in train_censoring])
@@ -171,7 +184,7 @@ def fit_torch_predictor(
             torch.nn.utils.clip_grad_norm_(trainable, float(optimization_config["gradient_clip_norm"]))
             optimizer.step()
             totals.append(float(output.total.detach()))
-        prediction = predict_torch(model, normalizer, validation_features, device=device)
+        prediction = _predict_normalized(model, validation_x, device=device)
         score = float(spearmanr(prediction, validation_target).statistic)
         score = score if np.isfinite(score) else -1.0
         scheduler.step(score)
