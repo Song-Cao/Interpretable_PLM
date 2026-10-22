@@ -1,0 +1,7 @@
+{
+  "one_cv_epoch_seconds": 5.8782313730043825,
+  "projected_gate1_gpu_hours": 0.9143915469117928,
+  "epochs_per_adapter": 80,
+  "adapter_fits": 7,
+  "benchmark_optimizer_steps": 23
+}
