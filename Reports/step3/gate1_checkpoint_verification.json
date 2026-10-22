@@ -1,0 +1,17 @@
+{
+  "training_restart": "authoritative training completed before resumed eval-mode analysis",
+  "optimizer_steps_each": 207,
+  "real": {
+    "bytes": 3903813,
+    "parameter_tensors": 66,
+    "lora_parameter_tensors": 64,
+    "sha256": "38da4c4aec3cbec958e866679be078c24948cd434be0d65b50ba2a337a02e4b4"
+  },
+  "shuffled": {
+    "bytes": 3904101,
+    "parameter_tensors": 66,
+    "lora_parameter_tensors": 64,
+    "sha256": "287db0b1206fa2190af0814e3a314f87966c4cf396e833239a9e7b0f9511219b"
+  },
+  "reserve_extraction_mode": "eval"
+}
