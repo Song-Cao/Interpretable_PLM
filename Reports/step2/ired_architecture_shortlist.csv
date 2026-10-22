@@ -1,8 +1,8 @@
 arm,validation_spearman,selected_configuration,boundary_hyperparameters
-onehot_ridge_unaugmented,0.615140598275986,"{""density_penalty"": 1e-08, ""site_penalty"": 425.8195125935258}","{""density_penalty"": ""both""}"
-aaindex_flat_ridge_unaugmented,0.6150378263992459,"{""density_penalty"": 1e-08, ""site_penalty"": 8326.543793473036}","{""density_penalty"": ""both""}"
-onehot_ridge_augmented,0.6116813908886508,"{""density_penalty"": 1e-08, ""site_penalty"": 39.89484434913667}","{""density_penalty"": ""both""}"
-aaindex_flat_ridge_augmented,0.6114268578602395,"{""density_penalty"": 1e-08, ""site_penalty"": 699.5256107414234}","{""density_penalty"": ""both""}"
+onehot_ridge_unaugmented,0.615140598275986,"{""density_penalty"": 1e-08, ""site_penalty"": 425.8195125935258}",{}
+aaindex_flat_ridge_unaugmented,0.6150378263992459,"{""density_penalty"": 1e-08, ""site_penalty"": 8326.543793473036}",{}
+onehot_ridge_augmented,0.6116813908886508,"{""density_penalty"": 1e-08, ""site_penalty"": 39.89484434913667}",{}
+aaindex_flat_ridge_augmented,0.6114268578602395,"{""density_penalty"": 1e-08, ""site_penalty"": 699.5256107414234}",{}
 esm_mean_ridge,0.6076484349219287,"{""batch_size"": 32, ""learning_rate"": 0.0003, ""weight_decay"": 0.0001}","{""batch_size"": ""lower"", ""weight_decay"": ""lower""}"
 esm_mean_mlp,0.6057659886414433,"{""batch_size"": 32, ""dropout"": 0.4, ""hidden_dims"": [512, 256, 128], ""learning_rate"": 0.001, ""weight_decay"": 0.001}","{""batch_size"": ""lower"", ""dropout"": ""upper"", ""learning_rate"": ""upper""}"
 esm_mutpool_ridge,0.5500693147158584,"{""batch_size"": 64, ""learning_rate"": 0.0003, ""weight_decay"": 0.001}",{}

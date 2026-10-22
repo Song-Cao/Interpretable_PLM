@@ -124,6 +124,7 @@ def fit_torch_predictor(
     train_censoring: Sequence[str],
     validation_features: np.ndarray,
     validation_target: np.ndarray,
+    validation_censoring: Sequence[str],
     *,
     objective_config: dict,
     optimization_config: dict,
@@ -138,8 +139,10 @@ def fit_torch_predictor(
     train_x = torch.from_numpy(normalizer.transform(train_features))
     validation_x = torch.from_numpy(normalizer.transform(validation_features))
     train_y = torch.as_tensor(train_target, dtype=torch.float32)
+    validation_y = torch.as_tensor(validation_target, dtype=torch.float32)
     censor_codes = {"none": 0, "floor": 1, "ceiling": 2}
     train_c = torch.tensor([censor_codes[str(value)] for value in train_censoring])
+    validation_c = torch.tensor([censor_codes[str(value)] for value in validation_censoring])
     generator = torch.Generator().manual_seed(seed)
     loader = DataLoader(
         TensorDataset(train_x, train_y, train_c),
@@ -157,7 +160,7 @@ def fit_torch_predictor(
     )
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer,
-        mode="max",
+        mode="min",
         factor=float(optimization_config["scheduler_factor"]),
         patience=int(optimization_config["scheduler_patience"]),
     )
@@ -184,11 +187,26 @@ def fit_torch_predictor(
             torch.nn.utils.clip_grad_norm_(trainable, float(optimization_config["gradient_clip_norm"]))
             optimizer.step()
             totals.append(float(output.total.detach()))
-        prediction = _predict_normalized(model, validation_x, device=device)
+        model.eval()
+        with torch.no_grad():
+            validation_scores = model(validation_x.to(device))
+            validation_output = objective(
+                validation_scores,
+                validation_y.to(device),
+                validation_c.to(device),
+                regularized_parameters=model.parameters(),
+            )
+            validation_loss = float(validation_output.total)
+            prediction = validation_scores.detach().cpu().numpy().astype(np.float64)
         score = float(spearmanr(prediction, validation_target).statistic)
         score = score if np.isfinite(score) else -1.0
-        scheduler.step(score)
-        history.append({"epoch": float(epoch), "loss": float(np.mean(totals)), "validation_spearman": score})
+        scheduler.step(validation_loss)
+        history.append({
+            "epoch": float(epoch),
+            "loss": float(np.mean(totals)),
+            "validation_loss": validation_loss,
+            "validation_spearman": score,
+        })
         if score > best_score + float(optimization_config["early_stopping_min_delta"]):
             best_score, best_epoch, stale = score, epoch, 0
             best_model = copy.deepcopy(model.state_dict())

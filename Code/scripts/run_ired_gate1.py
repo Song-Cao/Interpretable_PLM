@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import sys
 import time
 from pathlib import Path
@@ -21,6 +20,8 @@ from crossfit.adaptation import (
     SequenceFitnessAdapter,
     build_lora_adapter,
     fit_adapter,
+    fit_adapter_early_stopping,
+    fit_adapter_for_steps,
     predict_adapter,
     save_trainable_state,
 )
@@ -30,7 +31,7 @@ from crossfit.gate1 import bootstrap_drift_gap, linear_cka_by_layer, tokenwise_r
 from crossfit.models import RidgeHead
 from crossfit.representations import esm_mean
 from crossfit.search import training_pool_folds
-from crossfit.training import fit_torch_fixed_epochs, predict_torch
+from crossfit.training import fit_torch_predictor, predict_torch
 from crossfit.utils import REPO_ROOT, load_config
 
 
@@ -133,13 +134,14 @@ def main() -> int:
         device=args.device,
     )
     epoch_seconds = time.perf_counter() - started
-    # Five CV adapters plus the matched real and shuffled full-training adapters.
-    projected_hours = epoch_seconds * epochs * 7 / 3600.0
+    # Five early-stopped CV adapters; one is the final real adapter. The
+    # shuffled control then replays that adapter's exact best-step LR schedule.
+    projected_hours = epoch_seconds * epochs * 6 / 3600.0
     timing = {
         "one_cv_epoch_seconds": epoch_seconds,
         "projected_gate1_gpu_hours": projected_hours,
         "epochs_per_adapter": epochs,
-        "adapter_fits": 7,
+        "adapter_fits_upper_bound": 6,
         "benchmark_optimizer_steps": benchmark.optimizer_steps,
     }
     (report_dir / "gate1_timing.json").write_text(json.dumps(timing, indent=2) + "\n")
@@ -167,29 +169,43 @@ def main() -> int:
     del base_residue
 
     cv_rows = []
+    final_fold = int(config["gate1"]["final_adapter_cv_fold"])
+    if final_fold < 0 or final_fold >= len(folds):
+        raise ValueError("gate1.final_adapter_cv_fold is outside the CV range")
+    real_fit = None
+    real_tokenize = None
+    real_train = None
     for fold_index, (train, validation) in enumerate(folds):
-        head_fit = fit_torch_fixed_epochs(
+        fit_seed = int(config["adapter"]["seed"]) + fold_index
+        np.random.seed(fit_seed)
+        torch.manual_seed(fit_seed)
+        torch.cuda.manual_seed_all(fit_seed)
+        head_fit = fit_torch_predictor(
             RidgeHead(base_mean.shape[1]),
             base_mean[train], target[train], censoring[train],
-            objective_config=step2["objective"],
-            optimization_config={"gradient_clip_norm": config["adapter"]["gradient_clip_norm"]},
-            parameters=_head_parameters(config), epochs=epochs,
-            seed=int(config["adapter"]["seed"]) + fold_index, device=args.device,
+            base_mean[validation], target[validation], censoring[validation],
+            objective_config=step2["objective"], optimization_config=config["adapter"],
+            parameters=_head_parameters(config), seed=fit_seed, device=args.device,
         )
         frozen_prediction = predict_torch(
             head_fit.model, head_fit.normalizer, base_mean[validation], device=args.device
         )
-        fit_seed = int(config["adapter"]["seed"]) + fold_index
         adapter_model, tokenize = _new_adapter(config, args.device, fit_seed)
-        real_fit = fit_adapter(
+        fold_fit = fit_adapter_early_stopping(
             adapter_model,
             [sequences[index] for index in train], target[train], censoring[train],
+            [sequences[index] for index in validation], target[validation], censoring[validation],
             backbone_tokenize=tokenize,
             objective_config=step2["objective"], adapter_config=adapter_parameters,
-            epochs=epochs, seed=fit_seed, device=args.device,
+            max_epochs=epochs,
+            patience=int(config["adapter"]["early_stopping_patience"]),
+            min_delta=float(config["adapter"]["early_stopping_min_delta"]),
+            scheduler_factor=float(config["adapter"]["scheduler_factor"]),
+            scheduler_patience=int(config["adapter"]["scheduler_patience"]),
+            seed=fit_seed, device=args.device,
         )
         real_prediction = predict_adapter(
-            real_fit.model, [sequences[index] for index in validation],
+            fold_fit.model, [sequences[index] for index in validation],
             backbone_tokenize=tokenize, batch_size=int(config["adapter"]["batch_size"]),
             device=args.device,
         )
@@ -200,26 +216,30 @@ def main() -> int:
             "frozen_spearman": frozen_score,
             "adapted_spearman": real_score,
             "task_gain": real_score - frozen_score,
-            "adapter_optimizer_steps": real_fit.optimizer_steps,
+            "adapter_best_epoch": fold_fit.best_epoch + 1,
+            "adapter_optimizer_steps": fold_fit.best_optimizer_steps,
+            "adapter_executed_optimizer_steps": fold_fit.executed_optimizer_steps,
+            "frozen_head_best_epoch": head_fit.best_epoch + 1,
         })
         print(json.dumps(cv_rows[-1]), flush=True)
-        _clear(head_fit, real_fit, adapter_model)
+        if fold_index == final_fold:
+            real_fit = fold_fit
+            real_fit.model.to("cpu")
+            real_tokenize = tokenize
+            real_train = train.copy()
+            _clear(head_fit)
+        else:
+            _clear(head_fit, fold_fit, adapter_model)
     cv_frame = pd.DataFrame(cv_rows)
     cv_frame.to_csv(report_dir / "gate1_task_gain_cv.csv", index=False)
+    if real_fit is None or real_tokenize is None or real_train is None:
+        raise AssertionError("the configured final adapter CV fold was not retained")
+    real_fit.model.to(args.device)
 
     checkpoint_dir = REPO_ROOT / config["paths"]["checkpoints"]
     if checkpoint_dir.exists():
         raise FileExistsError(f"refusing to overwrite Gate 1 checkpoints: {checkpoint_dir}")
     checkpoint_dir.mkdir(parents=True)
-    real_model, real_tokenize = _new_adapter(
-        config, args.device, int(config["adapter"]["seed"])
-    )
-    real_fit = fit_adapter(
-        real_model, [sequences[index] for index in train_pool], target[train_pool], censoring[train_pool],
-        backbone_tokenize=real_tokenize,
-        objective_config=step2["objective"], adapter_config=adapter_parameters,
-        epochs=epochs, seed=int(config["adapter"]["seed"]), device=args.device,
-    )
     save_trainable_state(real_fit.model, checkpoint_dir / "real_adapter.pt")
 
     reserve_frame = load_assay("IRED", with_sequences=True, include_reserve=True)
@@ -229,19 +249,22 @@ def main() -> int:
         real_fit.model, reserve_sequences, int(config["extraction"]["reserve_batch_size"])
     )
     shuffled_rng = np.random.default_rng(int(config["adapter"]["shuffled_label_seed"]))
-    permutation = shuffled_rng.permutation(len(train_pool))
-    shuffled_target = target[train_pool][permutation]
-    shuffled_censoring = censoring[train_pool][permutation]
+    permutation = shuffled_rng.permutation(len(real_train))
+    shuffled_target = target[real_train][permutation]
+    shuffled_censoring = censoring[real_train][permutation]
     shuffled_model, shuffled_tokenize = _new_adapter(
-        config, args.device, int(config["adapter"]["seed"])
+        config, args.device, int(config["adapter"]["seed"]) + final_fold
     )
-    shuffled_fit = fit_adapter(
-        shuffled_model, [sequences[index] for index in train_pool], shuffled_target, shuffled_censoring,
+    shuffled_fit = fit_adapter_for_steps(
+        shuffled_model, [sequences[index] for index in real_train],
+        shuffled_target, shuffled_censoring,
         backbone_tokenize=shuffled_tokenize,
         objective_config=step2["objective"], adapter_config=adapter_parameters,
-        epochs=epochs, seed=int(config["adapter"]["seed"]), device=args.device,
+        optimizer_steps=real_fit.best_optimizer_steps,
+        learning_rates=real_fit.learning_rates_to_best,
+        seed=int(config["adapter"]["seed"]) + final_fold, device=args.device,
     )
-    if shuffled_fit.optimizer_steps != real_fit.optimizer_steps:
+    if shuffled_fit.optimizer_steps != real_fit.best_optimizer_steps:
         raise AssertionError("real and shuffled adapters took different optimizer step counts")
     save_trainable_state(shuffled_fit.model, checkpoint_dir / "shuffled_adapter.pt")
     shuffled_layers = _extract_layers(
@@ -322,8 +345,12 @@ def main() -> int:
         "selected_shuffled_cka": float(shuffled_cka[selected_layer]),
         "maximum_activation_change": maximum_change,
         "numerical_magnitude_floor": magnitude_floor,
-        "optimizer_steps_real": real_fit.optimizer_steps,
+        "stopping_metric": "validation_spearman",
+        "final_adapter_cv_fold": final_fold,
+        "optimizer_steps_real": real_fit.best_optimizer_steps,
+        "optimizer_steps_real_executed_before_restore": real_fit.executed_optimizer_steps,
         "optimizer_steps_shuffled": shuffled_fit.optimizer_steps,
+        "matched_learning_rate_schedule": True,
         "gate1_pass": bool(gate_pass),
         "gpu_projection_hours": projected_hours,
     }

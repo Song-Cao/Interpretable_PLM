@@ -34,6 +34,7 @@ def test_torch_fit_selects_on_validation_and_returns_direct_scores():
         ["none"] * 36,
         features[36:],
         target[36:],
+        ["none"] * 12,
         objective_config={
             "margin_sd": 0.1,
             "temperature": 1.0,
@@ -57,6 +58,7 @@ def test_torch_fit_selects_on_validation_and_returns_direct_scores():
     prediction = predict_torch(fit.model, fit.normalizer, features[36:], device="cpu")
     assert prediction.shape == (12,)
     assert fit.validation_spearman > 0.8
+    assert all("validation_loss" in row for row in fit.history)
     assert torch.isfinite(fit.loss.residual_scale())
 
 

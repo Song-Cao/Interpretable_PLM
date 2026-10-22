@@ -7,6 +7,8 @@ import torch
 
 from crossfit.adaptation import (
     SequenceFitnessAdapter,
+    fit_adapter_early_stopping,
+    fit_adapter_for_steps,
     fit_adapter,
     load_trainable_state,
     predict_adapter,
@@ -104,3 +106,36 @@ def test_initialization_seed_precedes_training_seed():
         torch.equal(left, right)
         for left, right in zip(first.parameters(), restarted.parameters(), strict=True)
     )
+
+
+def test_real_early_stop_and_shuffled_control_have_matched_steps():
+    sequences = ["AA", "AC", "CA", "CC"] * 4
+    target = np.asarray([0.0, 1.0, 1.0, 2.0] * 4, dtype=np.float32)
+    objective = {
+        "margin_sd": 0.1, "temperature": 1.0, "magnitude_mode": "huber",
+        "huber_delta": 1.0, "residual_scale": {"initial": 1.0, "floor": 1e-4},
+        "weights": {"rank": 1.0, "magnitude": 1.0, "censoring": 1.0, "regularization": 0.0},
+    }
+    settings = {
+        "batch_size": 2, "gradient_accumulation_steps": 2, "learning_rate": 0.01,
+        "weight_decay": 1e-4, "gradient_clip_norm": 1.0,
+    }
+    real = fit_adapter_early_stopping(
+        SequenceFitnessAdapter(_Backbone(), 4), sequences[:12], target[:12], ["none"] * 12,
+        sequences[12:], target[12:], ["none"] * 4,
+        backbone_tokenize=_tokenize, objective_config=objective, adapter_config=settings,
+        max_epochs=5, patience=2, min_delta=1e-4, scheduler_factor=0.5,
+        scheduler_patience=1, seed=9, device="cpu",
+    )
+    assert real.best_optimizer_steps > 0
+    assert real.executed_optimizer_steps >= real.best_optimizer_steps
+    assert len(real.learning_rates_to_best) == real.best_optimizer_steps
+    assert all("validation_loss" in row and "validation_spearman" in row for row in real.trace)
+
+    shuffled = fit_adapter_for_steps(
+        SequenceFitnessAdapter(_Backbone(), 4), sequences[:12], target[:12][::-1].copy(),
+        ["none"] * 12, backbone_tokenize=_tokenize, objective_config=objective,
+        adapter_config=settings, optimizer_steps=real.best_optimizer_steps,
+        learning_rates=real.learning_rates_to_best, seed=9, device="cpu",
+    )
+    assert shuffled.optimizer_steps == real.best_optimizer_steps

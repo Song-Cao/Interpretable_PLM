@@ -251,6 +251,9 @@ def main() -> int:
         }
 
     boundaries = boundary_hyperparameters(selected, space)
+    # The density penalty is fixed at 1e-8 by the published formulation; it is
+    # not a searched range and therefore cannot be a selected search boundary.
+    boundaries.pop("density_penalty", None)
     result = {
         "dataset": "IRED",
         "arm": arm,

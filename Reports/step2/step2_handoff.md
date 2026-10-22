@@ -1,104 +1,104 @@
-# Step 2 handoff: v12 preflight and IRED curation
+# Step 2 handoff: IRED predictor comparison
 
-Date: 2026-10-21
-Status: stopped at the required post-curation review boundary; no model training or ESM-C inference has run.
+Date: 2026-10-22
+Status: pooled and classical arms complete; convolutional arms stopped by the v12 compute rule.
 
-## Plan and standing contract
+## Scope and selection contract
 
-`CROSSFIT_Implementation_Plan_v12.docx` is the sole plan. Root `AGENTS.md` carries its standing invariants. Each dataset has an independent direct-fitness pipeline; nothing pools labels, models, gradients, or results across datasets. `pg_kfold` is the only model-selection split. Five-fold validation is formed strictly inside its training pool. The layer-freeze reserve, pg_kfold test, round-held-out split, and external plate set cannot enter fitting or tuning.
+All results are for IRED alone. Primary fold 0 contains 895 training-pool and 228 test variants after excluding the 59-row layer-freeze reserve. Every hyperparameter was selected by five-fold cross-validation inside those 895 rows using validation Spearman. The test fold, round-5 holdout, and 54-row plate set were never used for fitting, tuning, calibration, or selection. The plate table was evaluated only by Spearman and NDCG.
 
-`Code/tests/test_invariants.py` fails if the removed assay sampler, cross-dataset optimizer, grouped folds, pairwise score aggregation, difference-censoring path, pair-dataset constructors, prohibited config keys, or superseded mutation-indicator symbol return. It also verifies the frozen Georgiev table hash.
+Random-search seeds and spaces are in `Code/config/step2.yaml`. Continuous classical searches ran 60 configurations. The finite ESM ridge space contains 48 unique configurations; MLP and random forest ran 60. Every reported stochastic result is a five-member ensemble with seeds 0-4. The exact convex classical fits are seed-invariant and therefore have ensemble SD zero.
 
-## Step 2 modules
+## Extraction and cache interface
 
-### Objective
+The pinned backbone is `biohub/ESMC-300M` revision `e4bac860f0c502cd80f3aeac3d0ce6524c6627cb` under `esm==3.4.1.post1`. It returned 960 channels and 30 hidden-state depths.
 
-`Code/crossfit/losses.py` exposes:
+`Cache/step2/IRED/representations/` remains on the pod and contains:
 
-- `in_batch_rank_indices(target, margin) -> (left, right)`: forms strict `|y_i-y_j| > c` upper-triangle pairs inside one batch.
-- `CompositeFitnessLoss(...)`: accepts aligned per-variant `scores`, `targets`, and censor labels. It returns one weighted scalar plus ranking, uncensored magnitude, per-variant Tobit, L2, and count diagnostics.
-- `LearnedResidualScale`: one positive scale for one dataset pipeline, learned jointly with the predictor.
+- `variant_residue.npy`: float16 `[1182, 290, 960]`, aligned to `variant_rows.npy`.
+- `plate_residue.npy`: float16 `[54, 290, 960]`, plate CSV order.
+- `wild_type_residue.npy`: float16 `[290, 960]`.
+- `reserve_all_layers_base.npy`: float16 `[59, 30, 290, 960]`, aligned to `reserve_rows.npy`.
+- `metadata.json`: model, shapes, task counts, elapsed time, and byte count.
 
-The floor Tobit term is `-log Phi((floor-score)/sigma)`; the symmetric ceiling branch is retained and tested. The config fixes `c=0.25` within-dataset SD and `T=1.0`; neither is swept. Magnitude excludes censored rows. Regularization is L2 and receives the intended parameter iterable explicitly.
+The realized cache is 1,674,691,432 bytes before the small metadata file. Extraction took 90.62 seconds of model work. It stores all depths only for the reserve, never for the full campaign.
 
-### Representations and density feature
+`Cache/step2/IRED/dpll.csv` has unique columns `aa_seq,dpll` and 1,237 rows: wild type, all campaign sequences, and all plate sequences. It used 3,441 variant-context masked tasks and 277 wild-type position tasks. Every scalar is finite. The cache is consumed only on the pod.
 
-`Code/crossfit/representations.py` provides one named interface for:
+## Training and artifacts
 
-- `onehot`: dense `N x (20L)` whole-sequence encoding, including all positions and all 20 columns.
-- `onehot_positional`: the identical information as `N x L x 20`.
-- `aaindex_flat`: dense `N x (19L)` absolute Georgiev values at every position.
-- `esm_mean`, `esm_residue`, and `esm_residue_delta`.
-- `esm_mutpool`, labelled only as the Step 7 pooling-domain diagnostic.
+Library interfaces:
 
-Non-canonical residues and unaligned sequence lengths raise. `aaindex_positional`, sparse difference encodings, observed-vocabulary restriction, and early subtraction no longer exist.
+- `Code/crossfit/losses.py`: direct-score composite loss, in-batch ranking pairs, standard per-variant Tobit, learned residual scale, and L2 term.
+- `Code/crossfit/representations.py`: dense whole-sequence one-hot and AAIndex, full/mean/mutated-pool ESM states, and residue deltas.
+- `Code/crossfit/models.py`: exact diagonal ridge, linear head, MLP, random forest, and residual 1-D convolution.
+- `Code/crossfit/training.py`: training-only normalization, validation-Spearman early stopping, and validation-free fixed-epoch refits.
+- `Code/crossfit/evaluation.py`: direct-score metrics, five-member ensembles, bootstrap intervals, and Mondrian conformal intervals.
 
-`Code/crossfit/density.py` exposes `DPLLDensityFeature`. For each substituted position it requests the variant residue probability in the variant's masked context, subtracts the wild-type residue probability in the wild-type masked context, and sums only those positions. Wild-type terms are cached by position and each completed scalar is cached by variant.
+Models are loadable on the pod from `Models/step2/IRED/<arm>/seed_<0-4>.*`. Neural `.pt` files contain the state dict, learned residual scale, frozen normalizer, selected configuration, selected epoch count, and input shape. Random forests are `.joblib`. Classical `.npz` files contain coefficients, intercept, penalties, and fitting variant rows.
 
-### Models
+Neural search early-stopped on validation Spearman and restored the best checkpoint. Each
+five-seed final refit used the rounded median best epoch across the selected configuration's
+five CV folds: 16 epochs for ESM-mean ridge, 7 for ESM-mean MLP, and 9 for
+ESM-mutated-position ridge. Thus final refit duration was selected without consulting test,
+round-held-out, calibration, or plate labels.
 
-`Code/crossfit/models.py` exposes `build_model(name, input_shape, parameters)` for ridge, MLP, random forest, and residual 1-D convolution. v12 explicitly removes gradient-boosted trees and attention pooling. Neural arms return one score per variant and preserve sequence shape for convolution.
+Each arm has compact committed files under `Reports/step2/`:
 
-`DiagonalRidgeRegressor` is the exact augmented classical solver. It constructs the normal equations with an explicit diagonal penalty: intercept 0, each site feature lambda, and dPLL `1e-8`. It does not use a scalar-alpha approximation or dPLL rescaling.
+- `<arm>_search.csv`: one row per configuration and inner fold.
+- `<arm>_timing.json`: ten-fit timing audit, count, projection, and sampling seed where stochastic.
+- `<arm>_result.json`: selected configuration, boundary audit, three evaluation conditions, ensemble variability, bootstrap intervals, and conformal strata.
+- `<arm>_predictions.csv`: `condition,variant_row,target,prediction` and `epistemic_sd` for stochastic arms.
 
-### Evaluation
+## Results read from disk
 
-`Code/crossfit/evaluation.py` provides direct-score Spearman, Pearson, MSE, NDCG, wild-type-cutoff top-k precision, test-set hit rate, exactly five-member ensemble aggregation, and split Mondrian conformal intervals by `(mutation_count, unseen_position)`. Supplying top-k budgets without a wild-type cutoff raises. This is how the plate set is prevented from receiving an invented cutoff.
+The three complete tables are:
 
-`Code/config/step2.yaml` names the five v12 datasets, registers exactly nine arm families and random-search spaces, fixes objective constants, and records every IRED curation seed, split, path, and threshold. It contains no balancing, pair-distance, low-N selection, or uncertainty-weighting controls.
+- `Reports/step2/ired_pg_kfold_test_results.csv`
+- `Reports/step2/ired_round_held_out_results.csv`
+- `Reports/step2/ired_plate_results.csv`
 
-## IRED curated data
+Spearman point estimates are:
 
-The detailed audit is `Reports/step2/ired_curation_summary.md`; the machine-readable counts are `Reports/step2/ired_curation_summary.json`.
+| arm | inner CV | pg test | round holdout | plate |
+|---|---:|---:|---:|---:|
+| onehot ridge, unaugmented | 0.6151 | 0.5320 | 0.5291 | 0.5637 |
+| AAIndex ridge, unaugmented | 0.6150 | 0.5322 | 0.5291 | 0.5634 |
+| onehot ridge + dPLL | 0.6117 | 0.5441 | 0.5394 | 0.5300 |
+| AAIndex ridge + dPLL | 0.6114 | 0.5442 | 0.5371 | 0.5296 |
+| ESM mean ridge | 0.6076 | 0.5224 | 0.4987 | 0.3368 |
+| ESM mean MLP | 0.6058 | 0.4397 | 0.4433 | 0.2392 |
+| ESM mean random forest | 0.5396 | 0.4320 | 0.4455 | 0.2317 |
+| ESM mutated-position ridge | 0.5501 | 0.5452 | 0.4483 | 0.4443 |
 
-### Campaign table
+Bootstrap confidence intervals and every other metric are in the three tables. IRED fold 0's observed hit rate at the standardized wild-type cutoff 0.3217626895 is 0.4956140351.
 
-`Data/processed/ired_variants.parquet` has 1,182 rows and columns:
+The architecture shortlist and exact selected configurations are in `Reports/step2/ired_architecture_shortlist.csv`. Selected boundaries that require reporting are:
 
-`assay_id, variant_row, mutations, n_mutations, mutated_positions, y_raw, y, sigma_v, sigma_source, n_measurements, censored, dup_disagrees, is_layer_freeze_reserve, start_round`
+- ESM mean ridge: minimum weight decay and minimum batch size.
+- ESM mean MLP: maximum dropout, maximum learning rate, minimum batch size.
+- Random forest: maximum depth, maximum `min_samples_leaf`, and maximum feature fraction.
 
-The source contained 1,183 rows including one wild type. Sequence length is 290. Every mutation and sequence reconstructs, all residues are canonical, and all non-WT sequences are unique. The raw-label mean and population SD used for standardization are -1.3385716276552053 and 4.049363506220418. There are 173 floor-censored and zero ceiling-censored variants. The wild-type raw fitness is -0.035637535033723; `wild_type_fitness("IRED")` returns its standardized cutoff from the curated table.
+The fixed `1e-8` dPLL coefficient penalty is not a searched boundary. Classical site penalties did not land exactly at `1e-4` or `1e4`.
 
-The mutation-count distribution is 189, 318, 375, 204, 72, 22, and 2 for one through seven mutations. Start-round counts excluding WT are 185, 149, 298, 165, and 385.
+## Pooling-domain answer
 
-### Splits and reserve
+`Reports/step2/ired_pooling_domain.json` selects all-residue mean pooling because validation Spearman is 0.60765 versus 0.55007 for mutated-position pooling under matched ridge heads. This selection uses validation only. The pg-test point estimates reverse weakly (0.52243 versus 0.54519) with overlapping intervals, and plate estimates are 0.33684 versus 0.44425. Those reversals are reported but cannot override the selection protocol.
 
-- `Data/processed/splits/ired_pg_kfold.csv`: 1,182 rows. Full fold sizes are 237, 237, 236, 236, 236; usable sizes after reserve exclusion are 228, 226, 225, 224, 220. Fold 0 is the primary test fold, with 895 usable rows in its training pool.
-- `Data/processed/splits/ired_round_held_out.csv`: 1,182 rows. Rounds 1-4 versus round 5 contain 797/385 rows before reserve exclusion and 758/365 afterward.
-- The layer-freeze reserve contains 59 rows. `load_assay("IRED")` excludes them by default, leaving 1,123.
+## Conformal calibration
 
-### External plate
-
-`Data/processed/ired_plate.csv` has exactly `aa_seq, mut, 1/s`. One duplicate source measurement was averaged, leaving 54 unique sequences; campaign overlap is zero. `load_plate_dataset("IRED")` is separate from every split loader. Only Spearman and NDCG are permitted because the plate contains no wild-type kcat.
-
-### Loader calls
-
-```python
-from crossfit.datasets import get_split, load_assay, load_plate_dataset, wild_type_fitness
-
-campaign = load_assay("IRED", with_sequences=True)
-train_idx, test_idx = get_split("IRED", "pg_kfold", fold=0)
-round_train_idx, round_test_idx = get_split("IRED", "round_held_out")
-plate = load_plate_dataset("IRED")
-wt_cutoff = wild_type_fitness("IRED")
-```
-
-Each selected dataset is checked at load time for zero ceiling-censored rows. IRED, GB1, GFP, KRAS, and DAAO all pass with count zero.
-
-## Superseded artifacts
-
-Invalid pre-v10 GB1 fits are isolated at `Reports/archive/step2_pre_v10_gb1_additive/`. Old pair/Hamming diagnostics are isolated at `Reports/archive/step2_pre_v10_pair_diagnostics/`. No active config or loader points to either directory. The obsolete modules, scripts, tests, grouped split table, and prior handoff were deleted or replaced; exact names are recorded in `PROJECT_LOG.md`.
-
-## Verification
-
-- Curation rerun: `python Code/scripts/curate_ired.py` completed and reproduced the recorded counts and hashes.
-- Full suite: 186 tests passed with `python -m pytest Code/tests -q` after adding the two tree-factory cases.
-- `python -m compileall -q Code/crossfit Code/scripts` passed.
-- `git diff --check` passed.
-- GPU cost: 0 hours.
+The 134-row calibration split is excluded from each final pg model fit. Quantiles are fit separately by mutation count and position novelty. All observed test strata were represented in calibration, but several novelty strata contain only one to three calibration rows; their finite-sample quantiles are infinite and coverage is consequently 1.0. This is valid but uninformative uncertainty, not evidence of exceptional calibration.
 
 ## Incomplete, uncertain, or deviating
 
-No deviation from the user-overridden v12 design is known. The one plate duplicate is intentionally averaged and explicitly reported rather than counted twice in evaluation.
+Ten representative `esm_residue -> conv residual` fits averaged 137.72 seconds. This projects to 11.48 GPU-hours at 60 configurations and 5.74 hours at the required minimum 30 for one arm. The two required ESM convolutional arms therefore cannot both fit under the nine-hour session ceiling after Step 2 pooled arms and Step 3; the optional one-hot convolution was also omitted. Timing evidence is committed as `Reports/step2/esm_residue_conv_timing.json`. No arm is reported from fewer than 30 configurations, and no ensemble seed or measurement was cut.
 
-The following are deliberately incomplete pending review: ESM-C residue extraction, wild-type masked-term caching, variant dPLL computation, hyperparameter search, five-seed ensembles, conformal calibration, the four classical augmented/unaugmented fits, architecture comparison, three result tables, pooling-domain answer, shortlist, and saved tuned artifacts. Consequently there are no Step 2 performance results yet. Training on IRED must not begin until this curation handoff is accepted.
+The exact published classical normal-equation baselines optimize diagonally penalized squared error, and scikit-learn random forests optimize squared-error tree splits. Those solvers cannot optimize the differentiable composite Tobit/ranking objective used by the neural arms. This is the literal published-form implementation in sections 2f-2g, but it is an objective mismatch relative to section 2a's statement that every model uses one identical objective. Results preserve both facts rather than hiding the mismatch.
+
+The completed neural searches used validation Spearman for early stopping, best-checkpoint
+selection, and ReduceLROnPlateau. The first two match the pre-committed selection rule; the
+latest ruling requires loss, not Spearman, to drive the learning-rate scheduler. The code now
+uses validation loss for scheduling, but these completed Step 2 results were not silently
+rerun and therefore retain the original scheduler behavior.
+
+Step 4 budget bounds are in `Reports/step3/step4_budget_ired.json`. All 895 training variants at all 290 residues would occupy 0.996672 GB for two fp16 models; mutation-only is a 0.009492 GB lower bound. v12 does not fix the window radius or distant-position count, so a final realized subsampled budget cannot be named without those Step 4 choices. No Step 4 cache was written.

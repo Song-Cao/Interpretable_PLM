@@ -6,9 +6,7 @@
     "site_penalty": 8326.543793473036,
     "density_penalty": 1e-08
   },
-  "boundary_hyperparameters": {
-    "density_penalty": "both"
-  },
+  "boundary_hyperparameters": {},
   "validation_spearman_mean": 0.6150378263992459,
   "pg_kfold_test": {
     "spearman": {

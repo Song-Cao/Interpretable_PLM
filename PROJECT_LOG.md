@@ -590,3 +590,53 @@ the prediction track needs 0 or 3 crosscoders.
   that arm alone. Per the v12 budget rule, classical and pooled ESM arms take priority; the
   two required residue-conv arms cannot both fit under the nine-hour session ceiling, and
   the optional one-hot conv arm is not launched. No seed count or measurement is reduced.
+- `[FINDING]` Five-fold validation selects all-residue mean pooling over mutated-position
+  pooling under the matched ridge comparison (Spearman 0.60765 versus 0.55007), so Step 7's
+  pooling domain is all residues. The held-out estimates reverse weakly (0.52243 versus
+  0.54519) with strongly overlapping bootstrap intervals, and the plate estimates are
+  0.33684 versus 0.44425. Those evaluation reversals are reported but do not override the
+  pre-registered validation-only selection rule.
+- `[FINDING]` The ranking among completed IRED arms is narrow at the top: one-hot ridge,
+  AAIndex ridge, their dPLL-augmented versions, ESM-mean ridge, and ESM-mean MLP have inner-CV
+  Spearman 0.6058-0.6151. External plate performance separates them: unaugmented classical
+  ridge is best at about 0.564; augmented classical is about 0.530; mutated-position ESM
+  ridge 0.444; ESM-mean ridge 0.337; MLP 0.239; random forest 0.232.
+- `[FINDING]` Selected search boundaries: ESM-mean ridge chose minimum weight decay and batch
+  size; ESM-mean MLP chose maximum dropout and learning rate plus minimum batch size; random
+  forest chose maximum depth, maximum `min_samples_leaf`, and maximum feature fraction. The fixed `1e-8` dPLL
+  penalty is not a searched hyperparameter and is therefore not mislabeled as a boundary.
+- `[DECISION]` The exact ESM-C backbone is `biohub/ESMC-300M` revision
+  `e4bac860f0c502cd80f3aeac3d0ce6524c6627cb`, loaded with `esm==3.4.1.post1`. Runtime loading
+  now fails if the Hugging Face main ref differs. Step 3 uses batch size 16 with two-step
+  accumulation, preserving the registered effective batch size 32 and the same 23/28
+  optimizer steps per CV/full epoch as the earlier 4-by-8 setting.
+- `[ADJUST]` Gate 1 task gain is measured on five cross-validation folds within IRED's
+  pg_kfold training pool, not on the 59-row layer-freeze reserve. The reserve is used only
+  for depth selection, drift, and shuffled-label separation. This supersedes v12's labelled
+  reserve comparison and preserves the reserve as training-independent activation data.
+- `[ADJUST]` The analysis depth is selected on IRED alone for this run. The common-depth
+  agreement required across datasets is deferred until the second dataset; all 30 IRED
+  depths are committed so that decision will not require recomputing this curve.
+- `[ADJUST]` A preliminary fixed-80-epoch Gate 1 run completed, but PEFT
+  `save_pretrained` emitted empty 40-byte states for ESM-C's compatibility wrapper. Explicit
+  trainable-state export fixed that defect, after which a clean two-control refit exposed a
+  second issue: initialization had occurred before the per-fit seed, so recovered checkpoints
+  did not reproduce the cached activations. The preliminary reports, cache, empty exports,
+  and complete-but-mismatched recovery fits are preserved in explicitly named archive paths
+  and are not official Gate 1 results. Adapter construction is now seeded and checkpoint
+  export is name-and-shape validated.
+- `[DECISION]` Step 2 early stopping and best-checkpoint selection monitor validation
+  Spearman. Final five-seed neural refits use the rounded median best epoch from the selected
+  configuration's five CV folds. The completed IRED Step 2 runs followed both rules, but their
+  ReduceLROnPlateau scheduler also monitored validation Spearman. This differs from the new
+  ruling that loss alone drives the scheduler. The code now schedules on validation loss;
+  existing Step 2 results are disclosed as run and are not silently rerun.
+- `[DECISION]` Step 3 real adapters early-stop on validation Spearman and restore the best
+  checkpoint. IRED fold 0 is the config-fixed final adapter fold. The shuffled-label control
+  uses the same training rows, initialization seed, optimizer, rank, and exact learning-rate
+  sequence for exactly the real adapter's best-checkpoint optimizer-step count; it never
+  early-stops on shuffled validation labels. Both realized counts are written to Gate 1.
+- `[ADJUST]` The fixed-epoch Gate rerun was interrupted after the stopping-rule clarification,
+  before any active checkpoint or cache existed. Its timing file is archived and its partial
+  fold value is not an official or reported Gate result. Every subsequent fit starts from its
+  registered initialization; no partial training state is reused.

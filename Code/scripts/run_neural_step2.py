@@ -26,7 +26,7 @@ from crossfit.evaluation import (
 from crossfit.models import build_model
 from crossfit.representations import esm_mean, esm_mutpool, esm_residue_delta, onehot_positional
 from crossfit.search import boundary_hyperparameters, sample_configurations, training_pool_folds
-from crossfit.training import fit_torch_fixed_epochs, fit_torch_predictor, predict_torch
+from crossfit.training import fit_torch_fixed_epochs, fit_torch_predictor, predict_torch, seed_everything
 from crossfit.utils import REPO_ROOT, load_config, stable_hash
 
 
@@ -171,9 +171,10 @@ def main() -> int:
             model = _fit_rf(architecture, input_shape, parameters, features, target, train, search_seed + index)
             model.predict(features[validation])
         else:
+            seed_everything(search_seed + index)
             model = build_model(architecture, input_shape, _model_parameters(architecture, parameters))
             fit_torch_predictor(
-                model, features[train], target[train], censoring[train], features[validation], target[validation],
+                model, features[train], target[train], censoring[train], features[validation], target[validation], censoring[validation],
                 objective_config=config["objective"], optimization_config=config["optimization"],
                 parameters=parameters, seed=search_seed + index, device=args.device,
             )
@@ -202,9 +203,10 @@ def main() -> int:
                 prediction = fit.predict(features[validation])
                 best_epoch = 0
             else:
+                seed_everything(seed)
                 model = build_model(architecture, input_shape, _model_parameters(architecture, parameters))
                 fit = fit_torch_predictor(
-                    model, features[train], target[train], censoring[train], features[validation], target[validation],
+                    model, features[train], target[train], censoring[train], features[validation], target[validation], censoring[validation],
                     objective_config=config["objective"], optimization_config=config["optimization"],
                     parameters=parameters, seed=seed, device=args.device,
                 )
@@ -247,14 +249,22 @@ def main() -> int:
             import joblib
             joblib.dump(fitted, model_dir / f"seed_{seed}.joblib")
         else:
+            seed_everything(seed)
+            pg_model = build_model(
+                architecture, input_shape, _model_parameters(architecture, selected)
+            )
             fitted = fit_torch_fixed_epochs(
-                build_model(architecture, input_shape, _model_parameters(architecture, selected)),
+                pg_model,
                 features[fit_indices], target[fit_indices], censoring[fit_indices],
                 objective_config=config["objective"], optimization_config=config["optimization"],
                 parameters=selected, epochs=selected_epochs, seed=seed, device=args.device,
             )
+            seed_everything(seed)
+            round_model = build_model(
+                architecture, input_shape, _model_parameters(architecture, selected)
+            )
             round_fitted = fit_torch_fixed_epochs(
-                build_model(architecture, input_shape, _model_parameters(architecture, selected)),
+                round_model,
                 features[round_train], target[round_train], censoring[round_train],
                 objective_config=config["objective"], optimization_config=config["optimization"],
                 parameters=selected, epochs=selected_epochs, seed=seed, device=args.device,
