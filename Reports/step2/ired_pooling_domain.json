@@ -1,0 +1,18 @@
+{
+  "status": "complete",
+  "comparison_model": "ridge",
+  "selection_protocol": "configurations selected only by inner-CV validation Spearman",
+  "esm_mean_validation_spearman": 0.6076484349219287,
+  "esm_mutpool_validation_spearman": 0.5500693147158584,
+  "esm_mean_test_spearman": {
+    "estimate": 0.5224263168446716,
+    "lower": 0.41094461354556555,
+    "upper": 0.6280223382322262
+  },
+  "esm_mutpool_test_spearman": {
+    "estimate": 0.5451901398128011,
+    "lower": 0.44335718319603257,
+    "upper": 0.6410206278077993
+  },
+  "answer": "all_residue_mean"
+}

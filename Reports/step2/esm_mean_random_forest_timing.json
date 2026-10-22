@@ -1,0 +1,8 @@
+{
+  "arm": "esm_mean_random_forest",
+  "representative_fits": 10,
+  "mean_fit_seconds": 3.840881056099897,
+  "configuration_count": 60,
+  "projected_search_gpu_hours": 0.0,
+  "sampling_seed": 21039647
+}

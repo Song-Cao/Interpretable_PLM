@@ -1,0 +1,8 @@
+{
+  "arm": "esm_mutpool_ridge",
+  "representative_fits": 10,
+  "mean_fit_seconds": 5.158652765399893,
+  "configuration_count": 48,
+  "projected_search_gpu_hours": 0.3439101843599929,
+  "sampling_seed": 20988160
+}

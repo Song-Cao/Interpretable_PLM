@@ -1,0 +1,166 @@
+{
+  "dataset": "IRED",
+  "arm": "esm_mean_random_forest",
+  "sampling_seed": 21039647,
+  "configuration_count": 60,
+  "selected_configuration": {
+    "n_estimators": 600,
+    "max_depth": 24,
+    "min_samples_leaf": 5,
+    "max_features": 1.0
+  },
+  "selected_epochs": 1,
+  "boundary_hyperparameters": {
+    "max_depth": "upper",
+    "min_samples_leaf": "upper",
+    "max_features": "upper"
+  },
+  "validation_spearman_mean": 0.5396290210787724,
+  "pg_kfold_test": {
+    "spearman": {
+      "estimate": 0.43199680841935734,
+      "lower": 0.30876297164706057,
+      "upper": 0.5469182823525943
+    },
+    "pearson": {
+      "estimate": 0.3349795687565716,
+      "lower": 0.2039246911872872,
+      "upper": 0.4566272564712788
+    },
+    "mse": {
+      "estimate": 0.7708873056398043,
+      "lower": 0.6118542266599912,
+      "upper": 0.9537933870192323
+    },
+    "ndcg": {
+      "estimate": 0.9374974699789023,
+      "lower": 0.891248598892619,
+      "upper": 0.9612281618479541
+    },
+    "test_hit_rate": {
+      "estimate": 0.4956140350877193,
+      "lower": 0.4298245614035088,
+      "upper": 0.5570175438596491
+    },
+    "top_24_precision": {
+      "estimate": 0.8333333333333334,
+      "lower": 0.6666666666666666,
+      "upper": 0.9583333333333334
+    },
+    "top_48_precision": {
+      "estimate": 0.7291666666666666,
+      "lower": 0.5833333333333334,
+      "upper": 0.8541666666666666
+    },
+    "top_96_precision": {
+      "estimate": 0.6979166666666666,
+      "lower": 0.59375,
+      "upper": 0.78125
+    }
+  },
+  "round_held_out": {
+    "spearman": {
+      "estimate": 0.44552065948842784,
+      "lower": 0.3492341088932093,
+      "upper": 0.5331694897324096
+    },
+    "pearson": {
+      "estimate": 0.3070495877350045,
+      "lower": 0.21207449234015718,
+      "upper": 0.4020780378194747
+    },
+    "mse": {
+      "estimate": 0.9663096434448554,
+      "lower": 0.7862184727579742,
+      "upper": 1.1436022745471315
+    },
+    "ndcg": {
+      "estimate": 0.9478525033040558,
+      "lower": 0.9350680398471267,
+      "upper": 0.9594029392877081
+    },
+    "test_hit_rate": {
+      "estimate": 0.6356164383561644,
+      "lower": 0.5862328767123289,
+      "upper": 0.684931506849315
+    },
+    "top_24_precision": {
+      "estimate": 0.9583333333333334,
+      "lower": 0.8333333333333334,
+      "upper": 1.0
+    },
+    "top_48_precision": {
+      "estimate": 0.9375,
+      "lower": 0.8541666666666666,
+      "upper": 1.0
+    },
+    "top_96_precision": {
+      "estimate": 0.8645833333333334,
+      "lower": 0.7916666666666666,
+      "upper": 0.9270833333333334
+    }
+  },
+  "plate": {
+    "spearman": {
+      "estimate": 0.23171336001524676,
+      "lower": -0.041388530181385205,
+      "upper": 0.4669199672810522
+    },
+    "ndcg": {
+      "estimate": 0.4709574821973298,
+      "lower": 0.35344745769963304,
+      "upper": 0.8511854434525171
+    }
+  },
+  "member_metric_mean": {
+    "spearman": 0.4327396412400869,
+    "pearson": 0.3338676032301982,
+    "mse": 0.7717852295483519,
+    "ndcg": 0.937956618069982,
+    "test_hit_rate": 0.4956140350877193,
+    "top_24_precision": 0.85,
+    "top_48_precision": 0.7208333333333332,
+    "top_96_precision": 0.6937499999999999
+  },
+  "member_metric_sd": {
+    "spearman": 0.004289274222510663,
+    "pearson": 0.003995712283699068,
+    "mse": 0.00271269612399604,
+    "ndcg": 0.0006850444288620947,
+    "test_hit_rate": 0.0,
+    "top_24_precision": 0.0228217732293819,
+    "top_48_precision": 0.01863389981249823,
+    "top_96_precision": 0.005705443307345459
+  },
+  "mean_epistemic_sd": 0.03087217160266363,
+  "calibration_rows_reserved": 134,
+  "mondrian_conformal": {
+    "calibration_counts": {
+      "(1, False)": 19,
+      "(1, True)": 1,
+      "(2, False)": 32,
+      "(2, True)": 2,
+      "(3, False)": 42,
+      "(3, True)": 2,
+      "(4, False)": 23,
+      "(4, True)": 3,
+      "(5, False)": 7,
+      "(5, True)": 2,
+      "(6, False)": 1
+    },
+    "unsupported_test_rows": 0,
+    "coverage_by_stratum": {
+      "(1, False)": 0.8846153846153846,
+      "(1, True)": 1.0,
+      "(2, False)": 1.0,
+      "(2, True)": 1.0,
+      "(3, False)": 0.922077922077922,
+      "(3, True)": 1.0,
+      "(4, False)": 1.0,
+      "(4, True)": 1.0,
+      "(5, False)": 1.0,
+      "(5, True)": 1.0,
+      "(6, False)": 1.0
+    }
+  }
+}

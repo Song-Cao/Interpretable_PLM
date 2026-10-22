@@ -1,0 +1,8 @@
+{
+  "arm": "esm_mean_mlp",
+  "representative_fits": 10,
+  "mean_fit_seconds": 5.780438414594391,
+  "configuration_count": 60,
+  "projected_search_gpu_hours": 0.4817032012161993,
+  "sampling_seed": 21256414
+}

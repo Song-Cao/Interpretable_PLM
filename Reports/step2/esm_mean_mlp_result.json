@@ -1,0 +1,171 @@
+{
+  "dataset": "IRED",
+  "arm": "esm_mean_mlp",
+  "sampling_seed": 21256414,
+  "configuration_count": 60,
+  "selected_configuration": {
+    "hidden_dims": [
+      512,
+      256,
+      128
+    ],
+    "dropout": 0.4,
+    "learning_rate": 0.001,
+    "weight_decay": 0.001,
+    "batch_size": 32
+  },
+  "selected_epochs": 7,
+  "boundary_hyperparameters": {
+    "dropout": "upper",
+    "learning_rate": "upper",
+    "batch_size": "lower"
+  },
+  "validation_spearman_mean": 0.6057659886414433,
+  "pg_kfold_test": {
+    "spearman": {
+      "estimate": 0.43968913110114194,
+      "lower": 0.3200952667100032,
+      "upper": 0.5520019178134085
+    },
+    "pearson": {
+      "estimate": 0.2949204098537114,
+      "lower": 0.16688420558443082,
+      "upper": 0.4214708053530157
+    },
+    "mse": {
+      "estimate": 0.8924232626142513,
+      "lower": 0.6713915575109578,
+      "upper": 1.1295335703136997
+    },
+    "ndcg": {
+      "estimate": 0.9123125555629634,
+      "lower": 0.8729760027611481,
+      "upper": 0.9602123125344655
+    },
+    "test_hit_rate": {
+      "estimate": 0.4956140350877193,
+      "lower": 0.4298245614035088,
+      "upper": 0.5570175438596491
+    },
+    "top_24_precision": {
+      "estimate": 0.75,
+      "lower": 0.5833333333333334,
+      "upper": 0.9166666666666666
+    },
+    "top_48_precision": {
+      "estimate": 0.75,
+      "lower": 0.625,
+      "upper": 0.875
+    },
+    "top_96_precision": {
+      "estimate": 0.71875,
+      "lower": 0.6145833333333334,
+      "upper": 0.8020833333333334
+    }
+  },
+  "round_held_out": {
+    "spearman": {
+      "estimate": 0.4433378939464221,
+      "lower": 0.35003586240005563,
+      "upper": 0.5287868428723682
+    },
+    "pearson": {
+      "estimate": 0.31792539108980444,
+      "lower": 0.21430822037315256,
+      "upper": 0.41828248551631575
+    },
+    "mse": {
+      "estimate": 1.1769834880474745,
+      "lower": 0.9260589726689789,
+      "upper": 1.4319098029763546
+    },
+    "ndcg": {
+      "estimate": 0.9430421437471881,
+      "lower": 0.9298894654349966,
+      "upper": 0.9549437784917865
+    },
+    "test_hit_rate": {
+      "estimate": 0.6356164383561644,
+      "lower": 0.5862328767123289,
+      "upper": 0.684931506849315
+    },
+    "top_24_precision": {
+      "estimate": 0.875,
+      "lower": 0.75,
+      "upper": 1.0
+    },
+    "top_48_precision": {
+      "estimate": 0.875,
+      "lower": 0.7708333333333334,
+      "upper": 0.9583333333333334
+    },
+    "top_96_precision": {
+      "estimate": 0.8125,
+      "lower": 0.7291666666666666,
+      "upper": 0.8958333333333334
+    }
+  },
+  "plate": {
+    "spearman": {
+      "estimate": 0.23918429578806932,
+      "lower": -0.03297707681655679,
+      "upper": 0.4832518032538761
+    },
+    "ndcg": {
+      "estimate": 0.6168909532611533,
+      "lower": 0.3750774415072103,
+      "upper": 0.9488451981254571
+    }
+  },
+  "member_metric_mean": {
+    "spearman": 0.4339856343548033,
+    "pearson": 0.29118618077914543,
+    "mse": 0.9008024541838806,
+    "ndcg": 0.9199485845220353,
+    "test_hit_rate": 0.4956140350877193,
+    "top_24_precision": 0.7666666666666666,
+    "top_48_precision": 0.75,
+    "top_96_precision": 0.7125
+  },
+  "member_metric_sd": {
+    "spearman": 0.01142616685635354,
+    "pearson": 0.02296817688259019,
+    "mse": 0.02279638985326347,
+    "ndcg": 0.010064189769020699,
+    "test_hit_rate": 0.0,
+    "top_24_precision": 0.022821773229381902,
+    "top_48_precision": 0.02083333333333337,
+    "top_96_precision": 0.01187682734478268
+  },
+  "mean_epistemic_sd": 0.09183890684782164,
+  "calibration_rows_reserved": 134,
+  "mondrian_conformal": {
+    "calibration_counts": {
+      "(1, False)": 19,
+      "(1, True)": 1,
+      "(2, False)": 32,
+      "(2, True)": 2,
+      "(3, False)": 42,
+      "(3, True)": 2,
+      "(4, False)": 23,
+      "(4, True)": 3,
+      "(5, False)": 7,
+      "(5, True)": 2,
+      "(6, False)": 1
+    },
+    "unsupported_test_rows": 0,
+    "coverage_by_stratum": {
+      "(1, False)": 0.8846153846153846,
+      "(1, True)": 1.0,
+      "(2, False)": 0.9836065573770492,
+      "(2, True)": 1.0,
+      "(3, False)": 0.8961038961038961,
+      "(3, True)": 1.0,
+      "(4, False)": 1.0,
+      "(4, True)": 1.0,
+      "(5, False)": 1.0,
+      "(5, True)": 1.0,
+      "(6, False)": 1.0
+    }
+  }
+}
