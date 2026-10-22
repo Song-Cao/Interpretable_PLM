@@ -327,9 +327,10 @@ def main() -> int:
         "gate1_pass": bool(gate_pass),
         "gpu_projection_hours": projected_hours,
     }
-    (report_dir / "gate1_report.json").write_text(json.dumps(result, indent=2) + "\n")
-    print(json.dumps(result, indent=2), flush=True)
     if not gate_pass:
+        result["run_complete"] = True
+        (report_dir / "gate1_report.json").write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result, indent=2), flush=True)
         return 2
 
     selected_cache = REPO_ROOT / config["paths"]["cache"]
@@ -355,6 +356,15 @@ def main() -> int:
     np.save(selected_cache / "full_selected_layer_base.npy", base_selected.astype(np.float16))
     np.save(selected_cache / "full_selected_layer_adapted.npy", adapted_selected.astype(np.float16))
     np.save(selected_cache / "full_variant_rows.npy", full_frame["variant_row"].to_numpy(np.int64))
+    result["run_complete"] = True
+    result["selected_cache_shapes"] = {
+        "reserve_all_layers_adapted": list(adapted_layers.shape),
+        "reserve_all_layers_shuffled": list(shuffled_layers.shape),
+        "full_selected_layer_base": list(base_selected.shape),
+        "full_selected_layer_adapted": list(adapted_selected.shape),
+    }
+    (report_dir / "gate1_report.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result, indent=2), flush=True)
     return 0
 
 
