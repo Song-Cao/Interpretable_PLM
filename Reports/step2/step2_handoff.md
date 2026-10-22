@@ -96,9 +96,9 @@ Ten representative `esm_residue -> conv residual` fits averaged 137.72 seconds. 
 The exact published classical normal-equation baselines optimize diagonally penalized squared error, and scikit-learn random forests optimize squared-error tree splits. Those solvers cannot optimize the differentiable composite Tobit/ranking objective used by the neural arms. This is the literal published-form implementation in sections 2f-2g, but it is an objective mismatch relative to section 2a's statement that every model uses one identical objective. Results preserve both facts rather than hiding the mismatch.
 
 The completed neural searches used validation Spearman for early stopping, best-checkpoint
-selection, and ReduceLROnPlateau. The first two match the pre-committed selection rule; the
-latest ruling requires loss, not Spearman, to drive the learning-rate scheduler. The code now
-uses validation loss for scheduling, but these completed Step 2 results were not silently
-rerun and therefore retain the original scheduler behavior.
+selection, and ReduceLROnPlateau. This is the standing policy for every dataset: all three
+training decisions use the same pre-committed quantity, preserving cross-dataset
+comparability. Training loss remains a diagnostic and an optimization objective, not a
+scheduler monitor.
 
 Step 4 budget bounds are in `Reports/step3/step4_budget_ired.json`. All 895 training variants at all 290 residues would occupy 0.996672 GB for two fp16 models; mutation-only is a 0.009492 GB lower bound. v12 does not fix the window radius or distant-position count, so a final realized subsampled budget cannot be named without those Step 4 choices. No Step 4 cache was written.

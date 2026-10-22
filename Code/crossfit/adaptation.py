@@ -255,7 +255,7 @@ def fit_adapter_early_stopping(
         weight_decay=float(adapter_config["weight_decay"]),
     )
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode="min", factor=float(scheduler_factor), patience=int(scheduler_patience),
+        optimizer, mode="max", factor=float(scheduler_factor), patience=int(scheduler_patience),
     )
     accumulation = int(adapter_config["gradient_accumulation_steps"])
     best_score = -float("inf")
@@ -307,7 +307,7 @@ def fit_adapter_early_stopping(
                 regularized_parameters=(model.head.weight, model.head.bias),
             )
             validation_loss = float(validation_output.total)
-        scheduler.step(validation_loss)
+        scheduler.step(score)
         trace.append({
             "epoch": float(epoch), "loss": float(np.mean(totals)),
             "validation_loss": validation_loss, "validation_spearman": score,

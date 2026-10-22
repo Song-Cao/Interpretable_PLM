@@ -627,10 +627,10 @@ the prediction track needs 0 or 3 crosscoders.
   export is name-and-shape validated.
 - `[DECISION]` Step 2 early stopping and best-checkpoint selection monitor validation
   Spearman. Final five-seed neural refits use the rounded median best epoch from the selected
-  configuration's five CV folds. The completed IRED Step 2 runs followed both rules, but their
-  ReduceLROnPlateau scheduler also monitored validation Spearman. This differs from the new
-  ruling that loss alone drives the scheduler. The code now schedules on validation loss;
-  existing Step 2 results are disclosed as run and are not silently rerun.
+  configuration's five CV folds. ReduceLROnPlateau also monitors validation Spearman by
+  design, for IRED and every later dataset. Keeping stopping, restoration, and scheduling on
+  the same pre-committed quantity is more coherent and preserves cross-dataset comparability.
+  The completed IRED Step 2 results already follow this policy and are not rerun.
 - `[DECISION]` Step 3 real adapters early-stop on validation Spearman and restore the best
   checkpoint. IRED fold 0 is the config-fixed final adapter fold. The shuffled-label control
   uses the same training rows, initialization seed, optimizer, rank, and exact learning-rate

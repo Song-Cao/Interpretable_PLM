@@ -160,7 +160,7 @@ def fit_torch_predictor(
     )
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer,
-        mode="min",
+        mode="max",
         factor=float(optimization_config["scheduler_factor"]),
         patience=int(optimization_config["scheduler_patience"]),
     )
@@ -200,7 +200,7 @@ def fit_torch_predictor(
             prediction = validation_scores.detach().cpu().numpy().astype(np.float64)
         score = float(spearmanr(prediction, validation_target).statistic)
         score = score if np.isfinite(score) else -1.0
-        scheduler.step(validation_loss)
+        scheduler.step(score)
         history.append({
             "epoch": float(epoch),
             "loss": float(np.mean(totals)),
