@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
+from pathlib import Path
 from typing import Iterable, Sequence
 
 import numpy as np
@@ -16,11 +18,25 @@ class ESMCBatch:
     layers: np.ndarray | None
 
 
-def load_esmc(model_name: str, device: str | torch.device = "cuda") -> torch.nn.Module:
+def load_esmc(
+    model_name: str,
+    device: str | torch.device = "cuda",
+    *,
+    repository: str | None = None,
+    expected_revision: str | None = None,
+) -> torch.nn.Module:
     """Load the pinned local open ESM-C model in inference mode."""
     from esm.models.esmc import ESMC
 
     model = ESMC.from_pretrained(model_name, device=torch.device(device))
+    if repository is not None and expected_revision is not None:
+        cache_root = Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface"))
+        reference = cache_root / "hub" / f"models--{repository.replace('/', '--')}" / "refs" / "main"
+        if not reference.exists() or reference.read_text().strip() != expected_revision:
+            observed = reference.read_text().strip() if reference.exists() else "missing"
+            raise RuntimeError(
+                f"ESM-C revision mismatch for {repository}: expected {expected_revision}, found {observed}"
+            )
     return model.eval()
 
 

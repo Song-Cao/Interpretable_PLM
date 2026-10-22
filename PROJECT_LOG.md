@@ -569,3 +569,24 @@ the prediction track needs 0 or 3 crosscoders.
   selected site penalties were 425.82 and 8326.54; neither is exactly on the registered
   `1e-4`/`1e4` boundary. Exact convex fits are seed-invariant, so their five-member ensemble
   means are identical and ensemble SD is zero.
+- `[FINDING]` ESM-C 300M extraction on the A100 returned 960 channels at 30 hidden-state
+  depths. IRED's realized cache is 1,674,691,432 bytes (1.67 GB decimal): final-layer
+  residue tensors for 1,182 campaign variants and 54 plate variants, all-depth tensors only
+  for the 59-variant reserve, plus wild type. The model work took 90.62 seconds (109.52
+  seconds wall time including startup and writes).
+- `[FINDING]` Mutated-position dPLL was computed for 1,237 unique sequences using 3,441
+  variant-context masked tasks and 277 wild-type position tasks cached once. All values are
+  finite and unique by sequence; mean is -5.7925, SD 5.3026, and range -32.4302 to 5.0523.
+- `[ADJUST]` The pod deliberately lacks ignored `Data/processed/variants.parquet`. The loader
+  now reads tracked `ired_variants.parquet` independently when the ProteinGym bundle is
+  absent, with a regression test. Pinned `pyarrow>=14,<18`: PyArrow 26 required NumPy 2,
+  while the ESM environment requires NumPy 1.26; PyArrow 17 is compatible with both.
+- `[FINDING]` The augmented classical arms remain close to each other. IRED pg_kfold test
+  Spearman is 0.54409 for one-hot+dPLL and 0.54419 for AAIndex+dPLL, versus 0.53197 and
+  0.53224 unaugmented. On the independent plate set, augmentation is worse: Spearman is
+  0.53002/0.52956 versus 0.56371/0.56341. This negative external result is retained.
+- `[COST]` Ten representative `esm_residue -> conv residual` fits averaged 137.72 seconds,
+  projecting 11.48 GPU-hours at 60 configurations and 5.74 hours even at the minimum 30 for
+  that arm alone. Per the v12 budget rule, classical and pooled ESM arms take priority; the
+  two required residue-conv arms cannot both fit under the nine-hour session ceiling, and
+  the optional one-hot conv arm is not launched. No seed count or measurement is reduced.

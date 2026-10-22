@@ -56,7 +56,11 @@ def main() -> int:
     full = load_assay("IRED", with_sequences=True, include_reserve=True)
     plate = load_plate_dataset("IRED")
     wild_type = wt_sequence("IRED")
-    model = load_esmc(str(step3["backbone"]["name"]), args.device)
+    model = load_esmc(
+        str(step3["backbone"]["name"]), args.device,
+        repository=str(step3["backbone"]["repository"]),
+        expected_revision=str(step3["backbone"]["revision"]),
+    )
 
     variant_batch = extract_residue_embeddings(
         model,

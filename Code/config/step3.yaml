@@ -7,7 +7,9 @@ paths:
   cache: Cache/step3/IRED
 backbone:
   name: esmc_300m
-  repository: EvolutionaryScale/esmc-300m-2024-12
+  repository: biohub/ESMC-300M
+  revision: e4bac860f0c502cd80f3aeac3d0ce6524c6627cb
+  esm_package: 3.4.1.post1
 adapter:
   rank: 16
   alpha: 32
@@ -17,8 +19,8 @@ adapter:
   head: linear
   learning_rate: 0.0001
   weight_decay: 0.01
-  batch_size: 4
-  gradient_accumulation_steps: 8
+  batch_size: 16
+  gradient_accumulation_steps: 2
   max_epochs: 80
   early_stopping_patience: 12
   scheduler_factor: 0.5

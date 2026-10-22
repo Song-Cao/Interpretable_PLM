@@ -41,7 +41,11 @@ def _arguments() -> argparse.Namespace:
 
 
 def _new_adapter(config: dict, device: str) -> tuple[SequenceFitnessAdapter, object]:
-    backbone = load_esmc(str(config["backbone"]["name"]), device)
+    backbone = load_esmc(
+        str(config["backbone"]["name"]), device,
+        repository=str(config["backbone"]["repository"]),
+        expected_revision=str(config["backbone"]["revision"]),
+    )
     adapted = build_lora_adapter(
         backbone,
         rank=int(config["adapter"]["rank"]),
@@ -237,7 +241,11 @@ def main() -> int:
     reserve_rows = np.load(cache_dir / "reserve_rows.npy")
     if not np.array_equal(reserve_rows, reserve_frame["variant_row"].to_numpy(int)):
         raise AssertionError("reserve row alignment changed between extraction and Gate 1")
-    base_tokens = load_esmc(str(config["backbone"]["name"]), args.device)._tokenize(reserve_sequences[:1])
+    base_tokens = load_esmc(
+        str(config["backbone"]["name"]), args.device,
+        repository=str(config["backbone"]["repository"]),
+        expected_revision=str(config["backbone"]["revision"]),
+    )._tokenize(reserve_sequences[:1])
     real_tokens = real_tokenize(reserve_sequences[:1])
     shuffled_tokens = shuffled_tokenize(reserve_sequences[:1])
     if not torch.equal(base_tokens, real_tokens) or not torch.equal(base_tokens, shuffled_tokens):
@@ -321,7 +329,11 @@ def main() -> int:
     np.save(selected_cache / "reserve_all_layers_shuffled.npy", shuffled_layers.astype(np.float16))
     full_frame = load_assay("IRED", with_sequences=True, include_reserve=True)
     full_sequences = full_frame["mutant_sequence"].astype(str).tolist()
-    base_model = load_esmc(str(config["backbone"]["name"]), args.device)
+    base_model = load_esmc(
+        str(config["backbone"]["name"]), args.device,
+        repository=str(config["backbone"]["repository"]),
+        expected_revision=str(config["backbone"]["revision"]),
+    )
     base_selected = extract_residue_embeddings(
         base_model, full_sequences, batch_size=int(config["extraction"]["full_dataset_batch_size"]),
         all_layers=True,
