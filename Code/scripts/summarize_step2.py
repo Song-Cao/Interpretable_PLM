@@ -70,11 +70,15 @@ def main() -> int:
     if "esm_mean_ridge" in by_arm and "esm_mutpool_ridge" in by_arm:
         mean = by_arm["esm_mean_ridge"]["pg_kfold_test"]["spearman"]
         mutated = by_arm["esm_mutpool_ridge"]["pg_kfold_test"]["spearman"]
-        winner = "all_residue_mean" if mean["estimate"] >= mutated["estimate"] else "mutated_position_pool"
+        mean_validation = by_arm["esm_mean_ridge"]["validation_spearman_mean"]
+        mutated_validation = by_arm["esm_mutpool_ridge"]["validation_spearman_mean"]
+        winner = "all_residue_mean" if mean_validation >= mutated_validation else "mutated_position_pool"
         pooling = {
             "status": "complete",
             "comparison_model": "ridge",
             "selection_protocol": "configurations selected only by inner-CV validation Spearman",
+            "esm_mean_validation_spearman": mean_validation,
+            "esm_mutpool_validation_spearman": mutated_validation,
             "esm_mean_test_spearman": mean,
             "esm_mutpool_test_spearman": mutated,
             "answer": winner,
