@@ -22,6 +22,7 @@ from crossfit.adaptation import (
     build_lora_adapter,
     fit_adapter,
     predict_adapter,
+    save_trainable_state,
 )
 from crossfit.datasets import get_split, load_assay
 from crossfit.esmc import extract_residue_embeddings, load_esmc
@@ -209,8 +210,7 @@ def main() -> int:
         objective_config=step2["objective"], adapter_config=adapter_parameters,
         epochs=epochs, seed=int(config["adapter"]["seed"]), device=args.device,
     )
-    real_fit.model.backbone.save_pretrained(checkpoint_dir / "real_lora")
-    torch.save(real_fit.model.head.state_dict(), checkpoint_dir / "real_head.pt")
+    save_trainable_state(real_fit.model, checkpoint_dir / "real_adapter.pt")
 
     reserve_frame = load_assay("IRED", with_sequences=True, include_reserve=True)
     reserve_frame = reserve_frame.loc[reserve_frame["is_layer_freeze_reserve"]].reset_index(drop=True)
@@ -231,8 +231,7 @@ def main() -> int:
     )
     if shuffled_fit.optimizer_steps != real_fit.optimizer_steps:
         raise AssertionError("real and shuffled adapters took different optimizer step counts")
-    shuffled_fit.model.backbone.save_pretrained(checkpoint_dir / "shuffled_lora")
-    torch.save(shuffled_fit.model.head.state_dict(), checkpoint_dir / "shuffled_head.pt")
+    save_trainable_state(shuffled_fit.model, checkpoint_dir / "shuffled_adapter.pt")
     shuffled_layers = _extract_layers(
         shuffled_fit.model, reserve_sequences, int(config["extraction"]["reserve_batch_size"])
     )

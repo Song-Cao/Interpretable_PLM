@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Sequence
 
 import numpy as np
@@ -42,6 +43,42 @@ def build_lora_adapter(backbone: nn.Module, *, rank: int, alpha: int, dropout: f
     for parameter in adapted.base_model.model.embed.parameters():
         parameter.requires_grad_(False)
     return adapted
+
+
+def save_trainable_state(model: SequenceFitnessAdapter, path: str | Path) -> None:
+    """Save the adapter and head parameters without relying on a backbone state dict."""
+    state = {
+        name: parameter.detach().cpu().clone()
+        for name, parameter in model.named_parameters()
+        if parameter.requires_grad
+    }
+    if not state or not any("lora_" in name for name in state):
+        raise AssertionError("adapter state contains no trainable LoRA parameters")
+    torch.save({"format": "crossfit_trainable_state_v1", "parameters": state}, path)
+
+
+def load_trainable_state(
+    model: SequenceFitnessAdapter, path: str | Path, *, map_location: str = "cpu"
+) -> None:
+    """Load an exact adapter and head parameter state and validate every name and shape."""
+    artifact = torch.load(path, map_location=map_location, weights_only=True)
+    if artifact.get("format") != "crossfit_trainable_state_v1":
+        raise ValueError("unrecognized adapter artifact format")
+    saved = artifact["parameters"]
+    current = {name: parameter for name, parameter in model.named_parameters() if parameter.requires_grad}
+    if set(saved) != set(current):
+        missing = sorted(set(current) - set(saved))
+        unexpected = sorted(set(saved) - set(current))
+        raise ValueError(f"adapter parameter mismatch: missing={missing}, unexpected={unexpected}")
+    with torch.no_grad():
+        for name, parameter in current.items():
+            value = saved[name]
+            if tuple(value.shape) != tuple(parameter.shape):
+                raise ValueError(
+                    f"adapter parameter shape mismatch for {name}: "
+                    f"saved={tuple(value.shape)}, current={tuple(parameter.shape)}"
+                )
+            parameter.copy_(value.to(device=parameter.device, dtype=parameter.dtype))
 
 
 class _SequenceDataset(Dataset):
