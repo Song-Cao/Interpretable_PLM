@@ -1,0 +1,25 @@
+{
+  "real": {
+    "bytes": 3903813,
+    "parameter_tensors": 66,
+    "lora_parameter_tensors": 64,
+    "sha256": "6ba600587485eab0771bdfde41ec77ea64c836c6547c3e30c8eb2008147502c0",
+    "reserve_activation_max_abs_difference": 7520.25,
+    "reserve_activation_mean_abs_difference": 13.236679077148438,
+    "reserve_activation_exact_float16_match_fraction": 0.0037415132476134815
+  },
+  "shuffled": {
+    "bytes": 3904101,
+    "parameter_tensors": 66,
+    "lora_parameter_tensors": 64,
+    "sha256": "b14f47debfb5c8a8da8dec311cf500ad53f2a7e4e731d3d8df597610f9b79f3f",
+    "reserve_activation_max_abs_difference": 1692.0,
+    "reserve_activation_mean_abs_difference": 5.941565036773682,
+    "reserve_activation_exact_float16_match_fraction": 0.01211583138515488
+  },
+  "optimizer_steps_each": 2240,
+  "epochs_each": 80,
+  "elapsed_seconds": 1104.8144256070082,
+  "training_restart": "both controls refit from epoch 1; no partial state reused",
+  "invalid_export_preserved_at": "Models/step3/IRED_empty_peft_export_20261022"
+}
