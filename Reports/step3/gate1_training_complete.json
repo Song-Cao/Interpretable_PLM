@@ -1,0 +1,10 @@
+{
+  "stopping_metric": "validation_spearman",
+  "final_adapter_cv_fold": 0,
+  "optimizer_steps_real": 207,
+  "optimizer_steps_real_executed_before_restore": 483,
+  "optimizer_steps_shuffled": 207,
+  "matched_learning_rate_schedule": true,
+  "run_complete": true,
+  "training_complete": true
+}

@@ -1,0 +1,51 @@
+{
+  "dataset": "IRED",
+  "task_gain_mean": 0.019058281125494504,
+  "frozen_spearman_mean": 0.598779882528889,
+  "adapted_spearman_mean": 0.6178381636543835,
+  "selected_layer": 29,
+  "layer_selection_rule": "maximum mean real-minus-shuffled relative drift on the reserve",
+  "selected_real_relative_drift": 1.2980905771255493,
+  "selected_shuffled_relative_drift": 0.8456480503082275,
+  "selected_drift_gap_95_ci": [
+    0.38618329379518157,
+    0.520736110614518
+  ],
+  "selected_real_cka": 0.06414967775344849,
+  "selected_shuffled_cka": 0.8195748925209045,
+  "maximum_activation_change": 7475.099609375,
+  "numerical_magnitude_floor": 3.693564745147149e-05,
+  "stopping_metric": "validation_spearman",
+  "final_adapter_cv_fold": 0,
+  "optimizer_steps_real": 207,
+  "optimizer_steps_real_executed_before_restore": 483,
+  "optimizer_steps_shuffled": 207,
+  "matched_learning_rate_schedule": true,
+  "gate1_pass": true,
+  "gpu_projection_hours": 0.8387125593338473,
+  "run_complete": true,
+  "selected_cache_shapes": {
+    "reserve_all_layers_adapted": [
+      59,
+      30,
+      290,
+      960
+    ],
+    "reserve_all_layers_shuffled": [
+      59,
+      30,
+      290,
+      960
+    ],
+    "full_selected_layer_base": [
+      1182,
+      290,
+      960
+    ],
+    "full_selected_layer_adapted": [
+      1182,
+      290,
+      960
+    ]
+  }
+}
