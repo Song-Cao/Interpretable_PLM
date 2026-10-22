@@ -1,0 +1,22 @@
+{
+  "dataset": "IRED",
+  "task_gain_mean": 0.012453723373081638,
+  "frozen_spearman_mean": 0.5979208585019362,
+  "adapted_spearman_mean": 0.6103745818750179,
+  "selected_layer": 11,
+  "layer_selection_rule": "maximum mean real-minus-shuffled relative drift on the reserve",
+  "selected_real_relative_drift": 0.32556843757629395,
+  "selected_shuffled_relative_drift": 0.09982016682624817,
+  "selected_drift_gap_95_ci": [
+    0.2234785631551581,
+    0.22820892329564538
+  ],
+  "selected_real_cka": 0.950035035610199,
+  "selected_shuffled_cka": 0.9372233152389526,
+  "maximum_activation_change": 8043.49169921875,
+  "numerical_magnitude_floor": 3.693564745147149e-05,
+  "optimizer_steps_real": 2240,
+  "optimizer_steps_shuffled": 2240,
+  "gate1_pass": true,
+  "gpu_projection_hours": 0.9789607799987101
+}
