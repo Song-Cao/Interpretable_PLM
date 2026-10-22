@@ -83,3 +83,24 @@ def test_trainable_adapter_state_round_trip(tmp_path):
     assert torch.equal(target.backbone.lora_A.weight, source.backbone.lora_A.weight)
     assert torch.equal(target.head.weight, source.head.weight)
     assert torch.equal(target.head.bias, source.head.bias)
+
+
+def test_initialization_seed_precedes_training_seed():
+    def construct(seed: int) -> SequenceFitnessAdapter:
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        model = SequenceFitnessAdapter(_LoRALikeBackbone(), 4)
+        for parameter in model.parameters():
+            parameter.requires_grad_(False)
+        model.backbone.lora_A.weight.requires_grad_(True)
+        model.head.weight.requires_grad_(True)
+        model.head.bias.requires_grad_(True)
+        return model
+
+    first = construct(17)
+    torch.rand(100)
+    restarted = construct(17)
+    assert all(
+        torch.equal(left, right)
+        for left, right in zip(first.parameters(), restarted.parameters(), strict=True)
+    )

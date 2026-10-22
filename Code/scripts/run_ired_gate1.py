@@ -41,7 +41,12 @@ def _arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _new_adapter(config: dict, device: str) -> tuple[SequenceFitnessAdapter, object]:
+def _new_adapter(config: dict, device: str, seed: int) -> tuple[SequenceFitnessAdapter, object]:
+    # Model construction initializes both LoRA A matrices and the readout. Seed
+    # before construction so a complete restart recreates the measured model.
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
     backbone = load_esmc(
         str(config["backbone"]["name"]), device,
         repository=str(config["backbone"]["repository"]),
@@ -110,7 +115,9 @@ def main() -> int:
 
     report_dir = REPO_ROOT / config["paths"]["reports"]
     report_dir.mkdir(parents=True, exist_ok=True)
-    benchmark_model, tokenize = _new_adapter(config, args.device)
+    benchmark_model, tokenize = _new_adapter(
+        config, args.device, int(config["adapter"]["seed"])
+    )
     benchmark_train, _ = folds[0]
     started = time.perf_counter()
     benchmark = fit_adapter(
@@ -172,13 +179,14 @@ def main() -> int:
         frozen_prediction = predict_torch(
             head_fit.model, head_fit.normalizer, base_mean[validation], device=args.device
         )
-        adapter_model, tokenize = _new_adapter(config, args.device)
+        fit_seed = int(config["adapter"]["seed"]) + fold_index
+        adapter_model, tokenize = _new_adapter(config, args.device, fit_seed)
         real_fit = fit_adapter(
             adapter_model,
             [sequences[index] for index in train], target[train], censoring[train],
             backbone_tokenize=tokenize,
             objective_config=step2["objective"], adapter_config=adapter_parameters,
-            epochs=epochs, seed=int(config["adapter"]["seed"]) + fold_index, device=args.device,
+            epochs=epochs, seed=fit_seed, device=args.device,
         )
         real_prediction = predict_adapter(
             real_fit.model, [sequences[index] for index in validation],
@@ -203,7 +211,9 @@ def main() -> int:
     if checkpoint_dir.exists():
         raise FileExistsError(f"refusing to overwrite Gate 1 checkpoints: {checkpoint_dir}")
     checkpoint_dir.mkdir(parents=True)
-    real_model, real_tokenize = _new_adapter(config, args.device)
+    real_model, real_tokenize = _new_adapter(
+        config, args.device, int(config["adapter"]["seed"])
+    )
     real_fit = fit_adapter(
         real_model, [sequences[index] for index in train_pool], target[train_pool], censoring[train_pool],
         backbone_tokenize=real_tokenize,
@@ -222,7 +232,9 @@ def main() -> int:
     permutation = shuffled_rng.permutation(len(train_pool))
     shuffled_target = target[train_pool][permutation]
     shuffled_censoring = censoring[train_pool][permutation]
-    shuffled_model, shuffled_tokenize = _new_adapter(config, args.device)
+    shuffled_model, shuffled_tokenize = _new_adapter(
+        config, args.device, int(config["adapter"]["seed"])
+    )
     shuffled_fit = fit_adapter(
         shuffled_model, [sequences[index] for index in train_pool], shuffled_target, shuffled_censoring,
         backbone_tokenize=shuffled_tokenize,
