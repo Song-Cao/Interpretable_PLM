@@ -608,8 +608,8 @@ the prediction track needs 0 or 3 crosscoders.
 - `[DECISION]` The exact ESM-C backbone is `biohub/ESMC-300M` revision
   `e4bac860f0c502cd80f3aeac3d0ce6524c6627cb`, loaded with `esm==3.4.1.post1`. Runtime loading
   now fails if the Hugging Face main ref differs. Step 3 uses batch size 16 with two-step
-  accumulation, preserving the registered effective batch size 32 and the same 23/28
-  optimizer steps per CV/full epoch as the earlier 4-by-8 setting.
+  accumulation, preserving the registered effective batch size 32 and 23 optimizer steps
+  per CV training epoch as the earlier 4-by-8 setting.
 - `[ADJUST]` Gate 1 task gain is measured on five cross-validation folds within IRED's
   pg_kfold training pool, not on the 59-row layer-freeze reserve. The reserve is used only
   for depth selection, drift, and shuffled-label separation. This supersedes v12's labelled
@@ -640,3 +640,34 @@ the prediction track needs 0 or 3 crosscoders.
   before any active checkpoint or cache existed. Its timing file is archived and its partial
   fold value is not an official or reported Gate result. Every subsequent fit starts from its
   registered initialization; no partial training state is reused.
+- `[FINDING]` The authoritative IRED Gate 1 task comparison completed all five folds. Frozen
+  and adapted mean Spearman are 0.59878 and 0.61784, for mean task gain +0.01906. Fold gains
+  are +0.01656, +0.04025, -0.02916, +0.08086, and -0.01321; two folds are negative. The
+  final fold-0 real adapter restores epoch 9 at 207 optimizer steps after executing 483 steps
+  to satisfy patience. The shuffled control completed exactly 207 steps with the real LR
+  sequence.
+- `[ADJUST]` Checkpoint load-back found that the first separation analysis of the authoritative
+  checkpoints had extracted the shuffled model while it remained in training mode, injecting
+  LoRA dropout noise. Training and checkpoints were complete and valid. All representation
+  extraction now forces eval mode, and the active analysis was resumed from those checkpoints.
+  The train-mode report and cache are preserved under explicit archive paths and are not used.
+- `[FINDING]` Corrected eval-mode Gate 1 passes. Depth 29 maximizes real-minus-shuffled drift:
+  real 1.29809, shuffled 0.84576, gap bootstrap 95% interval [0.38609, 0.52066]. Real and
+  shuffled CKA are 0.06415 and 0.81942. Every one of the 30 depths has a positive gap lower
+  bound. Depth 29 is the final layer, so +2/+4 sensitivity is impossible; -2/-4 gaps remain
+  positive at 0.32644 and 0.24897. This boundary optimum and lack of downstream blocks must
+  be revisited in the second-dataset common-layer agreement check.
+- `[FINDING]` The active Step 3 pod cache contains eval-mode reserve tensors shaped
+  `[59,30,290,960]` and base/adapted depth-29 tensors shaped `[1182,290,960]`, totaling
+  3.1 GB. Full-corpus extraction retains only the selected layer batch-by-batch. No Step 4
+  cache was written.
+- `[COST]` Step 2 consumed approximately 1.9 A100 GPU-hours against its 5-hour estimate,
+  including extraction, pooled-arm searches, the official conv timing audit, and discarded
+  timing attempts. Step 3 consumed approximately 2.0 A100 GPU-hours against its 2-hour
+  estimate, including the authoritative 0.43-hour run plus the fully preserved diagnostic
+  reruns needed to expose checkpoint and eval-mode defects. Session total is approximately
+  3.9 GPU-hours, below the 9-hour hard ceiling.
+- `[FINDING]` Final repository verification passed all 203 tests in 99.92 seconds. The active
+  Step 2 and Gate 1 reports contain only completed searches, folds, refits, and checkpoint-
+  backed analyses; interrupted and superseded attempts remain isolated under
+  `Reports/archive/` and are not used in any reported result.
