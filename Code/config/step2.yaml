@@ -91,6 +91,7 @@ search:
       weight_decay: [0.0001, 0.001, 0.01]
       batch_size: [16, 32, 64]
 optimization:
+  scheduler_metric: validation_spearman
   ensemble_seeds: [0, 1, 2, 3, 4]
   max_epochs: 300
   early_stopping_patience: 25

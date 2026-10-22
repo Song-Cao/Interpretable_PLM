@@ -148,6 +148,8 @@ def _position_sets(values: pd.Series) -> list[set[int]]:
 def main() -> int:
     args = _arguments()
     config = load_config(REPO_ROOT / "Code" / "config" / "step2.yaml")
+    if config["optimization"]["scheduler_metric"] != "validation_spearman":
+        raise ValueError("Step 2 scheduling must monitor validation Spearman")
     frame = load_assay("IRED", with_sequences=True)
     plate = load_plate_dataset("IRED")
     features = _representation(args.arm, config, frame)

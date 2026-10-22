@@ -72,3 +72,10 @@ def test_v12_excluded_architectures_stay_absent():
     text = _production_text() + "\n" + str(config)
     assert "gradient_boosted_trees" not in text
     assert "attention_pooling" not in text
+
+
+def test_scheduler_metric_is_validation_spearman_everywhere():
+    step2 = yaml.safe_load((REPO_ROOT / "Code" / "config" / "step2.yaml").read_text())
+    step3 = yaml.safe_load((REPO_ROOT / "Code" / "config" / "step3.yaml").read_text())
+    assert step2["optimization"]["scheduler_metric"] == "validation_spearman"
+    assert step3["adapter"]["scheduler_metric"] == "validation_spearman"

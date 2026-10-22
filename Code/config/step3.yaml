@@ -11,6 +11,7 @@ backbone:
   revision: e4bac860f0c502cd80f3aeac3d0ce6524c6627cb
   esm_package: 3.4.1.post1
 adapter:
+  scheduler_metric: validation_spearman
   rank: 16
   alpha: 32
   dropout: 0.05

@@ -26,7 +26,7 @@ from crossfit.adaptation import (
     save_trainable_state,
 )
 from crossfit.datasets import get_split, load_assay
-from crossfit.esmc import extract_residue_embeddings, load_esmc
+from crossfit.esmc import extract_residue_embeddings, extract_residue_layer, load_esmc
 from crossfit.gate1 import bootstrap_drift_gap, linear_cka_by_layer, tokenwise_relative_drift
 from crossfit.models import RidgeHead
 from crossfit.representations import esm_mean
@@ -103,6 +103,8 @@ def main() -> int:
     args = _arguments()
     step2 = load_config(REPO_ROOT / "Code" / "config" / "step2.yaml")
     config = load_config(REPO_ROOT / "Code" / "config" / "step3.yaml")
+    if config["adapter"]["scheduler_metric"] != "validation_spearman":
+        raise ValueError("Step 3 scheduling must monitor validation Spearman")
     frame = load_assay("IRED", with_sequences=True)
     sequences = frame["mutant_sequence"].astype(str).tolist()
     target = frame["y"].to_numpy(np.float32)
@@ -373,13 +375,14 @@ def main() -> int:
         repository=str(config["backbone"]["repository"]),
         expected_revision=str(config["backbone"]["revision"]),
     )
-    base_selected = extract_residue_embeddings(
+    base_selected = extract_residue_layer(
         base_model, full_sequences, batch_size=int(config["extraction"]["full_dataset_batch_size"]),
-        all_layers=True,
-    ).layers[:, selected_layer]
-    adapted_selected = _extract_layers(
-        real_fit.model, full_sequences, int(config["extraction"]["full_dataset_batch_size"])
-    )[:, selected_layer]
+        layer=selected_layer,
+    )
+    adapted_selected = extract_residue_layer(
+        real_fit.model.backbone, full_sequences,
+        batch_size=int(config["extraction"]["full_dataset_batch_size"]), layer=selected_layer,
+    )
     np.save(selected_cache / "full_selected_layer_base.npy", base_selected.astype(np.float16))
     np.save(selected_cache / "full_selected_layer_adapted.npy", adapted_selected.astype(np.float16))
     np.save(selected_cache / "full_variant_rows.npy", full_frame["variant_row"].to_numpy(np.int64))

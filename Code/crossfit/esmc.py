@@ -54,6 +54,9 @@ def extract_residue_embeddings(
     all_layers: bool = False,
 ) -> ESMCBatch:
     """Extract aligned residue states, dropping exactly the two special tokens."""
+    # Adapted models can arrive directly from training. Representation
+    # measurements must never include LoRA or head dropout noise.
+    model.eval()
     values = [str(value) for value in sequences]
     if not values or len({len(value) for value in values}) != 1:
         raise ValueError("ESM-C extraction needs non-empty equal-length sequences")
@@ -71,6 +74,29 @@ def extract_residue_embeddings(
     final = np.concatenate(final_rows, axis=0)
     layers = np.concatenate(layer_rows, axis=1).transpose(1, 0, 2, 3) if all_layers else None
     return ESMCBatch(final=final, layers=layers)
+
+
+@torch.inference_mode()
+def extract_residue_layer(
+    model: torch.nn.Module,
+    sequences: Sequence[str],
+    *,
+    layer: int,
+    batch_size: int,
+) -> np.ndarray:
+    """Extract one aligned hidden-state depth without retaining other depths."""
+    model.eval()
+    values = [str(value) for value in sequences]
+    if not values or len({len(value) for value in values}) != 1:
+        raise ValueError("ESM-C extraction needs non-empty equal-length sequences")
+    rows: list[np.ndarray] = []
+    for batch in _batched(values, batch_size):
+        tokens = model._tokenize(list(batch))
+        output = model(sequence_tokens=tokens)
+        if layer < 0 or layer >= output.hidden_states.shape[0]:
+            raise IndexError(f"hidden-state layer {layer} is outside the model output")
+        rows.append(output.hidden_states[layer, :, 1:-1].float().cpu().numpy())
+    return np.concatenate(rows, axis=0)
 
 
 @torch.inference_mode()
