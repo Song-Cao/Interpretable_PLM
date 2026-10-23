@@ -196,10 +196,22 @@ def main() -> int:
         candidate = json.loads(timing_path.read_text())
         if (
             candidate.get("arm") == args.arm
-            and int(candidate.get("configuration_count", -1)) == len(configurations)
             and int(candidate.get("sampling_seed", -1)) == search_seed
+            and int(candidate.get("representative_fits", -1))
+            == int(config["search"]["timing_fits"])
         ):
-            timing = candidate
+            timing = dict(candidate)
+            timing["configuration_count"] = len(configurations)
+            timing["projected_search_gpu_hours"] = (
+                0.0
+                if architecture == "random_forest" or args.device == "cpu"
+                else float(
+                    timing["mean_fit_seconds"] * len(configurations) * len(folds) / 3600.0
+                )
+            )
+            timing["one_time_fold_preparation_seconds"] = preparation_seconds
+            timing["reused_completed_timing_audit"] = True
+            timing_path.write_text(json.dumps(timing, indent=2) + "\n")
     if timing is None:
         timing_rows = []
         for index, parameters in enumerate(configurations[: int(config["search"]["timing_fits"])]):
