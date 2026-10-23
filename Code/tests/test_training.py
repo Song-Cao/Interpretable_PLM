@@ -9,6 +9,7 @@ from crossfit.training import (
     fit_torch_fixed_epochs,
     fit_torch_predictor,
     predict_torch,
+    prepare_feature_split,
 )
 
 
@@ -21,6 +22,17 @@ def test_feature_normalizer_uses_training_moments_for_vector_and_sequence_inputs
     sequence_normalizer = FeatureNormalizer.fit(sequence)
     normalized = sequence_normalizer.transform(sequence)
     np.testing.assert_allclose(normalized.mean(axis=(0, 1)), 0.0, atol=1e-6)
+
+
+def test_prepared_feature_split_matches_direct_training_normalization():
+    train = np.arange(24, dtype=np.float32).reshape(4, 2, 3)
+    validation = np.arange(12, dtype=np.float32).reshape(2, 2, 3) + 100.0
+    prepared = prepare_feature_split(train, validation)
+    expected = FeatureNormalizer.fit(train)
+    np.testing.assert_allclose(prepared.normalizer.mean, expected.mean)
+    np.testing.assert_allclose(prepared.normalizer.scale, expected.scale)
+    np.testing.assert_allclose(prepared.train.numpy(), expected.transform(train))
+    np.testing.assert_allclose(prepared.validation.numpy(), expected.transform(validation))
 
 
 def test_torch_fit_selects_on_validation_and_returns_direct_scores():

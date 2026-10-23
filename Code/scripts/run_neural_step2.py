@@ -26,7 +26,13 @@ from crossfit.evaluation import (
 from crossfit.models import build_model
 from crossfit.representations import esm_mean, esm_mutpool, esm_residue_delta, onehot_positional
 from crossfit.search import boundary_hyperparameters, sample_configurations, training_pool_folds
-from crossfit.training import fit_torch_fixed_epochs, fit_torch_predictor, predict_torch, seed_everything
+from crossfit.training import (
+    fit_torch_fixed_epochs,
+    fit_torch_predictor,
+    predict_torch,
+    prepare_feature_split,
+    seed_everything,
+)
 from crossfit.utils import REPO_ROOT, load_config, stable_hash
 
 
@@ -165,6 +171,15 @@ def main() -> int:
     configurations = _sample(space, requested, search_seed)
     input_shape = tuple(features.shape[1:])
 
+    preparation_started = time.perf_counter()
+    prepared_folds = None
+    if architecture != "random_forest":
+        prepared_folds = [
+            prepare_feature_split(features[train], features[validation])
+            for train, validation in folds
+        ]
+    preparation_seconds = time.perf_counter() - preparation_started
+
     timing_rows = []
     for index, parameters in enumerate(configurations[: int(config["search"]["timing_fits"])]):
         train, validation = folds[index % len(folds)]
@@ -179,6 +194,7 @@ def main() -> int:
                 model, features[train], target[train], censoring[train], features[validation], target[validation], censoring[validation],
                 objective_config=config["objective"], optimization_config=config["optimization"],
                 parameters=parameters, seed=search_seed + index, device=args.device,
+                prepared_features=prepared_folds[index % len(folds)],
             )
         timing_rows.append(time.perf_counter() - started)
     timing = {
@@ -188,6 +204,7 @@ def main() -> int:
         "configuration_count": len(configurations),
         "projected_search_gpu_hours": 0.0 if architecture == "random_forest" or args.device == "cpu" else float(np.mean(timing_rows) * len(configurations) * len(folds) / 3600.0),
         "sampling_seed": search_seed,
+        "one_time_fold_preparation_seconds": preparation_seconds,
     }
     report_dir = REPO_ROOT / config["paths"]["reports"]
     report_dir.mkdir(parents=True, exist_ok=True)
@@ -211,6 +228,7 @@ def main() -> int:
                     model, features[train], target[train], censoring[train], features[validation], target[validation], censoring[validation],
                     objective_config=config["objective"], optimization_config=config["optimization"],
                     parameters=parameters, seed=seed, device=args.device,
+                    prepared_features=prepared_folds[fold_index],
                 )
                 prediction = predict_torch(fit.model, fit.normalizer, features[validation], device=args.device)
                 best_epoch = fit.best_epoch + 1

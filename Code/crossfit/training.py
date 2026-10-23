@@ -71,6 +71,25 @@ class FixedEpochFit:
     epochs: int
 
 
+@dataclass(frozen=True)
+class PreparedFeatureSplit:
+    """One fold normalized once from training-only moments."""
+
+    normalizer: FeatureNormalizer
+    train: torch.Tensor
+    validation: torch.Tensor
+
+
+def prepare_feature_split(
+    train_features: np.ndarray, validation_features: np.ndarray
+) -> PreparedFeatureSplit:
+    """Fit training-only moments and cache transformed fold tensors."""
+    normalizer = FeatureNormalizer.fit(train_features)
+    train = torch.from_numpy(normalizer.transform(train_features))
+    validation = torch.from_numpy(normalizer.transform(validation_features))
+    return PreparedFeatureSplit(normalizer, train, validation)
+
+
 def _loss_from_config(config: dict) -> CompositeFitnessLoss:
     residual = config["residual_scale"]
     weights = config["weights"]
@@ -131,13 +150,17 @@ def fit_torch_predictor(
     parameters: dict,
     seed: int,
     device: str | torch.device,
+    prepared_features: PreparedFeatureSplit | None = None,
 ) -> TorchFit:
     """Fit one neural predictor with validation-Spearman early stopping."""
     seed_everything(seed)
     device = torch.device(device)
-    normalizer = FeatureNormalizer.fit(train_features)
-    train_x = torch.from_numpy(normalizer.transform(train_features))
-    validation_x = torch.from_numpy(normalizer.transform(validation_features))
+    prepared = prepared_features or prepare_feature_split(train_features, validation_features)
+    if len(prepared.train) != len(train_features) or len(prepared.validation) != len(validation_features):
+        raise ValueError("prepared feature rows do not match this train/validation split")
+    normalizer = prepared.normalizer
+    train_x = prepared.train
+    validation_x = prepared.validation
     train_y = torch.as_tensor(train_target, dtype=torch.float32)
     validation_y = torch.as_tensor(validation_target, dtype=torch.float32)
     censor_codes = {"none": 0, "floor": 1, "ceiling": 2}
