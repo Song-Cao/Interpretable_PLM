@@ -3,16 +3,16 @@
   "task_gain_mean": 0.0190582811254945,
   "frozen_spearman_mean": 0.598779882528889,
   "adapted_spearman_mean": 0.6178381636543835,
-  "selected_layer": 29,
-  "layer_selection_rule": "maximum mean real-minus-shuffled relative drift on the reserve",
-  "selected_real_relative_drift": 1.2980905771255493,
-  "selected_shuffled_relative_drift": 0.8457590937614441,
+  "selected_layer": 26,
+  "layer_selection_rule": "earliest mid-network layer with real CKA at least 0.5 and drift gap at least 90% of the eligible maximum",
+  "selected_real_relative_drift": 0.6338156,
+  "selected_shuffled_relative_drift": 0.341735,
   "selected_drift_gap_95_ci": [
-    0.3860896056738951,
-    0.5206580184021239
+    0.2831985412765357,
+    0.3012011526373483
   ],
-  "selected_real_cka": 0.06414967775344849,
-  "selected_shuffled_cka": 0.8194185495376587,
+  "selected_real_cka": 0.918944537639618,
+  "selected_shuffled_cka": 0.9811168313026428,
   "maximum_activation_change": 7475.099609375,
   "numerical_magnitude_floor": 3.693564745147149e-05,
   "stopping_metric": "validation_spearman",
@@ -22,30 +22,79 @@
   "optimizer_steps_shuffled": 207,
   "matched_learning_rate_schedule": true,
   "resumed_from_complete_checkpoints": true,
-  "gate1_pass": true,
+  "gate1_pass": false,
   "run_complete": true,
-  "selected_cache_shapes": {
-    "reserve_all_layers_adapted": [
-      59,
-      30,
-      290,
-      960
-    ],
-    "reserve_all_layers_shuffled": [
-      59,
-      30,
-      290,
-      960
-    ],
-    "full_selected_layer_base": [
-      1182,
-      290,
-      960
-    ],
-    "full_selected_layer_adapted": [
-      1182,
-      290,
-      960
-    ]
+  "task_gain_test": {
+    "method": "paired_two_sided_t",
+    "alpha": 0.05,
+    "n_folds": 5,
+    "mean": 0.0190582811254945,
+    "standard_error": 0.019545831524577777,
+    "t_statistic": 0.9750560420788336,
+    "degrees_of_freedom": 4,
+    "p_value_two_sided": 0.38474402796197554,
+    "established": false
+  },
+  "selected_layer_frozen": false,
+  "layer_selection_parameters": {
+    "real_cka_floor": 0.5,
+    "exclude_first_layers": 3,
+    "exclude_last_layers": 3,
+    "near_maximum_drift_gap_fraction": 0.9,
+    "eligible_maximum_drift_gap": 0.29208058,
+    "near_maximum_threshold": 0.262872522
+  },
+  "selected_real_to_shuffled_drift_ratio": 1.8546991089586962,
+  "matched_drift_null_required": false,
+  "selected_activation_norm_ratio": 0.9164953231811523,
+  "sensitivity": [
+    {
+      "offset": -4,
+      "available": true,
+      "layer": 22,
+      "drift_gap": 0.17599192,
+      "drift_gap_95_ci": [
+        0.1683665111408395,
+        0.1839182225892604
+      ],
+      "real_cka": 0.9803887605667114,
+      "activation_norm_ratio": 0.9170894622802734
+    },
+    {
+      "offset": -2,
+      "available": true,
+      "layer": 24,
+      "drift_gap": 0.21504185,
+      "drift_gap_95_ci": [
+        0.2064500936891062,
+        0.2239560948211257
+      ],
+      "real_cka": 0.9705724716186525,
+      "activation_norm_ratio": 0.9207599759101868
+    },
+    {
+      "offset": 2,
+      "available": true,
+      "layer": 28,
+      "drift_gap": 0.37330925,
+      "drift_gap_95_ci": [
+        0.3635346139386549,
+        0.3833654643620475
+      ],
+      "real_cka": 0.624270498752594,
+      "activation_norm_ratio": 0.9028392434120178
+    },
+    {
+      "offset": 4,
+      "available": false
+    }
+  ],
+  "gate_failure_reasons": [
+    "task_gain_not_established"
+  ],
+  "superseded_layer_29_result": {
+    "reason": "real CKA 0.06415 indicates final-layer collapse",
+    "archive": "Reports/archive/step3_gate1_depth29_pre_cka_floor",
+    "full_selected_layer_cache_is_superseded": true
   }
 }
