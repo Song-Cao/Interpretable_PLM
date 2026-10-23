@@ -79,3 +79,14 @@ def test_scheduler_metric_is_validation_spearman_everywhere():
     step3 = yaml.safe_load((REPO_ROOT / "Code" / "config" / "step3.yaml").read_text())
     assert step2["optimization"]["scheduler_metric"] == "validation_spearman"
     assert step3["adapter"]["scheduler_metric"] == "validation_spearman"
+
+
+def test_gate1_layer_rule_retains_collapse_and_midnetwork_guards():
+    step3 = yaml.safe_load((REPO_ROOT / "Code" / "config" / "step3.yaml").read_text())
+    gate = step3["gate1"]
+    assert gate["real_cka_floor"] == 0.5
+    assert gate["exclude_first_layers"] == 3
+    assert gate["exclude_last_layers"] == 3
+    assert gate["near_maximum_drift_gap_fraction"] == 0.9
+    assert gate["task_gain_test"] == "paired_two_sided_t"
+    assert gate["task_gain_alpha"] == 0.05

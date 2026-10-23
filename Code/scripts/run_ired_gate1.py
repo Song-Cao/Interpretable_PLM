@@ -27,7 +27,14 @@ from crossfit.adaptation import (
 )
 from crossfit.datasets import get_split, load_assay
 from crossfit.esmc import extract_residue_embeddings, extract_residue_layer, load_esmc
-from crossfit.gate1 import bootstrap_drift_gap, linear_cka_by_layer, tokenwise_relative_drift
+from crossfit.gate1 import (
+    activation_norms_by_layer,
+    bootstrap_drift_gap,
+    linear_cka_by_layer,
+    paired_task_gain_test,
+    select_analysis_layer,
+    tokenwise_relative_drift,
+)
 from crossfit.models import RidgeHead
 from crossfit.representations import esm_mean
 from crossfit.search import training_pool_folds
@@ -297,6 +304,7 @@ def main() -> int:
     shuffled_drift = tokenwise_relative_drift(base_layers, shuffled_layers)
     real_cka = linear_cka_by_layer(base_layers, adapted_layers, device=args.device)
     shuffled_cka = linear_cka_by_layer(base_layers, shuffled_layers, device=args.device)
+    base_norm, real_norm, norm_ratio = activation_norms_by_layer(base_layers, adapted_layers)
     lower, upper = bootstrap_drift_gap(
         real_drift, shuffled_drift,
         samples=int(config["gate1"]["bootstrap_samples"]),
@@ -304,7 +312,14 @@ def main() -> int:
         confidence_level=float(config["gate1"]["confidence_level"]),
     )
     drift_gap = real_drift.mean(axis=0) - shuffled_drift.mean(axis=0)
-    selected_layer = int(np.argmax(drift_gap))
+    gate = config["gate1"]
+    selected_layer, eligible, near_max, near_max_threshold = select_analysis_layer(
+        drift_gap, real_cka,
+        cka_floor=float(gate["real_cka_floor"]),
+        exclude_first=int(gate["exclude_first_layers"]),
+        exclude_last=int(gate["exclude_last_layers"]),
+        near_max_fraction=float(gate["near_maximum_drift_gap_fraction"]),
+    )
     layer_frame = pd.DataFrame({
         "layer": np.arange(base_layers.shape[1]),
         "real_relative_drift": real_drift.mean(axis=0),
@@ -314,6 +329,12 @@ def main() -> int:
         "drift_gap_upper": upper,
         "real_cka": real_cka,
         "shuffled_cka": shuffled_cka,
+        "base_mean_activation_norm": base_norm,
+        "real_mean_activation_norm": real_norm,
+        "activation_norm_ratio": norm_ratio,
+        "selection_eligible": eligible,
+        "within_near_maximum": near_max,
+        "selected": np.arange(base_layers.shape[1]) == selected_layer,
     })
     layer_frame.to_csv(report_dir / "gate1_by_layer.csv", index=False)
     figure, axes = plt.subplots(1, 2, figsize=(11, 4))
@@ -331,20 +352,59 @@ def main() -> int:
     figure.savefig(report_dir / "gate1_drift_by_depth.png", dpi=180)
     plt.close(figure)
 
-    mean_gain = float(cv_frame["task_gain"].mean())
-    gate_pass = mean_gain > 0.0 and float(lower[selected_layer]) > 0.0
+    task_test = paired_task_gain_test(cv_frame["task_gain"].to_numpy())
+    mean_gain = float(task_test["mean"])
+    task_gain_established = (
+        mean_gain > 0.0
+        and float(task_test["p_value_two_sided"]) < float(gate["task_gain_alpha"])
+    )
+    gate_pass = task_gain_established and float(lower[selected_layer]) > 0.0
+    sensitivity = []
+    for offset in map(int, gate["sensitivity_offsets"]):
+        layer = selected_layer + offset
+        if layer < 0 or layer >= len(layer_frame):
+            sensitivity.append({"offset": offset, "available": False})
+        else:
+            sensitivity.append({
+                "offset": offset, "available": True, "layer": layer,
+                "drift_gap": float(drift_gap[layer]),
+                "drift_gap_95_ci": [float(lower[layer]), float(upper[layer])],
+                "real_cka": float(real_cka[layer]),
+                "activation_norm_ratio": float(norm_ratio[layer]),
+            })
+    drift_ratio = float(
+        real_drift[:, selected_layer].mean() / shuffled_drift[:, selected_layer].mean()
+    )
+    ratio_window = list(map(float, gate["drift_ratio_window"]))
     result = {
         "dataset": "IRED",
         "task_gain_mean": mean_gain,
         "frozen_spearman_mean": float(cv_frame["frozen_spearman"].mean()),
         "adapted_spearman_mean": float(cv_frame["adapted_spearman"].mean()),
         "selected_layer": selected_layer,
-        "layer_selection_rule": "maximum mean real-minus-shuffled relative drift on the reserve",
+        "task_gain_test": {
+            "method": str(gate["task_gain_test"]),
+            "alpha": float(gate["task_gain_alpha"]),
+            **task_test,
+            "established": bool(task_gain_established),
+        },
+        "layer_selection_rule": "earliest eligible layer within 90% of the maximum drift gap",
+        "layer_selection_parameters": {
+            "real_cka_floor": float(gate["real_cka_floor"]),
+            "exclude_first_layers": int(gate["exclude_first_layers"]),
+            "exclude_last_layers": int(gate["exclude_last_layers"]),
+            "near_maximum_drift_gap_fraction": float(gate["near_maximum_drift_gap_fraction"]),
+            "near_maximum_threshold": near_max_threshold,
+        },
         "selected_real_relative_drift": float(real_drift[:, selected_layer].mean()),
         "selected_shuffled_relative_drift": float(shuffled_drift[:, selected_layer].mean()),
+        "selected_real_to_shuffled_drift_ratio": drift_ratio,
+        "matched_drift_null_required": not ratio_window[0] <= drift_ratio <= ratio_window[1],
         "selected_drift_gap_95_ci": [float(lower[selected_layer]), float(upper[selected_layer])],
         "selected_real_cka": float(real_cka[selected_layer]),
         "selected_shuffled_cka": float(shuffled_cka[selected_layer]),
+        "selected_activation_norm_ratio": float(norm_ratio[selected_layer]),
+        "sensitivity": sensitivity,
         "maximum_activation_change": maximum_change,
         "numerical_magnitude_floor": magnitude_floor,
         "stopping_metric": "validation_spearman",
@@ -354,6 +414,7 @@ def main() -> int:
         "optimizer_steps_shuffled": shuffled_fit.optimizer_steps,
         "matched_learning_rate_schedule": True,
         "gate1_pass": bool(gate_pass),
+        "gate_failure_reasons": ([] if task_gain_established else ["task_gain_not_established"]),
         "gpu_projection_hours": projected_hours,
     }
     if not gate_pass:

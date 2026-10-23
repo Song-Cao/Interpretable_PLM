@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 import torch
+from scipy.stats import ttest_1samp
 
 
 def tokenwise_relative_drift(base: np.ndarray, adapted: np.ndarray) -> np.ndarray:
@@ -16,6 +17,72 @@ def tokenwise_relative_drift(base: np.ndarray, adapted: np.ndarray) -> np.ndarra
     if np.any(denominator == 0):
         raise ValueError("base activation norm is zero")
     return numerator / denominator
+
+
+def activation_norms_by_layer(
+    base: np.ndarray, adapted: np.ndarray
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Return base and adapted mean token norms and their ratio for every layer."""
+    left = np.asarray(base, dtype=np.float32)
+    right = np.asarray(adapted, dtype=np.float32)
+    if left.shape != right.shape or left.ndim != 4:
+        raise ValueError("layer activations must align as N x depth x L x d")
+    base_norm = np.linalg.norm(left, axis=-1).mean(axis=(0, 2))
+    adapted_norm = np.linalg.norm(right, axis=-1).mean(axis=(0, 2))
+    if np.any(base_norm == 0):
+        raise ValueError("base activation norm is zero")
+    return base_norm, adapted_norm, adapted_norm / base_norm
+
+
+def paired_task_gain_test(gains: np.ndarray) -> dict[str, float | int]:
+    """Test whether paired cross-validation gains differ from zero."""
+    values = np.asarray(gains, dtype=np.float64)
+    if values.ndim != 1 or len(values) < 2 or not np.isfinite(values).all():
+        raise ValueError("task gains must be a finite vector with at least two folds")
+    result = ttest_1samp(values, popmean=0.0)
+    return {
+        "n_folds": int(len(values)),
+        "mean": float(values.mean()),
+        "standard_error": float(values.std(ddof=1) / np.sqrt(len(values))),
+        "t_statistic": float(result.statistic),
+        "degrees_of_freedom": int(result.df),
+        "p_value_two_sided": float(result.pvalue),
+    }
+
+
+def select_analysis_layer(
+    drift_gap: np.ndarray,
+    real_cka: np.ndarray,
+    *,
+    cka_floor: float,
+    exclude_first: int,
+    exclude_last: int,
+    near_max_fraction: float,
+) -> tuple[int, np.ndarray, np.ndarray, float]:
+    """Select the earliest eligible layer within a fraction of the maximum drift gap."""
+    gap = np.asarray(drift_gap, dtype=np.float64)
+    cka = np.asarray(real_cka, dtype=np.float64)
+    if gap.ndim != 1 or cka.shape != gap.shape or not np.isfinite(gap).all():
+        raise ValueError("drift gap and CKA must be aligned finite vectors")
+    if not np.isfinite(cka).all():
+        raise ValueError("drift gap and CKA must be aligned finite vectors")
+    if exclude_first < 0 or exclude_last < 0 or exclude_first + exclude_last >= len(gap):
+        raise ValueError("layer exclusions leave no selectable depth")
+    if not 0.0 < near_max_fraction <= 1.0:
+        raise ValueError("near-max fraction must be in (0, 1]")
+    layer = np.arange(len(gap))
+    last = len(gap) - exclude_last
+    eligible = (
+        (layer >= exclude_first)
+        & (layer < last)
+        & (cka >= float(cka_floor))
+    )
+    if not eligible.any():
+        raise ValueError("no layer satisfies the CKA and mid-network constraints")
+    maximum = float(gap[eligible].max())
+    threshold = float(near_max_fraction) * maximum
+    near_max = eligible & (gap >= threshold)
+    return int(np.flatnonzero(near_max)[0]), eligible, near_max, threshold
 
 
 def linear_cka_by_layer(
