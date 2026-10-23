@@ -167,12 +167,27 @@ def fit_torch_predictor(
     train_c = torch.tensor([censor_codes[str(value)] for value in train_censoring])
     validation_c = torch.tensor([censor_codes[str(value)] for value in validation_censoring])
     generator = torch.Generator().manual_seed(seed)
-    loader = DataLoader(
-        TensorDataset(train_x, train_y, train_c),
-        batch_size=int(parameters["batch_size"]),
-        shuffle=True,
-        generator=generator,
-    )
+    cuda_resident = device.type == "cuda"
+    if cuda_resident:
+        train_x = train_x.to(device)
+        validation_x = validation_x.to(device)
+        train_y = train_y.to(device)
+        validation_y = validation_y.to(device)
+        train_c = train_c.to(device)
+        validation_c = validation_c.to(device)
+        loader = DataLoader(
+            TensorDataset(torch.arange(len(train_x))),
+            batch_size=int(parameters["batch_size"]),
+            shuffle=True,
+            generator=generator,
+        )
+    else:
+        loader = DataLoader(
+            TensorDataset(train_x, train_y, train_c),
+            batch_size=int(parameters["batch_size"]),
+            shuffle=True,
+            generator=generator,
+        )
     model = model.to(device)
     objective = _loss_from_config(objective_config).to(device)
     trainable = list(model.parameters()) + list(objective.residual_scale.parameters())
@@ -196,8 +211,12 @@ def fit_torch_predictor(
     for epoch in range(int(optimization_config["max_epochs"])):
         model.train()
         totals: list[float] = []
-        for batch_x, batch_y, batch_c in loader:
-            batch_x, batch_y, batch_c = batch_x.to(device), batch_y.to(device), batch_c.to(device)
+        for batch in loader:
+            if cuda_resident:
+                indices = batch[0].to(device)
+                batch_x, batch_y, batch_c = train_x[indices], train_y[indices], train_c[indices]
+            else:
+                batch_x, batch_y, batch_c = (value.to(device) for value in batch)
             optimizer.zero_grad(set_to_none=True)
             scores = model(batch_x)
             output = objective(
@@ -266,12 +285,22 @@ def fit_torch_fixed_epochs(
     y = torch.as_tensor(target, dtype=torch.float32)
     censor_codes = {"none": 0, "floor": 1, "ceiling": 2}
     c = torch.tensor([censor_codes[str(value)] for value in censoring])
-    loader = DataLoader(
-        TensorDataset(x, y, c),
-        batch_size=int(parameters["batch_size"]),
-        shuffle=True,
-        generator=torch.Generator().manual_seed(seed),
-    )
+    cuda_resident = device.type == "cuda"
+    if cuda_resident:
+        x, y, c = x.to(device), y.to(device), c.to(device)
+        loader = DataLoader(
+            TensorDataset(torch.arange(len(x))),
+            batch_size=int(parameters["batch_size"]),
+            shuffle=True,
+            generator=torch.Generator().manual_seed(seed),
+        )
+    else:
+        loader = DataLoader(
+            TensorDataset(x, y, c),
+            batch_size=int(parameters["batch_size"]),
+            shuffle=True,
+            generator=torch.Generator().manual_seed(seed),
+        )
     model = model.to(device)
     objective = _loss_from_config(objective_config).to(device)
     trainable = list(model.parameters()) + list(objective.residual_scale.parameters())
@@ -283,8 +312,12 @@ def fit_torch_fixed_epochs(
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
     for _ in range(epochs):
         model.train()
-        for batch_x, batch_y, batch_c in loader:
-            batch_x, batch_y, batch_c = batch_x.to(device), batch_y.to(device), batch_c.to(device)
+        for batch in loader:
+            if cuda_resident:
+                indices = batch[0].to(device)
+                batch_x, batch_y, batch_c = x[indices], y[indices], c[indices]
+            else:
+                batch_x, batch_y, batch_c = (value.to(device) for value in batch)
             optimizer.zero_grad(set_to_none=True)
             output = objective(
                 model(batch_x), batch_y, batch_c,
