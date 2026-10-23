@@ -25,7 +25,13 @@ from crossfit.evaluation import (
 )
 from crossfit.models import build_model
 from crossfit.representations import esm_mean, esm_mutpool, esm_residue_delta, onehot_positional
-from crossfit.search import boundary_hyperparameters, sample_configurations, training_pool_folds
+from crossfit.search import (
+    boundary_hyperparameters,
+    load_search_state,
+    sample_configurations,
+    training_pool_folds,
+    write_search_state,
+)
 from crossfit.training import (
     fit_torch_fixed_epochs,
     fit_torch_predictor,
@@ -170,6 +176,10 @@ def main() -> int:
     search_seed = int(config["search"]["sampling_seed"]) + stable_hash(args.arm) % 1_000_000
     configurations = _sample(space, requested, search_seed)
     input_shape = tuple(features.shape[1:])
+    report_dir = REPO_ROOT / config["paths"]["reports"]
+    report_dir.mkdir(parents=True, exist_ok=True)
+    state_dir = REPO_ROOT / config["paths"]["search_state"]
+    partial_path = state_dir / f"{args.arm}_partial.csv"
 
     preparation_started = time.perf_counter()
     prepared_folds = None
@@ -180,42 +190,54 @@ def main() -> int:
         ]
     preparation_seconds = time.perf_counter() - preparation_started
 
-    timing_rows = []
-    for index, parameters in enumerate(configurations[: int(config["search"]["timing_fits"])]):
-        train, validation = folds[index % len(folds)]
-        started = time.perf_counter()
-        if architecture == "random_forest":
-            model = _fit_rf(architecture, input_shape, parameters, features, target, train, search_seed + index)
-            model.predict(features[validation])
-        else:
-            seed_everything(search_seed + index)
-            model = build_model(architecture, input_shape, _model_parameters(architecture, parameters))
-            fit_torch_predictor(
-                model, features[train], target[train], censoring[train], features[validation], target[validation], censoring[validation],
-                objective_config=config["objective"], optimization_config=config["optimization"],
-                parameters=parameters, seed=search_seed + index, device=args.device,
-                prepared_features=prepared_folds[index % len(folds)],
-            )
-        timing_rows.append(time.perf_counter() - started)
-    timing = {
-        "arm": args.arm,
-        "representative_fits": len(timing_rows),
-        "mean_fit_seconds": float(np.mean(timing_rows)),
-        "configuration_count": len(configurations),
-        "projected_search_gpu_hours": 0.0 if architecture == "random_forest" or args.device == "cpu" else float(np.mean(timing_rows) * len(configurations) * len(folds) / 3600.0),
-        "sampling_seed": search_seed,
-        "one_time_fold_preparation_seconds": preparation_seconds,
-    }
-    report_dir = REPO_ROOT / config["paths"]["reports"]
-    report_dir.mkdir(parents=True, exist_ok=True)
-    (report_dir / f"{args.arm}_timing.json").write_text(json.dumps(timing, indent=2) + "\n")
+    timing_path = report_dir / f"{args.arm}_timing.json"
+    timing = None
+    if timing_path.exists():
+        candidate = json.loads(timing_path.read_text())
+        if (
+            candidate.get("arm") == args.arm
+            and int(candidate.get("configuration_count", -1)) == len(configurations)
+            and int(candidate.get("sampling_seed", -1)) == search_seed
+        ):
+            timing = candidate
+    if timing is None:
+        timing_rows = []
+        for index, parameters in enumerate(configurations[: int(config["search"]["timing_fits"])]):
+            train, validation = folds[index % len(folds)]
+            started = time.perf_counter()
+            if architecture == "random_forest":
+                model = _fit_rf(architecture, input_shape, parameters, features, target, train, search_seed + index)
+                model.predict(features[validation])
+            else:
+                seed_everything(search_seed + index)
+                model = build_model(architecture, input_shape, _model_parameters(architecture, parameters))
+                fit_torch_predictor(
+                    model, features[train], target[train], censoring[train], features[validation], target[validation], censoring[validation],
+                    objective_config=config["objective"], optimization_config=config["optimization"],
+                    parameters=parameters, seed=search_seed + index, device=args.device,
+                    prepared_features=prepared_folds[index % len(folds)],
+                )
+            timing_rows.append(time.perf_counter() - started)
+        timing = {
+            "arm": args.arm,
+            "representative_fits": len(timing_rows),
+            "mean_fit_seconds": float(np.mean(timing_rows)),
+            "configuration_count": len(configurations),
+            "projected_search_gpu_hours": 0.0 if architecture == "random_forest" or args.device == "cpu" else float(np.mean(timing_rows) * len(configurations) * len(folds) / 3600.0),
+            "sampling_seed": search_seed,
+            "one_time_fold_preparation_seconds": preparation_seconds,
+        }
+        timing_path.write_text(json.dumps(timing, indent=2) + "\n")
     print(json.dumps(timing, indent=2), flush=True)
     if args.benchmark_only:
         return 0
 
-    search_rows = []
+    search_rows = load_search_state(partial_path, args.arm, len(configurations), len(folds))
+    complete = {(int(row["configuration"]), int(row["fold"])) for row in search_rows}
     for configuration_index, parameters in enumerate(configurations):
         for fold_index, (train, validation) in enumerate(folds):
+            if (configuration_index, fold_index) in complete:
+                continue
             seed = search_seed + configuration_index * len(folds) + fold_index
             if architecture == "random_forest":
                 fit = _fit_rf(architecture, input_shape, parameters, features, target, train, seed)
@@ -240,10 +262,16 @@ def main() -> int:
                 "best_epoch": best_epoch,
                 **parameters,
             })
+            write_search_state(pd.DataFrame(search_rows), partial_path)
+            complete.add((configuration_index, fold_index))
         fold_values = [row["validation_spearman"] for row in search_rows if row["configuration"] == configuration_index]
-        print(f"{args.arm} config {configuration_index + 1}/{len(configurations)} mean={np.mean(fold_values):.5f}", flush=True)
+        if len(fold_values) == len(folds):
+            print(f"{args.arm} config {configuration_index + 1}/{len(configurations)} mean={np.mean(fold_values):.5f}", flush=True)
     search_frame = pd.DataFrame(search_rows)
-    search_frame.to_csv(report_dir / f"{args.arm}_search.csv", index=False)
+    if len(search_frame) != len(configurations) * len(folds):
+        raise RuntimeError("search ended without every configuration-fold fit")
+    search_frame = search_frame.sort_values(["configuration", "fold"]).reset_index(drop=True)
+    write_search_state(search_frame, report_dir / f"{args.arm}_search.csv")
     mean_scores = search_frame.groupby("configuration")["validation_spearman"].mean()
     selected_index = int(mean_scores.idxmax())
     selected = configurations[selected_index]

@@ -11,6 +11,7 @@ paths:
   ired_round_held_out: Data/processed/splits/ired_round_held_out.csv
   representations: Cache/step2/IRED/representations
   density_cache: Cache/step2/IRED/dpll.csv
+  search_state: Cache/step2/IRED/search_state
   reports: Reports/step2
   models: Models/step2
   preflight_report: Reports/step2/ired_preflight.json

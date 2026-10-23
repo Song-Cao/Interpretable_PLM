@@ -4,9 +4,11 @@ from __future__ import annotations
 import itertools
 import math
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 import numpy as np
+import pandas as pd
 
 
 def training_pool_folds(
@@ -97,3 +99,32 @@ def boundary_hyperparameters(
             if np.isclose(value, float(specification["high"])):
                 hits[name] = "upper"
     return hits
+
+
+def write_search_state(frame: pd.DataFrame, path: Path) -> None:
+    """Atomically save completed search folds to CSV."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    frame.to_csv(temporary, index=False)
+    temporary.replace(path)
+
+
+def load_search_state(
+    path: Path, arm: str, configuration_count: int, fold_count: int
+) -> list[dict[str, Any]]:
+    """Load validated complete-fold state from an interrupted search."""
+    if not path.exists():
+        return []
+    frame = pd.read_csv(path)
+    required = {"arm", "configuration", "fold", "validation_spearman", "best_epoch"}
+    if not required.issubset(frame.columns):
+        raise ValueError(f"invalid partial search state columns in {path}")
+    if set(frame["arm"].astype(str)) != {arm}:
+        raise ValueError(f"partial search state belongs to another arm: {path}")
+    if frame[["configuration", "fold"]].duplicated().any():
+        raise ValueError(f"duplicate completed folds in partial search state: {path}")
+    if not frame["configuration"].between(0, configuration_count - 1).all():
+        raise ValueError(f"configuration outside current search in {path}")
+    if not frame["fold"].between(0, fold_count - 1).all():
+        raise ValueError(f"fold outside current search in {path}")
+    return frame.to_dict("records")
