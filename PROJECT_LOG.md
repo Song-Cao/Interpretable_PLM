@@ -671,3 +671,64 @@ the prediction track needs 0 or 3 crosscoders.
   Step 2 and Gate 1 reports contain only completed searches, folds, refits, and checkpoint-
   backed analyses; interrupted and superseded attempts remain isolated under
   `Reports/archive/` and are not used in any reported result.
+- `[ADJUST]` The earlier Gate 1 verdict is withdrawn. The five paired fold gains have mean
+  0.01906, SE 0.01955, `t(4)=0.97506`, and two-sided `p=0.38474`; a positive sample mean is
+  not evidence that the adapted encoder beats the frozen encoder. Gate 1 is false because
+  task gain is not established at alpha 0.05.
+- `[ADJUST]` The former maximum-gap layer rule was miscalibrated because it selected collapsed
+  final depth 29 (real CKA 0.06415) and left no downstream computation for causal patching.
+  Layer selection now excludes the first and final three depths, requires real CKA at least
+  0.5, and selects the earliest eligible depth within 90% of the eligible maximum drift gap.
+  The depth-29 report is preserved under
+  `Reports/archive/step3_gate1_depth29_pre_cka_floor/` rather than deleted.
+- `[FINDING]` The corrected reserve-only rule nominates depth 26. Its real/shuffled drift is
+  0.63382/0.34174 (ratio 1.85470), gap interval [0.28320, 0.30120], real CKA 0.91895, and
+  mean activation-norm ratio `||h_fit||/||h_evo||=0.91650`. Sensitivity gaps at offsets -4,
+  -2, and +2 are 0.17599, 0.21504, and 0.37331; +4 does not exist and is reported as such.
+  The layer remains unfrozen pending review.
+- `[ADJUST]` Layer selection and headline reporting use different held-out data by design.
+  The layer is selected once from the 59-variant reserve curve; after it is frozen, headline
+  drift is measured on the 228-row pg_kfold test split. Training/test stability profiles are
+  deferred with that re-extraction and must not be used to re-select the layer.
+- `[DECISION]` The proposed lower-learning-rate or stronger-regularization collapse remedy is
+  withdrawn. The adapter already used learning rate 1e-4 and weight decay 0.01, and collapse
+  was localized to the head-adjacent final depth. No adapter is retrained to repair that
+  collapse. A bounded task-gain sweep changes only rank and learning rate upward:
+  `(16,3e-4)`, `(32,1e-4)`, and `(32,3e-4)`, against the completed `(16,1e-4)` baseline.
+- `[ADJUST]` The three convolutional Step 2 arms were deliberately omitted after the original
+  ten-fit projection, not accidentally missed. That projection-based omission proved too
+  conservative when the completed session used only about 1.9 GPU-hours, and the incomplete
+  arm count was not surfaced prominently enough. The two required ESM-residue arms are now
+  being completed at 30 random configurations; the optional one-hot arm will run if its timing
+  is cheap.
+- `[ADJUST]` A restarted-pod convolution timing attempt spent 52 minutes without completing
+  its ten fits because identical fold normalization was recomputed for every configuration.
+  It was interrupted before any search fold or result existed. Fold-specific training-only
+  moments and transformed tensors are now cached once and reused exactly across configurations;
+  the arm restarted from the beginning with no partial result carried forward.
+- `[DECISION]` Neural random searches now atomically cache each completed configuration-fold
+  fit under `Cache/step2/IRED/search_state/`. A resumed search validates arm identity, fold and
+  configuration bounds, and uniqueness before skipping completed folds. A fit interrupted
+  before its atomic row is written is rerun from that fold's beginning; partial predictions or
+  weights are never promoted to reports. This changes restart behavior only, not training.
+- `[ADJUST]` A second `esm_residue_conv` invocation was stopped during an unfinished repeat of
+  the timing audit after 1.07 hours, before the official random search and before any result.
+  The completed earlier ten-fit audit has the same arm, seed, model, and training logic, so it
+  is reused to project the requested 30 configurations. The runner restarted the search from
+  its beginning under atomic completed-fold caching; the interrupted timing fit is discarded.
+- `[ADJUST]` The first official `esm_residue_conv` fold completed but exposed a host-transfer
+  bottleneck: roughly 45 minutes for a fit whose best epoch was 15, while A100 utilization was
+  mostly idle. CUDA training now keeps the current normalized fold tensors GPU-resident and
+  shuffles lightweight row indices. This preserves values, batch membership, seeds, objective,
+  stopping, and architecture. Completed fold 0 remains authoritative; the unfinished fold 1
+  attempt was discarded and rerun from its beginning, completing in about 2.5 minutes. Peak
+  conv-process memory was about 2.1 GB on the 80-GB card.
+- `[FINDING]` The bounded IRED task-gain sweep completed every fold for all three new
+  configurations. Rank 16/lr 3e-4 gives mean gain 0.02314, `t(4)=1.23124`, `p=0.28568`;
+  rank 32/lr 1e-4 gives 0.03086, `t(4)=1.36380`, `p=0.24433`; rank 32/lr 3e-4 gives
+  0.03104, `t(4)=1.58446`, `p=0.18826`. None establishes positive task gain at alpha
+  0.05. The registered rank 16/lr 1e-4 Gate result remains failed, and the analysis layer
+  is unchanged. This is a finding about what the 895-row IRED training pool can establish.
+- `[COST]` The three-configuration IRED task-gain sweep consumed 3.02390 A100 GPU-hours.
+  All 15 new cross-validation folds completed; the authoritative registered baseline was
+  reused rather than retrained.

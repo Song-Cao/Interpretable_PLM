@@ -1,28 +1,28 @@
 # Step 3 handoff: IRED adaptation through Gate 1
 
-Date: 2026-10-22
-Status: Gate 1 passed; stopped before Step 4 caching.
+Date: 2026-10-23
+Status: Gate 1 failed; stopped before Step 4 caching.
 
 ## Measurement and stopping contract
 
 The backbone is ESM-C 300M at pinned revision
-`e4bac860f0c502cd80f3aeac3d0ce6524c6627cb`. Adaptation uses rank-16 LoRA on all
-linear layers, alpha 32, dropout 0.05, frozen embeddings, and exactly `Linear(960,1)`
-as the fitness head. Task gain is measured by five-fold cross-validation inside the 895-row
-pg_kfold training pool. The 59-row layer-freeze reserve is used only for activation drift,
-shuffled-label separation, and depth selection.
+`e4bac860f0c502cd80f3aeac3d0ce6524c6627cb`. The registered adapter uses rank-16
+LoRA on all linear layers, alpha 32, dropout 0.05, learning rate 1e-4, weight decay
+0.01, frozen embeddings, and exactly `Linear(960,1)` as the fitness head. Task gain is
+measured by five-fold cross-validation inside the 895-row pg_kfold training pool. The
+59-row layer-freeze reserve is used only for activation statistics and layer selection.
 
 Every real fold early-stops on validation Spearman and restores its best state. The
-ReduceLROnPlateau scheduler also monitors validation Spearman. Config-fixed fold 0 supplies
-the final real adapter. Its best checkpoint occurs at epoch 9 and 207 optimizer steps;
-training executed 483 steps before the patience rule fired and the best state was restored.
-The shuffled-label control uses the same fold-0 training rows, initialization seed, optimizer,
-rank, and exact learning-rate sequence for exactly 207 steps. It has no independent stopping
-rule. The auditable counts are in `Reports/step3/gate1_training_complete.json`.
+ReduceLROnPlateau scheduler also monitors validation Spearman. Config-fixed fold 0
+supplies the final real adapter. Its best checkpoint occurs at epoch 9 and 207 optimizer
+steps; training executed 483 steps before patience fired and restored that state. The
+shuffled-label control uses the same fold-0 rows, initialization seed, optimizer, rank,
+and exact learning-rate sequence for exactly 207 optimizer steps. It has no independent
+stopping rule. The counts are in `Reports/step3/gate1_training_complete.json`.
 
-## Task gain
+## Task gain and Gate verdict
 
-`Reports/step3/gate1_task_gain_cv.csv` contains only fully completed folds:
+`Reports/step3/gate1_task_gain_cv.csv` contains only completed folds:
 
 | fold | frozen Spearman | adapted Spearman | gain | best epoch | best steps | executed steps |
 |---:|---:|---:|---:|---:|---:|---:|
@@ -32,71 +32,93 @@ rule. The auditable counts are in `Reports/step3/gate1_training_complete.json`.
 | 3 | 0.60042 | 0.68128 | 0.08086 | 17 | 391 | 667 |
 | 4 | 0.60623 | 0.59302 | -0.01321 | 13 | 299 | 575 |
 
-Mean frozen and adapted Spearman are 0.59878 and 0.61784, respectively, for mean task
-gain +0.01906. Two of five fold gains are negative; the positive mean is not uniform
-improvement.
+Mean frozen and adapted Spearman are 0.59878 and 0.61784. The five paired gains have
+mean 0.01906 and standard error 0.01955. A two-sided paired t test gives
+`t(4)=0.97506`, `p=0.38474`; two folds are negative. Task gain is therefore not
+established at alpha 0.05, and `gate1_pass` is false. The machine-readable verdict is
+`Reports/step3/gate1_report.json`.
 
-## Drift, separation, and Gate 1
+## Corrected reserve-only layer selection
 
-Depth 29 maximizes mean real-minus-shuffled relative drift on the reserve. Real drift is
-1.29809, shuffled drift is 0.84576, and the paired bootstrap 95% interval for the gap is
-[0.38609, 0.52066]. Linear CKA is 0.06415 for the real adapter and 0.81942 for the
-shuffled control. All 30 depths have a positive bootstrap lower bound for the drift gap.
-The numerical activation-change assertion passes: maximum change is 7475.10 against a
-floor of 3.69e-5. Token alignment also passes.
+The original argmax rule selected collapsed final depth 29: real CKA 0.06415,
+shuffled CKA 0.81942, real relative drift 1.29809, and maximum activation change
+7475.10. This is not evidence of useful reorganization and would make downstream
+patching equivalent to readout ablation. Its complete report is retained under
+`Reports/archive/step3_gate1_depth29_pre_cka_floor/`.
 
-Gate 1 passes because mean task gain is positive and the selected-depth separation interval
-is strictly above zero. The full curve and plot are
-`Reports/step3/gate1_by_layer.csv` and `Reports/step3/gate1_drift_by_depth.png`.
+The replacement rule excludes the first and final three depths, requires real CKA at
+least 0.5, and selects the earliest eligible depth whose real-minus-shuffled drift gap
+is at least 90% of the eligible maximum. The maximum eligible gap is 0.29208 and the
+threshold is 0.26287. Depth 26 is the only qualifying depth and is nominated, not yet
+frozen.
 
-Depth 29 is the final available depth, so the registered +2/+4 sensitivity offsets do not
-exist. The available -2/-4 depths remain positive: gaps are 0.32644 at depth 27 and 0.24897
-at depth 25. This boundary optimum leaves no later ESM-C block after the analysis layer and
-must be considered when the common-layer agreement check is performed on the second dataset.
-Depth 29 is IRED-only for now; no common cross-dataset layer has been frozen.
+At depth 26, real and shuffled relative drift are 0.63382 and 0.34174, a ratio of
+1.85470. The gap is 0.29208 with paired bootstrap 95% interval [0.28320, 0.30120].
+Real and shuffled CKA are 0.91895 and 0.98112. Mean activation norms are 1137.86 for
+the base model and 1042.84 for the adapted model, so
+`||h_fit||/||h_evo||=0.91650`. The drift ratio is inside [0.5, 2], so no matched-drift
+null is required.
+
+The complete 30-depth scalar curve is `Reports/step3/gate1_by_layer.csv`; it reports
+both drifts, both CKA values, the gap interval, both mean activation norms, and their
+ratio at every depth. Reporting sensitivity around depth 26 is:
+
+| offset | depth | drift gap | 95% interval | real CKA | norm ratio |
+|---:|---:|---:|---:|---:|---:|
+| -4 | 22 | 0.17599 | [0.16837, 0.18392] | 0.98039 | 0.91709 |
+| -2 | 24 | 0.21504 | [0.20645, 0.22396] | 0.97057 | 0.92076 |
+| +2 | 28 | 0.37331 | [0.36353, 0.38337] | 0.62427 | 0.90284 |
+| +4 | unavailable | — | — | — | — |
+
+## Bounded task-gain sweep
+
+The registered rank-16, learning-rate-1e-4 result above remains the Gate measurement.
+A bounded diagnostic sweep changes only rank and learning rate upward while retaining
+the same five folds, stopping metric, best-state restoration, head, alpha, dropout,
+weight decay, optimizer, and data. Its three configurations are `(16,3e-4)`,
+`(32,1e-4)`, and `(32,3e-4)`. Only fully completed five-fold configurations are
+reported in `Reports/step3/task_gain_sweep/summary.csv`:
+
+| configuration | mean gain | SE | t(4) | two-sided p | established |
+|---|---:|---:|---:|---:|---:|
+| rank 16, lr 1e-4 (registered) | 0.01906 | 0.01955 | 0.97506 | 0.38474 | no |
+| rank 16, lr 3e-4 | 0.02314 | 0.01879 | 1.23124 | 0.28568 | no |
+| rank 32, lr 1e-4 | 0.03086 | 0.02263 | 1.36380 | 0.24433 | no |
+| rank 32, lr 3e-4 | 0.03104 | 0.01959 | 1.58446 | 0.18826 | no |
+
+No tested configuration establishes positive task gain at alpha 0.05. Increasing rank
+and learning rate raises the sample mean but not enough relative to between-fold
+variation. This is a negative result about what can be established from IRED's 895-row
+training pool, not a reason to change the Gate threshold or analysis layer. The three
+new configurations consumed 3.02390 A100 GPU-hours in total.
 
 ## Checkpoints and cache interface
 
-Pod-only checkpoints are:
+Pod-only registered checkpoints are:
 
 - `Models/step3/IRED/real_adapter.pt`: 66 tensors, 3,903,813 bytes, SHA-256
   `38da4c4aec3cbec958e866679be078c24948cd434be0d65b50ba2a337a02e4b4`.
 - `Models/step3/IRED/shuffled_adapter.pt`: 66 tensors, 3,904,101 bytes, SHA-256
   `287db0b1206fa2190af0814e3a314f87966c4cf396e833239a9e7b0f9511219b`.
 
-Each contains 64 LoRA parameter tensors plus the readout weight and bias. Load only into the
-pinned backbone and matching rank-16 adapter with
-`crossfit.adaptation.load_trainable_state`. Checkpoint provenance is committed in
-`Reports/step3/gate1_checkpoint_verification.json`.
+Each contains 64 LoRA tensors plus readout weight and bias. Load only into the pinned
+backbone and matching rank-16 adapter with `crossfit.adaptation.load_trainable_state`.
+Checkpoint provenance is in `Reports/step3/gate1_checkpoint_verification.json`.
 
-`Cache/step3/IRED/` remains on the pod and contains:
+`Cache/step3/IRED/` remains on the pod. The all-depth reserve tensors have shape
+`[59,30,290,960]`. The existing full-corpus selected-layer tensors have shape
+`[1182,290,960]` but are depth 29 and explicitly superseded; they must not be consumed
+as depth-26 data. No Step 4 cache was written.
 
-- `reserve_all_layers_adapted.npy`: float16 `[59, 30, 290, 960]`.
-- `reserve_all_layers_shuffled.npy`: float16 `[59, 30, 290, 960]`.
-- `full_selected_layer_base.npy`: float16 `[1182, 290, 960]`, depth 29.
-- `full_selected_layer_adapted.npy`: float16 `[1182, 290, 960]`, depth 29.
-- `full_variant_rows.npy`: int64 `[1182]`, row alignment for both full tensors.
+## Deferred and incomplete
 
-The directory occupies 3.1 GB. Every representation extraction forces eval mode, and
-full-corpus extraction retains only depth 29 batch-by-batch. No full-dataset all-depth tensor
-was written.
+Depth 26 awaits approval before it is frozen. Consequently, headline drift on the
+228-row pg_kfold test split and the reserve/train/test stability profiles are deferred;
+they require GPU re-extraction at the frozen depth. The reserve selects the layer, the
+test split reports the headline drift after selection, and the training profile is
+diagnostic only. Neither later profile may change the selection.
 
-## Incomplete, uncertain, or deviating
-
-The first completed Gate attempt used a fixed 80 epochs, contrary to the clarified stopping
-rule, and is archived rather than reported. Its generic PEFT export was empty; the replacement
-explicit state format is loadable and hash-recorded. A later checkpoint recovery exposed
-initialization-before-seeding, which is now fixed. No partial fold or interrupted model state
-was reused.
-
-The first analysis of the authoritative 207-step checkpoints extracted the shuffled model
-while it remained in training mode, so dropout contaminated that cache. Training itself was
-complete and unaffected. The faulty report/cache is preserved under
-`Reports/archive/step3_gate1_trainmode_shuffled/` and
-`Cache/step3/IRED_trainmode_shuffled_20261022/`. The active analysis was recomputed from the
-complete checkpoints with forced eval mode. The archived result is not a Gate result.
-
-Step 4 cache bounds, without writing a Step 4 cache, are in
-`Reports/step3/step4_budget_ired.json`: 0.996672 GB for all training residues, 0.897005 GB
-for the mutable-position union, and 0.009492 GB for mutations only. v12 does not define the
-window radius or distant-position draw count, so no final subsampled budget is claimed.
+The first fixed-80-epoch Gate attempt and the train-mode shuffled extraction are
+archived and never used. No incomplete fold or interrupted training result is reported.
+All bounded task-gain configurations completed, and none passed. Step 4 budget bounds,
+without a Step 4 cache, remain in `Reports/step3/step4_budget_ired.json`.

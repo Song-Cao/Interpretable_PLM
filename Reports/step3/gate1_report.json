@@ -96,5 +96,12 @@
     "reason": "real CKA 0.06415 indicates final-layer collapse",
     "archive": "Reports/archive/step3_gate1_depth29_pre_cka_floor",
     "full_selected_layer_cache_is_superseded": true
+  },
+  "bounded_task_gain_sweep": {
+    "summary": "Reports/step3/task_gain_sweep/summary.csv",
+    "completed_new_configurations": 3,
+    "any_task_gain_established": false,
+    "best_p_value_two_sided": 0.18826459592206574,
+    "gpu_hours": 3.0239005408649975
   }
 }
