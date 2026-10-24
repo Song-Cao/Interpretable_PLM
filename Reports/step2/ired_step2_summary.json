@@ -7,13 +7,12 @@
     "esm_mean_ridge",
     "esm_mean_mlp",
     "esm_mean_random_forest",
-    "esm_mutpool_ridge"
-  ],
-  "incomplete_arms": [
+    "esm_mutpool_ridge",
     "esm_residue_conv",
     "esm_residue_delta_conv",
     "onehot_positional_conv"
   ],
+  "incomplete_arms": [],
   "pooling_domain": {
     "status": "complete",
     "comparison_model": "ridge",

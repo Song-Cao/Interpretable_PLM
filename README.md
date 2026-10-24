@@ -52,11 +52,14 @@ and leaves all tensors and checkpoints under the gitignored `Cache/` and `Models
 .venv/bin/python Code/scripts/run_neural_step2.py --arm esm_mean_mlp --device cuda
 .venv/bin/python Code/scripts/run_neural_step2.py --arm esm_mean_random_forest --device cpu
 .venv/bin/python Code/scripts/run_neural_step2.py --arm esm_mutpool_ridge --device cuda
+.venv/bin/python Code/scripts/run_neural_step2.py --arm esm_residue_conv --device cuda --search-count 30
+.venv/bin/python Code/scripts/run_neural_step2.py --arm esm_residue_delta_conv --device cuda --search-count 30
+.venv/bin/python Code/scripts/run_neural_step2.py --arm onehot_positional_conv --device cuda --search-count 30
 .venv/bin/python Code/scripts/summarize_step2.py
 .venv/bin/python Code/scripts/run_ired_gate1.py --device cuda
 ```
 
 Committed results are summarized in `Reports/step2/step2_handoff.md` and
-`Reports/step3/step3_handoff.md`. The convolutional Step 2 arms were not launched after the
-required ten-fit timing audit projected 5.74 GPU-hours per arm even at the minimum search
-count; this budget-limited incompleteness is part of the result.
+`Reports/step3/step3_handoff.md`. The two required ESM convolutional arms and the optional
+one-hot positional convolutional arm use atomic fold-state caching: only complete folds are
+resumed, while an interrupted fold starts again from its registered initialization.

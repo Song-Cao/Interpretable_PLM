@@ -1,0 +1,10 @@
+{
+  "arm": "esm_residue_delta_conv",
+  "representative_fits": 10,
+  "mean_fit_seconds": 38.84784357799799,
+  "configuration_count": 30,
+  "projected_search_gpu_hours": 1.6186601490832497,
+  "sampling_seed": 20778347,
+  "one_time_fold_preparation_seconds": 17.146663120016456,
+  "reused_completed_timing_audit": true
+}

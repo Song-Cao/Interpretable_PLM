@@ -1,4 +1,7 @@
 arm,validation_spearman,selected_configuration,boundary_hyperparameters
+esm_residue_conv,0.6326771703629444,"{""batch_size"": 16, ""depth"": 3, ""dropout"": 0.1, ""kernel_size"": 5, ""learning_rate"": 0.0003, ""weight_decay"": 0.01, ""width"": 256}","{""batch_size"": ""lower"", ""depth"": ""lower"", ""dropout"": ""lower"", ""weight_decay"": ""upper"", ""width"": ""upper""}"
+onehot_positional_conv,0.6320684290476545,"{""batch_size"": 32, ""depth"": 5, ""dropout"": 0.1, ""kernel_size"": 7, ""learning_rate"": 0.0003, ""weight_decay"": 0.0001, ""width"": 256}","{""depth"": ""upper"", ""dropout"": ""lower"", ""kernel_size"": ""upper"", ""weight_decay"": ""lower"", ""width"": ""upper""}"
+esm_residue_delta_conv,0.6291040646249875,"{""batch_size"": 16, ""depth"": 5, ""dropout"": 0.1, ""kernel_size"": 3, ""learning_rate"": 0.0001, ""weight_decay"": 0.001, ""width"": 256}","{""batch_size"": ""lower"", ""depth"": ""upper"", ""dropout"": ""lower"", ""kernel_size"": ""lower"", ""learning_rate"": ""lower"", ""width"": ""upper""}"
 onehot_ridge_unaugmented,0.615140598275986,"{""density_penalty"": 1e-08, ""site_penalty"": 425.8195125935258}",{}
 aaindex_flat_ridge_unaugmented,0.6150378263992459,"{""density_penalty"": 1e-08, ""site_penalty"": 8326.543793473036}",{}
 onehot_ridge_augmented,0.6116813908886508,"{""density_penalty"": 1e-08, ""site_penalty"": 39.89484434913667}",{}

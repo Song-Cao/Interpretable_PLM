@@ -732,3 +732,42 @@ the prediction track needs 0 or 3 crosscoders.
 - `[COST]` The three-configuration IRED task-gain sweep consumed 3.02390 A100 GPU-hours.
   All 15 new cross-validation folds completed; the authoritative registered baseline was
   reused rather than retrained.
+- `[DECISION]` After the adapter sweep completed, the two required ESM convolution arms were
+  run concurrently on the A100. They have separate representations, random-search seeds,
+  atomic fold-state files, reports, and model directories. GPU-resident fold tensors use only
+  about 2.5 GB per process on the 80-GB card, and utilization remained below saturation. This
+  changes wall-clock scheduling only; both arms retain 30 configurations, five CV folds, and
+  five final seeds.
+- `[ADJUST]` The GPU pod restarted after atomically completing 102/150 `esm_residue_conv`
+  search folds and 93/150 `esm_residue_delta_conv` folds. The replacement container retained
+  both cache files. Completed rows were reused after validation; each fold active at shutdown
+  had no atomic row and was rerun from its beginning. No partial checkpoint, prediction, or
+  metric was promoted. The completed task-gain reports on the pod matched the committed copies
+  byte-for-byte before the pod fast-forwarded and both searches resumed.
+- `[DECISION]` The optional `onehot_positional_conv` arm was defined as cheap enough to run if
+  its completed ten-fit audit projected no more than 2 A100 GPU-hours for 30 configurations and
+  five folds. The audit measured 28.9690 seconds per fit and projected 1.20704 GPU-hours, so the
+  full optional search was launched. The threshold was applied before seeing any arm result.
+- `[FINDING]` Both required ESM convolutional arms completed 30 random configurations across
+  five folds and five final seeds. `esm_residue_conv` selected width 256, depth 3, kernel 5,
+  dropout 0.1, learning rate 3e-4, weight decay 0.01, batch size 16, and 13 epochs; validation,
+  pg-test, round-held-out, and plate Spearman are 0.63268, 0.54294, 0.49846, and 0.33364.
+  `esm_residue_delta_conv` selected width 256, depth 5, kernel 3, dropout 0.1, learning rate
+  1e-4, weight decay 0.001, batch size 16, and 2 epochs; the corresponding Spearman values are
+  0.62910, 0.54552, 0.54081, and 0.38998. All reported results come from complete searches and
+  complete five-member ensembles.
+- `[FINDING]` The optional `onehot_positional_conv` arm completed all 150 search folds and five
+  final seeds. It selected width 256, depth 5, kernel 7, dropout 0.1, learning rate 3e-4,
+  weight decay 1e-4, batch size 32, and 22 epochs. Validation, pg-test, round-held-out, and
+  plate Spearman are 0.63207, 0.51678, 0.50733, and 0.57423. Width, depth, and kernel size
+  landed on upper search boundaries; dropout and weight decay landed on lower boundaries.
+- `[COST]` Completing the three convolutional arms consumed approximately 5.9 A100 wall-hours:
+  about 1.94 hours in two discarded pre-search timing/host-transfer attempts, about 2.9 hours
+  for the two concurrent required searches across the pod restart, and 1.0198 hours for the
+  optional one-hot search and refits. Concurrent required processes are counted once as GPU
+  wall occupancy, not twice as process-hours. Together with the exact 3.02390-hour bounded
+  adapter sweep, this continuation used approximately 8.9 A100 GPU-hours.
+- `[FINDING]` The completed Step 2 summary contains all 11 expected result variants and no
+  incomplete arms. The convolutional validation shortlist ranks ESM residue (0.63268), one-hot
+  positional (0.63207), and ESM residue delta (0.62910). Final verification passes all 210
+  tests in 100.56 seconds.

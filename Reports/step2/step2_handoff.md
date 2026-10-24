@@ -1,13 +1,16 @@
 # Step 2 handoff: IRED predictor comparison
 
-Date: 2026-10-22
-Status: pooled and classical arms complete; convolutional arms stopped by the v12 compute rule.
+Date: 2026-10-24
+Status: all registered arms complete. The nine-arm architecture suite yields 11 result
+variants because both classical representations have augmented and unaugmented fits. The
+optional one-hot positional convolutional arm is included because its pre-result timing audit
+met the registered cost threshold.
 
 ## Scope and selection contract
 
 All results are for IRED alone. Primary fold 0 contains 895 training-pool and 228 test variants after excluding the 59-row layer-freeze reserve. Every hyperparameter was selected by five-fold cross-validation inside those 895 rows using validation Spearman. The test fold, round-5 holdout, and 54-row plate set were never used for fitting, tuning, calibration, or selection. The plate table was evaluated only by Spearman and NDCG.
 
-Random-search seeds and spaces are in `Code/config/step2.yaml`. Continuous classical searches ran 60 configurations. The finite ESM ridge space contains 48 unique configurations; MLP and random forest ran 60. Every reported stochastic result is a five-member ensemble with seeds 0-4. The exact convex classical fits are seed-invariant and therefore have ensemble SD zero.
+Random-search seeds and spaces are in `Code/config/step2.yaml`. Continuous classical searches ran 60 configurations. The finite ESM ridge space contains 48 unique configurations; MLP and random forest ran 60. Each convolutional arm ran 30 randomly sampled configurations across five folds. Every reported stochastic result is a five-member ensemble with seeds 0-4. The exact convex classical fits are seed-invariant and therefore have ensemble SD zero.
 
 ## Extraction and cache interface
 
@@ -40,7 +43,9 @@ Models are loadable on the pod from `Models/step2/IRED/<arm>/seed_<0-4>.*`. Neur
 Neural search early-stopped on validation Spearman and restored the best checkpoint. Each
 five-seed final refit used the rounded median best epoch across the selected configuration's
 five CV folds: 16 epochs for ESM-mean ridge, 7 for ESM-mean MLP, and 9 for
-ESM-mutated-position ridge. Thus final refit duration was selected without consulting test,
+ESM-mutated-position ridge. The same rule selected 13 epochs for ESM-residue convolution
+and 2 epochs for ESM-residue-delta convolution, and 22 epochs for one-hot positional
+convolution. Thus final refit duration was selected without consulting test,
 round-held-out, calibration, or plate labels.
 
 Each arm has compact committed files under `Reports/step2/`:
@@ -70,6 +75,9 @@ Spearman point estimates are:
 | ESM mean MLP | 0.6058 | 0.4397 | 0.4433 | 0.2392 |
 | ESM mean random forest | 0.5396 | 0.4320 | 0.4455 | 0.2317 |
 | ESM mutated-position ridge | 0.5501 | 0.5452 | 0.4483 | 0.4443 |
+| ESM residue convolution | 0.6327 | 0.5429 | 0.4985 | 0.3336 |
+| ESM residue-delta convolution | 0.6291 | 0.5455 | 0.5408 | 0.3900 |
+| one-hot positional convolution | 0.6321 | 0.5168 | 0.5073 | 0.5742 |
 
 Bootstrap confidence intervals and every other metric are in the three tables. IRED fold 0's observed hit rate at the standardized wild-type cutoff 0.3217626895 is 0.4956140351.
 
@@ -78,6 +86,12 @@ The architecture shortlist and exact selected configurations are in `Reports/ste
 - ESM mean ridge: minimum weight decay and minimum batch size.
 - ESM mean MLP: maximum dropout, maximum learning rate, minimum batch size.
 - Random forest: maximum depth, maximum `min_samples_leaf`, and maximum feature fraction.
+- ESM residue convolution: maximum width, minimum depth, minimum dropout, maximum weight
+  decay, and minimum batch size.
+- ESM residue-delta convolution: maximum width and depth, minimum kernel size, dropout,
+  learning rate, and batch size.
+- One-hot positional convolution: maximum width, depth, and kernel size, and minimum dropout
+  and weight decay.
 
 The fixed `1e-8` dPLL coefficient penalty is not a searched boundary. Classical site penalties did not land exactly at `1e-4` or `1e4`.
 
@@ -91,7 +105,19 @@ The 134-row calibration split is excluded from each final pg model fit. Quantile
 
 ## Incomplete, uncertain, or deviating
 
-Ten representative `esm_residue -> conv residual` fits averaged 137.72 seconds. This projects to 11.48 GPU-hours at 60 configurations and 5.74 hours at the required minimum 30 for one arm. The two required ESM convolutional arms therefore cannot both fit under the nine-hour session ceiling after Step 2 pooled arms and Step 3; the optional one-hot convolution was also omitted. Timing evidence is committed as `Reports/step2/esm_residue_conv_timing.json`. No arm is reported from fewer than 30 configurations, and no ensemble seed or measurement was cut.
+The three convolutional arms were originally omitted deliberately after a ten-fit timing
+audit projected 5.74 GPU-hours per arm at 30 configurations. That projection was too
+conservative relative to the completed Step 2 cost, and the omission was not surfaced clearly
+enough. The runner was corrected to cache fold normalization and keep CUDA fold tensors
+resident, without changing values, batches, seeds, objective, stopping, or architecture. Both
+required ESM arms then completed all 150 search folds and all five final refits. Atomic fold
+state contains only complete folds: after a pod restart, completed rows were validated and
+reused, while the interrupted folds restarted from their registered initialization. No partial
+checkpoint, prediction, or metric appears in a result.
+
+The optional one-hot positional arm was launched only after its ten-fit audit projected
+1.20704 GPU-hours, below the pre-result 2-hour threshold. It completed 150 search folds and
+five final refits in 1.0198 A100 wall-hours. No requested Step 2 arm remains incomplete.
 
 The exact published classical normal-equation baselines optimize diagonally penalized squared error, and scikit-learn random forests optimize squared-error tree splits. Those solvers cannot optimize the differentiable composite Tobit/ranking objective used by the neural arms. This is the literal published-form implementation in sections 2f-2g, but it is an objective mismatch relative to section 2a's statement that every model uses one identical objective. Results preserve both facts rather than hiding the mismatch.
 
