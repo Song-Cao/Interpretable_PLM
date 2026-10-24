@@ -36,6 +36,11 @@ from crossfit.gate1 import (
     tokenwise_relative_drift,
 )
 from crossfit.models import RidgeHead
+from crossfit.persistence import (
+    prediction_frame,
+    upsert_checkpoint_manifest,
+    write_prediction_csv,
+)
 from crossfit.representations import esm_mean
 from crossfit.search import training_pool_folds
 from crossfit.training import fit_torch_predictor, predict_torch
@@ -95,6 +100,17 @@ def _clear(*values: object) -> None:
         del value
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
+
+
+def _save_head_checkpoint(fit, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save({
+        "model": fit.model.state_dict(),
+        "residual_scale": fit.loss.residual_scale.state_dict(),
+        "normalizer_mean": fit.normalizer.mean,
+        "normalizer_scale": fit.normalizer.scale,
+        "best_epoch": fit.best_epoch + 1,
+    }, path)
 
 
 def _extract_layers(model: SequenceFitnessAdapter, sequences: list[str], batch_size: int) -> np.ndarray:
@@ -178,6 +194,15 @@ def main() -> int:
     del base_residue
 
     cv_rows = []
+    persistence = config["persistence"]
+    checkpoint_dir = REPO_ROOT / config["paths"]["checkpoints"]
+    if checkpoint_dir.exists():
+        raise FileExistsError(f"refusing to overwrite Gate 1 checkpoints: {checkpoint_dir}")
+    checkpoint_dir.mkdir(parents=True)
+    checkpoint_manifest = REPO_ROOT / persistence["checkpoint_manifest"]
+    registered_config_id = f"rank{int(config['adapter']['rank'])}_lr{float(config['adapter']['learning_rate']):g}"
+    oof_path = report_dir / f"{registered_config_id}_oof_predictions.csv"
+    oof_rows = []
     final_fold = int(config["gate1"]["final_adapter_cv_fold"])
     if final_fold < 0 or final_fold >= len(folds):
         raise ValueError("gate1.final_adapter_cv_fold is outside the CV range")
@@ -218,6 +243,39 @@ def main() -> int:
             backbone_tokenize=tokenize, batch_size=int(config["adapter"]["batch_size"]),
             device=args.device,
         )
+        if bool(persistence["write_cv_predictions"]):
+            oof_rows.extend([
+                prediction_frame(
+                    dataset="IRED", step=3, arm="frozen_head",
+                    config_id=registered_config_id, fold=fold_index, seed=fit_seed,
+                    condition="cv_validation",
+                    variant_rows=frame.iloc[validation]["variant_row"],
+                    targets=target[validation], predictions=frozen_prediction,
+                ),
+                prediction_frame(
+                    dataset="IRED", step=3, arm="real_adapter",
+                    config_id=registered_config_id, fold=fold_index, seed=fit_seed,
+                    condition="cv_validation",
+                    variant_rows=frame.iloc[validation]["variant_row"],
+                    targets=target[validation], predictions=real_prediction,
+                ),
+            ])
+            write_prediction_csv(pd.concat(oof_rows, ignore_index=True), oof_path)
+        if bool(persistence["save_cv_checkpoints"]):
+            fold_dir = checkpoint_dir / "cv" / registered_config_id / f"fold_{fold_index}"
+            frozen_checkpoint = fold_dir / "frozen_head.pt"
+            adapter_checkpoint = fold_dir / "real_adapter.pt"
+            _save_head_checkpoint(head_fit, frozen_checkpoint)
+            fold_dir.mkdir(parents=True, exist_ok=True)
+            save_trainable_state(fold_fit.model, adapter_checkpoint)
+            for arm, checkpoint in (
+                ("frozen_head", frozen_checkpoint), ("real_adapter", adapter_checkpoint)
+            ):
+                upsert_checkpoint_manifest(
+                    checkpoint_manifest, dataset="IRED", step=3, arm=arm,
+                    config_id=registered_config_id, fold=fold_index, seed=fit_seed,
+                    condition="cv_validation", checkpoint=checkpoint,
+                )
         frozen_score = float(spearmanr(frozen_prediction, target[validation]).statistic)
         real_score = float(spearmanr(real_prediction, target[validation]).statistic)
         cv_rows.append({
@@ -245,11 +303,13 @@ def main() -> int:
         raise AssertionError("the configured final adapter CV fold was not retained")
     real_fit.model.to(args.device)
 
-    checkpoint_dir = REPO_ROOT / config["paths"]["checkpoints"]
-    if checkpoint_dir.exists():
-        raise FileExistsError(f"refusing to overwrite Gate 1 checkpoints: {checkpoint_dir}")
-    checkpoint_dir.mkdir(parents=True)
     save_trainable_state(real_fit.model, checkpoint_dir / "real_adapter.pt")
+    upsert_checkpoint_manifest(
+        checkpoint_manifest, dataset="IRED", step=3, arm="real_adapter",
+        config_id=registered_config_id, fold=final_fold,
+        seed=int(config["adapter"]["seed"]) + final_fold,
+        condition="gate1_final", checkpoint=checkpoint_dir / "real_adapter.pt",
+    )
 
     reserve_frame = load_assay("IRED", with_sequences=True, include_reserve=True)
     reserve_frame = reserve_frame.loc[reserve_frame["is_layer_freeze_reserve"]].reset_index(drop=True)
@@ -276,6 +336,12 @@ def main() -> int:
     if shuffled_fit.optimizer_steps != real_fit.best_optimizer_steps:
         raise AssertionError("real and shuffled adapters took different optimizer step counts")
     save_trainable_state(shuffled_fit.model, checkpoint_dir / "shuffled_adapter.pt")
+    upsert_checkpoint_manifest(
+        checkpoint_manifest, dataset="IRED", step=3, arm="shuffled_adapter",
+        config_id=registered_config_id, fold=final_fold,
+        seed=int(config["adapter"]["seed"]) + final_fold,
+        condition="gate1_null", checkpoint=checkpoint_dir / "shuffled_adapter.pt",
+    )
     shuffled_layers = _extract_layers(
         shuffled_fit.model, reserve_sequences, int(config["extraction"]["reserve_batch_size"])
     )
@@ -416,6 +482,11 @@ def main() -> int:
         "gate1_pass": bool(gate_pass),
         "gate_failure_reasons": ([] if task_gain_established else ["task_gain_not_established"]),
         "gpu_projection_hours": projected_hours,
+        "prediction_persistence": {
+            "contract_version": int(persistence["contract_version"]),
+            "oof_predictions": f"Reports/step3/{registered_config_id}_oof_predictions.csv",
+            "checkpoint_manifest": str(persistence["checkpoint_manifest"]),
+        },
     }
     if not gate_pass:
         result["run_complete"] = True

@@ -55,6 +55,13 @@ Each arm has compact committed files under `Reports/step2/`:
 - `<arm>_result.json`: selected configuration, boundary audit, three evaluation conditions, ensemble variability, bootstrap intervals, and conformal strata.
 - `<arm>_predictions.csv`: `condition,variant_row,target,prediction` and `epistemic_sd` for stochastic arms.
 
+These historical files contain ensemble means, not individual ensemble members, and the
+search files contain fold metrics without fold predictions. They are retained unchanged as
+the record of the completed run. Future runners use the enforced persistence contract:
+selected CV and per-member condition predictions are committed, full-search predictions are
+pod-only parquet, and checkpoint manifests contain SHA-256 hashes. The arm-by-arm legacy
+status is `Reports/step3/prediction_persistence_audit.md`.
+
 ## Results read from disk
 
 The three complete tables are:

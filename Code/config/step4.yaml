@@ -1,0 +1,16 @@
+# CROSSFIT v12 Step 4 — IRED activation-cache budget only; caching awaits approval.
+
+dataset: IRED
+analysis_layer: 26
+source_split: pg_kfold
+source_fold: 0
+position_policy: all_training_residues
+embedding_dimension: 960
+storage_dtype: float16
+bytes_per_value: 2
+model_count: 2
+dictionary_reference_expansion: 8
+paths:
+  report_json: Reports/step4/step4_budget_ired.json
+  report_csv: Reports/step4/step4_budget_ired.csv
+  report_markdown: Reports/step4/step4_budget_ired.md

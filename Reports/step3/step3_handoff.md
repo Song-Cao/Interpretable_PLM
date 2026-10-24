@@ -1,6 +1,6 @@
 # Step 3 handoff: IRED adaptation through Gate 1
 
-Date: 2026-10-23
+Date: 2026-10-24
 Status: Gate 1 failed; stopped before Step 4 caching.
 
 ## Measurement and stopping contract
@@ -38,6 +38,16 @@ mean 0.01906 and standard error 0.01955. A two-sided paired t test gives
 established at alpha 0.05, and `gate1_pass` is false. The machine-readable verdict is
 `Reports/step3/gate1_report.json`.
 
+The per-fold gain standard deviation is 0.04371, giving Cohen's d = 0.436. A two-sided
+paired test at alpha 0.05 needs approximately 42.5 folds for 80% power at d = 0.44.
+Even treating ten folds as independent realizations would give only `t(9)=1.379`,
+`p=0.201`. A variant-level bootstrap of fixed out-of-fold predictions is not substituted:
+it conditions away model-fit variance and can therefore make an underpowered model-level
+comparison look artificially decisive. Task gain is small and positive in all four tested
+configurations and increases monotonically across the tested capacity settings, but it is not
+establishable from 895 training variants. The criterion is underpowered, not established as
+absent, and Gate 1 remains failed.
+
 ## Corrected reserve-only layer selection
 
 The original argmax rule selected collapsed final depth 29: real CKA 0.06415,
@@ -49,8 +59,8 @@ patching equivalent to readout ablation. Its complete report is retained under
 The replacement rule excludes the first and final three depths, requires real CKA at
 least 0.5, and selects the earliest eligible depth whose real-minus-shuffled drift gap
 is at least 90% of the eligible maximum. The maximum eligible gap is 0.29208 and the
-threshold is 0.26287. Depth 26 is the only qualifying depth and is nominated, not yet
-frozen.
+threshold is 0.26287. Depth 26 is the only qualifying depth and is frozen for the exploratory
+IRED Steps 4-8 pipeline.
 
 At depth 26, real and shuffled relative drift are 0.63382 and 0.34174, a ratio of
 1.85470. The gap is 0.29208 with paired bootstrap 95% interval [0.28320, 0.30120].
@@ -58,6 +68,10 @@ Real and shuffled CKA are 0.91895 and 0.98112. Mean activation norms are 1137.86
 the base model and 1042.84 for the adapted model, so
 `||h_fit||/||h_evo||=0.91650`. The drift ratio is inside [0.5, 2], so no matched-drift
 null is required.
+
+Thus the drift and shuffled-label separation criteria are met cleanly at depth 26: real drift
+is 0.63382 against shuffled drift 0.34174, with gap interval [0.28320, 0.30120]. The
+representational precondition holds; only the task-gain criterion fails.
 
 The complete 30-depth scalar curve is `Reports/step3/gate1_by_layer.csv`; it reports
 both drifts, both CKA values, the gap interval, both mean activation norms, and their
@@ -112,13 +126,19 @@ as depth-26 data. No Step 4 cache was written.
 
 ## Deferred and incomplete
 
-Depth 26 awaits approval before it is frozen. Consequently, headline drift on the
-228-row pg_kfold test split and the reserve/train/test stability profiles are deferred;
-they require GPU re-extraction at the frozen depth. The reserve selects the layer, the
-test split reports the headline drift after selection, and the training profile is
-diagnostic only. Neither later profile may change the selection.
+Depth 26 is frozen, but headline drift on the 228-row pg_kfold test split and the
+reserve/train/test stability profiles still require GPU re-extraction. The reserve selected
+the layer, the test split reports the headline drift after selection, and the training profile
+is diagnostic only. Neither later profile may change the selection or the failed Gate verdict.
 
 The first fixed-80-epoch Gate attempt and the train-mode shuffled extraction are
 archived and never used. No incomplete fold or interrupted training result is reported.
-All bounded task-gain configurations completed, and none passed. Step 4 budget bounds,
-without a Step 4 cache, remain in `Reports/step3/step4_budget_ired.json`.
+All bounded task-gain configurations completed, and none passed. The preliminary Step 4
+bounds are superseded by the realized training-only table at
+`Reports/step4/step4_budget_ired.md`; no Step 4 cache exists.
+
+Historical out-of-fold predictions were not persisted. Only fold-level Spearman summaries
+survive for the registered and bounded-sweep configurations. Fold 0's registered real and
+shuffled adapters are the only surviving Step 3 checkpoints; the other fitted models are
+unrecoverable without retraining, which is explicitly not authorized. The persistence audit
+and future enforcement contract are in `Reports/step3/prediction_persistence_audit.md`.

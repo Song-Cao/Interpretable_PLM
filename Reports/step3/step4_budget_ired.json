@@ -1,31 +1,5 @@
 {
-  "dataset": "IRED",
-  "training_variants": 895,
-  "sequence_length": 290,
-  "embedding_dimension": 960,
-  "training_mutable_positions": 261,
-  "rows": [
-    {
-      "scenario": "all_residues_upper_bound",
-      "positions": 259550,
-      "bytes": 996672000,
-      "gb_decimal": 0.996672,
-      "gib_binary": 0.9282231330871582
-    },
-    {
-      "scenario": "mutable_union_at_every_variant",
-      "positions": 233595,
-      "bytes": 897004800,
-      "gb_decimal": 0.8970048,
-      "gib_binary": 0.8354008197784424
-    },
-    {
-      "scenario": "mutated_positions_only_lower_bound",
-      "positions": 2472,
-      "bytes": 9492480,
-      "gb_decimal": 0.00949248,
-      "gib_binary": 0.008840560913085938
-    }
-  ],
-  "not_realized": "v12 does not fix the mutation-window radius or distant-position draw count; a final realized budget cannot be named without those Step 4 choices"
+  "status": "superseded_by_realized_training_only_budget",
+  "current_report": "Reports/step4/step4_budget_ired.json",
+  "activation_cache_created": false
 }

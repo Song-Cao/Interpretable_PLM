@@ -24,6 +24,12 @@ from crossfit.evaluation import (
     score_metrics,
 )
 from crossfit.models import build_model
+from crossfit.persistence import (
+    prediction_frame,
+    upsert_checkpoint_manifest,
+    write_prediction_csv,
+    write_prediction_parquet,
+)
 from crossfit.representations import esm_mean, esm_mutpool, esm_residue_delta, onehot_positional
 from crossfit.search import (
     boundary_hyperparameters,
@@ -157,6 +163,19 @@ def _position_sets(values: pd.Series) -> list[set[int]]:
     return [set() if pd.isna(value) or str(value) == "" else set(map(int, str(value).split(";"))) for value in values]
 
 
+def _save_torch_checkpoint(fit, path: Path, parameters: dict, input_shape: tuple[int, ...]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save({
+        "model": fit.model.state_dict(),
+        "residual_scale": fit.loss.residual_scale.state_dict(),
+        "normalizer_mean": fit.normalizer.mean,
+        "normalizer_scale": fit.normalizer.scale,
+        "configuration": parameters,
+        "epochs": int(getattr(fit, "epochs", getattr(fit, "best_epoch", -1) + 1)),
+        "input_shape": input_shape,
+    }, path)
+
+
 def main() -> int:
     args = _arguments()
     config = load_config(REPO_ROOT / "Code" / "config" / "step2.yaml")
@@ -180,6 +199,10 @@ def main() -> int:
     report_dir.mkdir(parents=True, exist_ok=True)
     state_dir = REPO_ROOT / config["paths"]["search_state"]
     partial_path = state_dir / f"{args.arm}_partial.csv"
+    persistence = config["persistence"]
+    search_prediction_dir = REPO_ROOT / config["paths"]["search_predictions"] / args.arm
+    search_checkpoint_dir = REPO_ROOT / config["paths"]["search_checkpoints"] / args.arm
+    checkpoint_manifest = report_dir / f"{args.arm}_checkpoint_manifest.json"
 
     preparation_started = time.perf_counter()
     prepared_folds = None
@@ -245,6 +268,23 @@ def main() -> int:
         return 0
 
     search_rows = load_search_state(partial_path, args.arm, len(configurations), len(folds))
+    if bool(persistence["write_search_predictions"]):
+        search_rows = [
+            row for row in search_rows
+            if (
+                search_prediction_dir
+                / f"config_{int(row['configuration']):03d}_fold_{int(row['fold']):02d}.parquet"
+            ).is_file()
+        ]
+    if bool(persistence["save_search_checkpoints"]):
+        extension = "joblib" if architecture == "random_forest" else "pt"
+        search_rows = [
+            row for row in search_rows
+            if (
+                search_checkpoint_dir
+                / f"config_{int(row['configuration']):03d}_fold_{int(row['fold']):02d}.{extension}"
+            ).is_file()
+        ]
     complete = {(int(row["configuration"]), int(row["fold"])) for row in search_rows}
     for configuration_index, parameters in enumerate(configurations):
         for fold_index, (train, validation) in enumerate(folds):
@@ -266,11 +306,38 @@ def main() -> int:
                 )
                 prediction = predict_torch(fit.model, fit.normalizer, features[validation], device=args.device)
                 best_epoch = fit.best_epoch + 1
+            held_out = prediction_frame(
+                dataset="IRED", step=2, arm=args.arm, config_id=configuration_index,
+                fold=fold_index, seed=seed, condition="cv_validation",
+                variant_rows=frame.iloc[validation]["variant_row"],
+                targets=target[validation], predictions=prediction,
+            )
+            if bool(persistence["write_search_predictions"]):
+                write_prediction_parquet(
+                    held_out,
+                    search_prediction_dir
+                    / f"config_{configuration_index:03d}_fold_{fold_index:02d}.parquet",
+                )
+            if bool(persistence["save_search_checkpoints"]):
+                if architecture == "random_forest":
+                    import joblib
+                    checkpoint = search_checkpoint_dir / f"config_{configuration_index:03d}_fold_{fold_index:02d}.joblib"
+                    checkpoint.parent.mkdir(parents=True, exist_ok=True)
+                    joblib.dump(fit, checkpoint)
+                else:
+                    checkpoint = search_checkpoint_dir / f"config_{configuration_index:03d}_fold_{fold_index:02d}.pt"
+                    _save_torch_checkpoint(fit, checkpoint, parameters, input_shape)
+                upsert_checkpoint_manifest(
+                    checkpoint_manifest, dataset="IRED", step=2, arm=args.arm,
+                    config_id=configuration_index, fold=fold_index, seed=seed,
+                    condition="cv_validation", checkpoint=checkpoint,
+                )
+            validation_spearman = float(spearmanr(prediction, target[validation]).statistic)
             search_rows.append({
                 "arm": args.arm,
                 "configuration": configuration_index,
                 "fold": fold_index,
-                "validation_spearman": float(spearmanr(prediction, target[validation]).statistic),
+                "validation_spearman": validation_spearman,
                 "best_epoch": best_epoch,
                 **parameters,
             })
@@ -288,6 +355,17 @@ def main() -> int:
     selected_index = int(mean_scores.idxmax())
     selected = configurations[selected_index]
     selected_epochs = max(1, int(round(search_frame.loc[search_frame["configuration"] == selected_index, "best_epoch"].median())))
+    if bool(persistence["commit_selected_cv_predictions"]):
+        write_prediction_csv(
+            pd.concat([
+                pd.read_parquet(
+                    search_prediction_dir
+                    / f"config_{selected_index:03d}_fold_{fold_index:02d}.parquet"
+                )
+                for fold_index in range(len(folds))
+            ], ignore_index=True),
+            report_dir / f"{args.arm}_cv_predictions.csv",
+        )
 
     rng = np.random.default_rng(int(config["evaluation"]["calibration_seed"]))
     shuffled = rng.permutation(train_pool)
@@ -298,6 +376,7 @@ def main() -> int:
     member_metrics = []
     model_dir = REPO_ROOT / config["paths"]["models"] / "IRED" / args.arm
     model_dir.mkdir(parents=True, exist_ok=True)
+    condition_rows = []
     for seed in map(int, config["optimization"]["ensemble_seeds"]):
         if architecture == "random_forest":
             fitted = _fit_rf(architecture, input_shape, selected, features, target, fit_indices, seed)
@@ -307,7 +386,11 @@ def main() -> int:
             plate_prediction = fitted.predict(plate_features)
             calibration_prediction = fitted.predict(features[calibration])
             import joblib
-            joblib.dump(fitted, model_dir / f"seed_{seed}.joblib")
+            pg_checkpoint = model_dir / f"seed_{seed}.joblib"
+            round_checkpoint = model_dir / f"seed_{seed}_round_held_out.joblib"
+            if bool(persistence["save_evaluation_checkpoints"]):
+                joblib.dump(fitted, pg_checkpoint)
+                joblib.dump(round_fitted, round_checkpoint)
         else:
             seed_everything(seed)
             pg_model = build_model(
@@ -335,11 +418,51 @@ def main() -> int:
             calibration_prediction = predict_torch(
                 fitted.model, fitted.normalizer, features[calibration], device=args.device
             )
-            torch.save({
-                "model": fitted.model.state_dict(), "residual_scale": fitted.loss.residual_scale.state_dict(),
-                "normalizer_mean": fitted.normalizer.mean, "normalizer_scale": fitted.normalizer.scale,
-                "configuration": selected, "epochs": selected_epochs, "input_shape": input_shape,
-            }, model_dir / f"seed_{seed}.pt")
+            pg_checkpoint = model_dir / f"seed_{seed}.pt"
+            round_checkpoint = model_dir / f"seed_{seed}_round_held_out.pt"
+            if bool(persistence["save_evaluation_checkpoints"]):
+                _save_torch_checkpoint(fitted, pg_checkpoint, selected, input_shape)
+                _save_torch_checkpoint(round_fitted, round_checkpoint, selected, input_shape)
+        if bool(persistence["save_evaluation_checkpoints"]):
+            for condition, checkpoint in (
+                ("pg_kfold_test", pg_checkpoint), ("round_held_out", round_checkpoint)
+            ):
+                upsert_checkpoint_manifest(
+                    checkpoint_manifest, dataset="IRED", step=2, arm=args.arm,
+                    config_id=selected_index, fold="final", seed=seed,
+                    condition=condition, checkpoint=checkpoint,
+                )
+        condition_rows.extend([
+            prediction_frame(
+                dataset="IRED", step=2, arm=args.arm, config_id=selected_index,
+                fold="final", seed=seed, condition="pg_kfold_test",
+                variant_rows=frame.iloc[test]["variant_row"], targets=target[test],
+                predictions=test_prediction,
+            ),
+            prediction_frame(
+                dataset="IRED", step=2, arm=args.arm, config_id=selected_index,
+                fold="final", seed=seed, condition="round_held_out",
+                variant_rows=frame.iloc[round_test]["variant_row"], targets=target[round_test],
+                predictions=round_prediction,
+            ),
+            prediction_frame(
+                dataset="IRED", step=2, arm=args.arm, config_id=selected_index,
+                fold="final", seed=seed, condition="plate",
+                variant_rows=np.arange(len(plate)), targets=plate["1/s"],
+                predictions=plate_prediction,
+            ),
+            prediction_frame(
+                dataset="IRED", step=2, arm=args.arm, config_id=selected_index,
+                fold="final", seed=seed, condition="pg_kfold_calibration",
+                variant_rows=frame.iloc[calibration]["variant_row"], targets=target[calibration],
+                predictions=calibration_prediction,
+            ),
+        ])
+        if bool(persistence["commit_member_condition_predictions"]):
+            write_prediction_csv(
+                pd.concat(condition_rows, ignore_index=True),
+                report_dir / f"{args.arm}_predictions.csv",
+            )
         test_members.append(test_prediction)
         round_members.append(round_prediction)
         plate_members.append(plate_prediction)
@@ -350,6 +473,38 @@ def main() -> int:
     round_ensemble = combine_deep_ensemble(np.stack(round_members))
     plate_ensemble = combine_deep_ensemble(np.stack(plate_members))
     calibration_ensemble = combine_deep_ensemble(np.stack(calibration_members))
+    ensemble_rows = [
+        prediction_frame(
+            dataset="IRED", step=2, arm=args.arm, config_id=selected_index,
+            fold="final", seed="ensemble", condition="pg_kfold_test",
+            variant_rows=frame.iloc[test]["variant_row"], targets=target[test],
+            predictions=test_ensemble.mean, uncertainty=test_ensemble.standard_deviation,
+        ),
+        prediction_frame(
+            dataset="IRED", step=2, arm=args.arm, config_id=selected_index,
+            fold="final", seed="ensemble", condition="round_held_out",
+            variant_rows=frame.iloc[round_test]["variant_row"], targets=target[round_test],
+            predictions=round_ensemble.mean, uncertainty=round_ensemble.standard_deviation,
+        ),
+        prediction_frame(
+            dataset="IRED", step=2, arm=args.arm, config_id=selected_index,
+            fold="final", seed="ensemble", condition="plate",
+            variant_rows=np.arange(len(plate)), targets=plate["1/s"],
+            predictions=plate_ensemble.mean, uncertainty=plate_ensemble.standard_deviation,
+        ),
+        prediction_frame(
+            dataset="IRED", step=2, arm=args.arm, config_id=selected_index,
+            fold="final", seed="ensemble", condition="pg_kfold_calibration",
+            variant_rows=frame.iloc[calibration]["variant_row"], targets=target[calibration],
+            predictions=calibration_ensemble.mean,
+            uncertainty=calibration_ensemble.standard_deviation,
+        ),
+    ]
+    if bool(persistence["commit_member_condition_predictions"]):
+        write_prediction_csv(
+            pd.concat(condition_rows + ensemble_rows, ignore_index=True),
+            report_dir / f"{args.arm}_predictions.csv",
+        )
     fit_positions = set().union(*_position_sets(frame.iloc[fit_indices]["mutated_positions"]))
     calibration_unseen = np.asarray([
         bool(value - fit_positions)
@@ -400,13 +555,15 @@ def main() -> int:
         "mean_epistemic_sd": float(test_ensemble.standard_deviation.mean()),
         "calibration_rows_reserved": len(calibration),
         "mondrian_conformal": conformal,
+        "prediction_persistence": {
+            "contract_version": int(persistence["contract_version"]),
+            "selected_cv": f"Reports/step2/{args.arm}_cv_predictions.csv",
+            "conditions": f"Reports/step2/{args.arm}_predictions.csv",
+            "search_partitions": f"Cache/step2/IRED/search_predictions/{args.arm}",
+            "checkpoint_manifest": f"Reports/step2/{args.arm}_checkpoint_manifest.json",
+        },
     }
     (report_dir / f"{args.arm}_result.json").write_text(json.dumps(result, indent=2) + "\n")
-    pd.concat([
-        pd.DataFrame({"condition": "pg_kfold_test", "variant_row": frame.iloc[test]["variant_row"], "target": target[test], "prediction": test_ensemble.mean, "epistemic_sd": test_ensemble.standard_deviation}),
-        pd.DataFrame({"condition": "round_held_out", "variant_row": frame.iloc[round_test]["variant_row"], "target": target[round_test], "prediction": round_ensemble.mean, "epistemic_sd": round_ensemble.standard_deviation}),
-        pd.DataFrame({"condition": "plate", "variant_row": np.arange(len(plate)), "target": plate["1/s"], "prediction": plate_ensemble.mean, "epistemic_sd": plate_ensemble.standard_deviation}),
-    ], ignore_index=True).to_csv(report_dir / f"{args.arm}_predictions.csv", index=False)
     print(json.dumps(result, indent=2), flush=True)
     return 0
 

@@ -12,6 +12,8 @@ paths:
   representations: Cache/step2/IRED/representations
   density_cache: Cache/step2/IRED/dpll.csv
   search_state: Cache/step2/IRED/search_state
+  search_predictions: Cache/step2/IRED/search_predictions
+  search_checkpoints: Models/step2/IRED/search
   reports: Reports/step2
   models: Models/step2
   preflight_report: Reports/step2/ired_preflight.json
@@ -100,6 +102,14 @@ optimization:
   scheduler_factor: 0.5
   scheduler_patience: 8
   gradient_clip_norm: 1.0
+persistence:
+  contract_version: 1
+  write_search_predictions: true
+  save_search_checkpoints: true
+  save_selected_cv_checkpoints: true
+  save_evaluation_checkpoints: true
+  commit_selected_cv_predictions: true
+  commit_member_condition_predictions: true
 evaluation:
   primary_test_fold: 0
   top_k: [24, 48, 96]

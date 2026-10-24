@@ -33,9 +33,22 @@
     "t_statistic": 0.9750560420788336,
     "degrees_of_freedom": 4,
     "p_value_two_sided": 0.38474402796197554,
-    "established": false
+    "established": false,
+    "per_fold_standard_deviation": 0.043705807965714265,
+    "cohens_d": 0.4360583183920334,
+    "power_analysis": {
+      "alpha_two_sided": 0.05,
+      "target_power": 0.8,
+      "approximate_folds_required_at_d_0_44": 42.5,
+      "hypothetical_ten_fold_t": 1.3789374787817177,
+      "hypothetical_ten_fold_degrees_of_freedom": 9,
+      "hypothetical_ten_fold_p_two_sided": 0.20121456665563112,
+      "interpretation": "Task gain is underpowered at IRED's dataset size, not established as absent. A variant-level bootstrap holding fitted out-of-fold predictions fixed would exclude model-fit variance and can overstate evidence."
+    },
+    "sweep_pattern": "Mean gain is small and positive in all four registered and bounded-sweep configurations and increases monotonically across the tested capacity settings, but none is statistically established."
   },
-  "selected_layer_frozen": false,
+  "selected_layer_frozen": true,
+  "selected_layer_scope": "exploratory_IRED_steps_4_to_8",
   "layer_selection_parameters": {
     "real_cka_floor": 0.5,
     "exclude_first_layers": 3,
@@ -92,6 +105,20 @@
   "gate_failure_reasons": [
     "task_gain_not_established"
   ],
+  "criterion_status": {
+    "task_gain": "failed_underpowered",
+    "drift": "met",
+    "shuffled_label_separation": "met"
+  },
+  "representational_precondition": {
+    "status": "met_cleanly_at_depth_26",
+    "real_relative_drift": 0.6338156,
+    "shuffled_relative_drift": 0.341735,
+    "drift_gap_95_ci": [
+      0.2831985412765357,
+      0.3012011526373483
+    ]
+  },
   "superseded_layer_29_result": {
     "reason": "real CKA 0.06415 indicates final-layer collapse",
     "archive": "Reports/archive/step3_gate1_depth29_pre_cka_floor",

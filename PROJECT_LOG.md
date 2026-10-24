@@ -771,3 +771,51 @@ the prediction track needs 0 or 3 crosscoders.
   incomplete arms. The convolutional validation shortlist ranks ESM residue (0.63268), one-hot
   positional (0.63207), and ESM residue delta (0.62910). Final verification passes all 210
   tests in 100.56 seconds.
+- `[DECISION]` IRED Gate 1 is failed permanently on the registered criterion. Mean paired gain
+  is 0.01906 with per-fold SD 0.04371, Cohen's d 0.436, `t(4)=0.975`, and `p=0.385`.
+  Approximately 42.5 independent folds are needed for 80% power at d=0.44; a hypothetical
+  ten-fold test gives only `t(9)=1.379`, `p=0.201`. A variant bootstrap of fixed out-of-fold
+  predictions is rejected because it conditions away model-fit variance. The small positive
+  gain is monotone across the four tested capacity settings but is not establishable from 895
+  training variants: underpowered is not the same as absent. Capacity, sweep size, and the Gate
+  criterion will not be changed.
+- `[FINDING]` Gate 1's independent representational precondition is met cleanly at depth 26:
+  real relative drift is 0.63382 against shuffled drift 0.34174, with gap interval
+  [0.28320, 0.30120] and real CKA 0.91894. Only the task-gain criterion fails.
+- `[ADJUST]` Prediction persistence is now a required pre-metric contract. Every future fit
+  writes held-out rows with dataset, step, arm, configuration, fold, seed, condition, variant,
+  target, and prediction before reducing them to metrics. Full-search folds are partitioned as
+  pod-only parquet; selected CV and individual ensemble-condition predictions are committed.
+  Checkpoint classes are enabled by default and every retained checkpoint receives a SHA-256
+  manifest entry. The historical audit records missing Step 2 CV/member rows and all missing
+  Step 3 OOF rows as unrecoverable without retraining; no missing row is fabricated.
+- `[DECISION]` Continuing past failed IRED Gate 1 is a post-hoc reinterpretation of the
+  criteria's relative weight, not a revised Gate verdict. The justification is that drift and
+  shuffled-label separation directly measure label-driven representation change over 17,110
+  held-out residue positions and both passed cleanly, whereas task gain is an underpowered
+  five-fold generalization proxy. No later result may retroactively mark IRED Gate 1 passed.
+- `[DECISION]` Depth 26 is frozen as the analysis layer for exploratory IRED Steps 4-8. Later
+  training/test stability profiles are reporting diagnostics and cannot re-select the layer.
+- `[DECISION]` IRED Steps 4-8 are exploratory pipeline shakedown only. No IRED feature-level
+  result is confirmatory or evidence for the central claim; every such result is
+  hypothesis-generating for GB1. The run must exercise caching, self-pair and shuffled nulls,
+  latent scaling, the per-decoder norm floor, classification precedence, and patching hygiene,
+  and every implementation defect found must be reported. GB1 starts only after the IRED
+  sequence is complete and never in parallel.
+- `[DECISION]` IRED dictionary width will be sized to effective sample size rather than the
+  alpha=8 default. The training pool contains 259,550 residue-position samples before any cache
+  exclusion, so alpha=8 would create 7,680 features with only 33.8 position-samples per feature.
+  Width selection must use participation ratio and dead-feature fraction as diagnostics and is
+  expected to require alpha far below 8. A high dead-feature fraction at this data volume is a
+  sample-size consequence, not a biological or methodological finding.
+- `[FINDING]` The approved pre-cache arithmetic for IRED uses all 895 pg_kfold fold-0 training
+  variants at all 290 residues: 259,550 positions. At d=960, fp16, and two models, the realized
+  activation payload is 996,672,000 bytes = 0.996672 decimal GB (0.928223 GiB), or 0.498336 GB
+  per model. Test, layer-freeze reserve, round-held-out test, and plate variants are excluded.
+  This is a budget calculation only; no activation cache was created.
+- `[COST]` Gate reporting, prediction-persistence enforcement, the IRED conclusion, and the
+  Step 4 budget calculation consumed 0 GPU-hours.
+- `[FINDING]` Repository verification after the persistence changes passes all 217 tests in
+  105.35 seconds. The new enforcement tests validate the common prediction schema, atomic CSV
+  and parquet writes, checkpoint hashing, legacy exceptions, inference-only backfill, and the
+  presence of condition predictions for every historical Step 2 result.

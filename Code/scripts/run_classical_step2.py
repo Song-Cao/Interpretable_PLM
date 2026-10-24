@@ -21,6 +21,12 @@ from crossfit.datasets import (
 )
 from crossfit.evaluation import MondrianConformal, bootstrap_metric_intervals, coverage_by_stratum
 from crossfit.models import DiagonalRidgeRegressor
+from crossfit.persistence import (
+    prediction_frame,
+    upsert_checkpoint_manifest,
+    write_prediction_csv,
+    write_prediction_parquet,
+)
 from crossfit.representations import aaindex_flat, load_aaindex_table, onehot
 from crossfit.search import boundary_hyperparameters, sample_configurations, training_pool_folds
 from crossfit.utils import REPO_ROOT, load_config, stable_hash
@@ -77,6 +83,25 @@ def _fit_predict(
     return model, prediction
 
 
+def _save_checkpoint(
+    model: DiagonalRidgeRegressor,
+    path: Path,
+    *,
+    site_penalty: float,
+    density_penalty: float,
+    fit_variant_rows: np.ndarray,
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez(
+        path,
+        coefficient=model.coefficient_,
+        intercept=model.intercept_,
+        site_penalty=site_penalty,
+        density_penalty=density_penalty,
+        fit_variant_rows=np.asarray(fit_variant_rows, dtype=int),
+    )
+
+
 def _mutation_counts(mutations: pd.Series) -> np.ndarray:
     return mutations.map(lambda value: 0 if value == "WT" else len(str(value).split(":"))).to_numpy(int)
 
@@ -121,9 +146,8 @@ def main() -> int:
     space = config["search"]["spaces"]["diagonal_ridge"]
     count = args.search_count or int(config["search"]["maximum_configurations_per_arm"])
     arm = f"{args.representation}_ridge_{args.augmentation}"
-    configurations = sample_configurations(
-        space, count, int(config["search"]["sampling_seed"]) + stable_hash(arm) % 1_000_000
-    )
+    search_seed = int(config["search"]["sampling_seed"]) + stable_hash(arm) % 1_000_000
+    configurations = sample_configurations(space, count, search_seed)
 
     timings = []
     for configuration in configurations[: int(config["search"]["timing_fits"])]:
@@ -149,14 +173,43 @@ def main() -> int:
     if args.benchmark_only:
         return 0
 
+    persistence = config["persistence"]
+    search_prediction_dir = REPO_ROOT / config["paths"]["search_predictions"] / arm
+    search_checkpoint_dir = REPO_ROOT / config["paths"]["search_checkpoints"] / arm
+    checkpoint_manifest = report_dir / f"{arm}_checkpoint_manifest.json"
     rows = []
     for config_index, configuration in enumerate(configurations):
         fold_scores = []
         for fold_index, (train, validation) in enumerate(folds):
-            _, prediction = _fit_predict(
+            model, prediction = _fit_predict(
                 features, target, train, validation, float(configuration["site_penalty"]), density,
                 float(configuration["density_penalty"]),
             )
+            fold_seed = search_seed + config_index * len(folds) + fold_index
+            held_out = prediction_frame(
+                dataset="IRED", step=2, arm=arm, config_id=config_index, fold=fold_index,
+                seed=fold_seed, condition="cv_validation",
+                variant_rows=frame.iloc[validation]["variant_row"],
+                targets=target[validation], predictions=prediction,
+            )
+            if bool(persistence["write_search_predictions"]):
+                write_prediction_parquet(
+                    held_out,
+                    search_prediction_dir / f"config_{config_index:03d}_fold_{fold_index:02d}.parquet",
+                )
+            if bool(persistence["save_search_checkpoints"]):
+                checkpoint = search_checkpoint_dir / f"config_{config_index:03d}_fold_{fold_index:02d}.npz"
+                _save_checkpoint(
+                    model, checkpoint,
+                    site_penalty=float(configuration["site_penalty"]),
+                    density_penalty=float(configuration["density_penalty"]),
+                    fit_variant_rows=frame.iloc[train]["variant_row"].to_numpy(int),
+                )
+                upsert_checkpoint_manifest(
+                    checkpoint_manifest, dataset="IRED", step=2, arm=arm,
+                    config_id=config_index, fold=fold_index, seed=fold_seed,
+                    condition="cv_validation", checkpoint=checkpoint,
+                )
             score = pd.Series(prediction).corr(pd.Series(target[validation]), method="spearman")
             fold_scores.append(float(score))
             rows.append(
@@ -174,6 +227,17 @@ def main() -> int:
     means = search_frame.groupby("configuration")["validation_spearman"].mean()
     selected_index = int(means.idxmax())
     selected = configurations[selected_index]
+    if bool(persistence["commit_selected_cv_predictions"]):
+        selected_folds = [
+            pd.read_parquet(
+                search_prediction_dir / f"config_{selected_index:03d}_fold_{fold_index:02d}.parquet"
+            )
+            for fold_index in range(len(folds))
+        ]
+        write_prediction_csv(
+            pd.concat(selected_folds, ignore_index=True),
+            report_dir / f"{arm}_cv_predictions.csv",
+        )
 
     evaluation = config["evaluation"]
     calibration_rng = np.random.default_rng(int(evaluation["calibration_seed"]))
@@ -191,16 +255,6 @@ def main() -> int:
     )
     model_dir = REPO_ROOT / config["paths"]["models"] / "IRED" / arm
     model_dir.mkdir(parents=True, exist_ok=True)
-    for seed in config["optimization"]["ensemble_seeds"]:
-        np.savez(
-            model_dir / f"seed_{seed}.npz",
-            coefficient=model.coefficient_,
-            intercept=model.intercept_,
-            site_penalty=float(selected["site_penalty"]),
-            density_penalty=float(selected["density_penalty"]),
-            fit_variant_rows=frame.iloc[fit_indices]["variant_row"].to_numpy(int),
-        )
-
     round_train, round_test = get_split("IRED", "round_held_out")
     round_model, round_prediction = _fit_predict(
         features, target, round_train, round_test, float(selected["site_penalty"]), density,
@@ -211,6 +265,63 @@ def main() -> int:
     plate_features = _features(plate_sequences, args.representation, config)
     plate_density = _density(plate_sequences, lookup) if lookup else None
     plate_prediction = model.predict(plate_features, density=plate_density)
+
+    condition_rows = []
+    for seed in map(int, config["optimization"]["ensemble_seeds"]):
+        pg_checkpoint = model_dir / f"seed_{seed}.npz"
+        round_checkpoint = model_dir / f"seed_{seed}_round_held_out.npz"
+        if bool(persistence["save_evaluation_checkpoints"]):
+            _save_checkpoint(
+                model, pg_checkpoint,
+                site_penalty=float(selected["site_penalty"]),
+                density_penalty=float(selected["density_penalty"]),
+                fit_variant_rows=frame.iloc[fit_indices]["variant_row"].to_numpy(int),
+            )
+            _save_checkpoint(
+                round_model, round_checkpoint,
+                site_penalty=float(selected["site_penalty"]),
+                density_penalty=float(selected["density_penalty"]),
+                fit_variant_rows=frame.iloc[round_train]["variant_row"].to_numpy(int),
+            )
+            for condition, checkpoint in (
+                ("pg_kfold_test", pg_checkpoint), ("round_held_out", round_checkpoint)
+            ):
+                upsert_checkpoint_manifest(
+                    checkpoint_manifest, dataset="IRED", step=2, arm=arm,
+                    config_id=selected_index, fold="final", seed=seed,
+                    condition=condition, checkpoint=checkpoint,
+                )
+        condition_rows.extend([
+            prediction_frame(
+                dataset="IRED", step=2, arm=arm, config_id=selected_index,
+                fold="final", seed=seed, condition="pg_kfold_test",
+                variant_rows=frame.iloc[test]["variant_row"], targets=target[test],
+                predictions=test_prediction,
+            ),
+            prediction_frame(
+                dataset="IRED", step=2, arm=arm, config_id=selected_index,
+                fold="final", seed=seed, condition="round_held_out",
+                variant_rows=frame.iloc[round_test]["variant_row"], targets=target[round_test],
+                predictions=round_prediction,
+            ),
+            prediction_frame(
+                dataset="IRED", step=2, arm=arm, config_id=selected_index,
+                fold="final", seed=seed, condition="plate",
+                variant_rows=np.arange(len(plate)), targets=plate["1/s"],
+                predictions=plate_prediction,
+            ),
+            prediction_frame(
+                dataset="IRED", step=2, arm=arm, config_id=selected_index,
+                fold="final", seed=seed, condition="pg_kfold_calibration",
+                variant_rows=frame.iloc[calibration]["variant_row"], targets=target[calibration],
+                predictions=calibration_prediction,
+            ),
+        ])
+        if bool(persistence["commit_member_condition_predictions"]):
+            write_prediction_csv(
+                pd.concat(condition_rows, ignore_index=True),
+                report_dir / f"{arm}_predictions.csv",
+            )
 
     fit_positions = set().union(*_position_sets(frame.iloc[fit_indices]["mutated_positions"]))
     calibration_unseen = np.asarray(
@@ -269,17 +380,15 @@ def main() -> int:
         "calibration_rows": len(calibration),
         "fit_rows": len(fit_indices),
         "mondrian_conformal": conformal,
+        "prediction_persistence": {
+            "contract_version": int(persistence["contract_version"]),
+            "selected_cv": f"Reports/step2/{arm}_cv_predictions.csv",
+            "conditions": f"Reports/step2/{arm}_predictions.csv",
+            "search_partitions": f"Cache/step2/IRED/search_predictions/{arm}",
+            "checkpoint_manifest": f"Reports/step2/{arm}_checkpoint_manifest.json",
+        },
     }
     (report_dir / f"{arm}_result.json").write_text(json.dumps(result, indent=2) + "\n")
-    prediction_frame = pd.concat(
-        [
-            pd.DataFrame({"condition": "pg_kfold_test", "variant_row": frame.iloc[test]["variant_row"], "target": target[test], "prediction": test_prediction}),
-            pd.DataFrame({"condition": "round_held_out", "variant_row": frame.iloc[round_test]["variant_row"], "target": target[round_test], "prediction": round_prediction}),
-            pd.DataFrame({"condition": "plate", "variant_row": np.arange(len(plate)), "target": plate["1/s"], "prediction": plate_prediction}),
-        ],
-        ignore_index=True,
-    )
-    prediction_frame.to_csv(report_dir / f"{arm}_predictions.csv", index=False)
     print(json.dumps(result, indent=2))
     return 0
 

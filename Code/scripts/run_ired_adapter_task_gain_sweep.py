@@ -20,10 +20,16 @@ from crossfit.adaptation import (
     build_lora_adapter,
     fit_adapter_early_stopping,
     predict_adapter,
+    save_trainable_state,
 )
 from crossfit.datasets import get_split, load_assay
 from crossfit.esmc import load_esmc
 from crossfit.gate1 import paired_task_gain_test
+from crossfit.persistence import (
+    prediction_frame,
+    upsert_checkpoint_manifest,
+    write_prediction_csv,
+)
 from crossfit.search import training_pool_folds
 from crossfit.utils import REPO_ROOT, load_config
 
@@ -86,6 +92,9 @@ def main() -> int:
     partial_dir = REPO_ROOT / config["paths"]["cache"] / "task_gain_sweep"
     report_dir.mkdir(parents=True, exist_ok=True)
     partial_dir.mkdir(parents=True, exist_ok=True)
+    persistence = config["persistence"]
+    checkpoint_root = REPO_ROOT / config["paths"]["checkpoints"] / "task_gain_sweep"
+    checkpoint_manifest = REPO_ROOT / persistence["checkpoint_manifest"]
     summary = [{
         "configuration": "rank16_lr1e-4",
         "rank": int(config["adapter"]["rank"]),
@@ -101,6 +110,7 @@ def main() -> int:
         learning_rate = float(candidate["learning_rate"])
         final_path = report_dir / f"{name}_cv.csv"
         partial_path = partial_dir / f"{name}_partial.csv"
+        prediction_path = report_dir / f"{name}_oof_predictions.csv"
         if final_path.exists():
             rows = pd.read_csv(final_path).to_dict("records")
             if len(rows) != len(folds):
@@ -109,6 +119,24 @@ def main() -> int:
             rows = pd.read_csv(partial_path).to_dict("records")
         else:
             rows = []
+        valid_completed = set()
+        for row in rows:
+            fold = int(row["fold"])
+            checkpoint = checkpoint_root / name / f"fold_{fold}" / "real_adapter.pt"
+            if prediction_path.exists():
+                persisted = pd.read_csv(prediction_path)
+                has_predictions = (
+                    (persisted["config_id"].astype(str) == name)
+                    & (persisted["fold"].astype(int) == fold)
+                    & (persisted["arm"].astype(str) == "real_adapter")
+                ).sum() == len(folds[fold][1])
+            else:
+                has_predictions = False
+            if has_predictions and (
+                not bool(persistence["save_sweep_checkpoints"]) or checkpoint.is_file()
+            ):
+                valid_completed.add(fold)
+        rows = [row for row in rows if int(row["fold"]) in valid_completed]
         completed = {int(row["fold"]) for row in rows}
         candidate_started = time.perf_counter()
         for fold_index, (train, validation) in enumerate(folds):
@@ -134,6 +162,32 @@ def main() -> int:
                 backbone_tokenize=tokenize, batch_size=int(config["adapter"]["batch_size"]),
                 device=device,
             )
+            held_out = prediction_frame(
+                dataset="IRED", step=3, arm="real_adapter", config_id=name,
+                fold=fold_index, seed=seed, condition="cv_validation",
+                variant_rows=frame.iloc[validation]["variant_row"],
+                targets=target[validation], predictions=prediction,
+            )
+            existing_predictions = (
+                pd.read_csv(prediction_path) if prediction_path.exists() else pd.DataFrame()
+            )
+            if not existing_predictions.empty:
+                existing_predictions = existing_predictions.loc[
+                    existing_predictions["fold"].astype(int) != fold_index
+                ]
+            combined_predictions = pd.concat(
+                [existing_predictions, held_out], ignore_index=True
+            )
+            write_prediction_csv(combined_predictions, prediction_path)
+            if bool(persistence["save_sweep_checkpoints"]):
+                checkpoint = checkpoint_root / name / f"fold_{fold_index}" / "real_adapter.pt"
+                checkpoint.parent.mkdir(parents=True, exist_ok=True)
+                save_trainable_state(fit.model, checkpoint)
+                upsert_checkpoint_manifest(
+                    checkpoint_manifest, dataset="IRED", step=3, arm="real_adapter",
+                    config_id=name, fold=fold_index, seed=seed,
+                    condition="cv_validation", checkpoint=checkpoint,
+                )
             adapted = float(spearmanr(prediction, target[validation]).statistic)
             frozen = float(authoritative.loc[authoritative["fold"] == fold_index, "frozen_spearman"].iloc[0])
             rows.append({
@@ -147,6 +201,8 @@ def main() -> int:
                 "adapter_best_epoch": fit.best_epoch + 1,
                 "adapter_optimizer_steps": fit.best_optimizer_steps,
                 "adapter_executed_optimizer_steps": fit.executed_optimizer_steps,
+                "prediction_file": f"Reports/step3/task_gain_sweep/{name}_oof_predictions.csv",
+                "checkpoint_manifest": str(persistence["checkpoint_manifest"]),
             })
             rows.sort(key=lambda row: int(row["fold"]))
             _atomic_csv(pd.DataFrame(rows), partial_path)
