@@ -2,7 +2,9 @@
   "arm": "esm_residue_conv",
   "representative_fits": 10,
   "mean_fit_seconds": 137.72409722970625,
-  "configuration_count": 60,
-  "projected_search_gpu_hours": 11.47700810247552,
-  "sampling_seed": 20915155
+  "configuration_count": 30,
+  "projected_search_gpu_hours": 5.73850405123776,
+  "sampling_seed": 20915155,
+  "one_time_fold_preparation_seconds": 4.225036964984611,
+  "reused_completed_timing_audit": true
 }
