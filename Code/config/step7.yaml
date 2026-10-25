@@ -2,6 +2,7 @@
 dataset: IRED
 dimension: 960
 width_multipliers: [1, 2, 4, 8]
+decoder_bias: false
 batch_topk:
   k: 32
   reasoning: "Published BatchTopK operating point; 3.3% of d, fixed before outcomes so width alone changes."

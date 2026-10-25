@@ -67,7 +67,7 @@ def main() -> int:
     torch.cuda.manual_seed_all(seed)
     model = CrossCoder(
         int(config["dimension"]), int(config["width_multiplier"]),
-        int(config["batch_topk"]["k"]),
+        int(config["batch_topk"]["k"]), decoder_bias=bool(config["decoder_bias"]),
     )
     trace = _train(model, evo, evo, config, "cuda")
     delta = decoder_delta(model).detach().cpu().numpy()
@@ -87,6 +87,7 @@ def main() -> int:
         "pair": "h_evo_h_evo",
         "width_multiplier": int(config["width_multiplier"]),
         "nominal_k": int(config["batch_topk"]["k"]),
+        "decoder_bias": bool(config["decoder_bias"]),
         "k_reasoning": str(config["batch_topk"]["reasoning"]),
         "positions": len(evo),
         "delta_min": float(delta.min()),

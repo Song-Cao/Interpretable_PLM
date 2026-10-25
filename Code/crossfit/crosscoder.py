@@ -32,7 +32,9 @@ class BatchTopK(nn.Module):
 class CrossCoder(nn.Module):
     """Shared sparse encoder with separate evo and fit linear decoders."""
 
-    def __init__(self, dimension: int, width_multiplier: int, k: int) -> None:
+    def __init__(
+        self, dimension: int, width_multiplier: int, k: int, *, decoder_bias: bool
+    ) -> None:
         super().__init__()
         if dimension <= 0 or width_multiplier <= 0:
             raise ValueError("dimension and width_multiplier must be positive")
@@ -41,8 +43,8 @@ class CrossCoder(nn.Module):
         self.features = self.dimension * self.width_multiplier
         self.encoder = nn.Linear(2 * self.dimension, self.features)
         self.sparsity = BatchTopK(k)
-        self.evo_decoder = nn.Linear(self.features, self.dimension)
-        self.fit_decoder = nn.Linear(self.features, self.dimension)
+        self.evo_decoder = nn.Linear(self.features, self.dimension, bias=decoder_bias)
+        self.fit_decoder = nn.Linear(self.features, self.dimension, bias=decoder_bias)
         self.reset_parameters()
 
     @property
@@ -55,7 +57,8 @@ class CrossCoder(nn.Module):
         # Symmetric initialization makes the self-pair null an exact alignment test.
         with torch.no_grad():
             self.fit_decoder.weight.copy_(self.evo_decoder.weight)
-            self.fit_decoder.bias.copy_(self.evo_decoder.bias)
+            if self.evo_decoder.bias is not None:
+                self.fit_decoder.bias.copy_(self.evo_decoder.bias)
 
     def encode(self, evo: torch.Tensor, fit: torch.Tensor) -> torch.Tensor:
         if evo.shape != fit.shape or evo.ndim != 2 or evo.shape[1] != self.dimension:

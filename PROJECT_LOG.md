@@ -851,3 +851,9 @@ the prediction track needs 0 or 3 crosscoders.
   linear head remained on CPU. The checkpoint and training artifacts were unaffected. The
   backfill loader now moves the complete wrapper to the requested device and reruns inference
   from the beginning; no model is retrained and no partial prediction file is retained.
+- `[ADJUST]` A formula audit after the first completed width sweep found that the implementation
+  had used affine decoder layers with biases, while v13 specifies the matrix maps `D_evo z` and
+  `D_fit z`. The symmetric self-pair test cannot expose this because the two biases remain equal.
+  Those results and checkpoints are archived as invalid, `decoder_bias: false` is now asserted in
+  both configs and tests, and the self-pair plus every width/seed run restarts from the beginning.
+  The activation cache and Gate 1 inference backfill are unaffected.

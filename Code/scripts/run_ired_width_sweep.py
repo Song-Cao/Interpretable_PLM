@@ -56,19 +56,30 @@ def _fit(model, evo, fit, train, seed, device):
 def _complete_checkpoint(path, config, width, seed, evo, fit, device):
     if path.exists():
         artifact = torch.load(path, map_location="cpu", weights_only=True)
-        if artifact["width_multiplier"] != width or artifact["seed"] != seed:
+        if (
+            artifact["width_multiplier"] != width
+            or artifact["seed"] != seed
+            or artifact["decoder_bias"] != bool(config["decoder_bias"])
+        ):
             raise AssertionError(f"checkpoint identity mismatch: {path}")
-        model = CrossCoder(int(config["dimension"]), width, int(config["batch_topk"]["k"]))
+        model = CrossCoder(
+            int(config["dimension"]), width, int(config["batch_topk"]["k"]),
+            decoder_bias=bool(config["decoder_bias"]),
+        )
         model.load_state_dict(artifact["state_dict"])
         model.to(device)
         return model, list(artifact["trace"]), True
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-    model = CrossCoder(int(config["dimension"]), width, int(config["batch_topk"]["k"]))
+    model = CrossCoder(
+        int(config["dimension"]), width, int(config["batch_topk"]["k"]),
+        decoder_bias=bool(config["decoder_bias"]),
+    )
     trace = _fit(model, evo, fit, config["training"], seed, device)
     artifact = {
         "format": "crossfit_crosscoder_v1", "width_multiplier": width, "seed": seed,
-        "nominal_k": int(config["batch_topk"]["k"]), "state_dict": model.state_dict(),
+        "nominal_k": int(config["batch_topk"]["k"]),
+        "decoder_bias": bool(config["decoder_bias"]), "state_dict": model.state_dict(),
         "trace": trace,
     }
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -86,6 +97,8 @@ def main() -> int:
     self_pair = json.loads((REPO_ROOT / "Reports/step6/self_pair_null.json").read_text())
     if not self_pair.get("passed"):
         raise RuntimeError("the self-pair null did not pass; real-pair training is forbidden")
+    if self_pair.get("decoder_bias") is not bool(config["decoder_bias"]):
+        raise RuntimeError("self-pair and real-pair decoder architecture differ")
     evo_array, fit_array = load_cached_pair(REPO_ROOT / config["paths"]["cache"])
     # The 1.99-GB float32 pair fits comfortably on the 80-GB A100. Keeping it
     # resident avoids making a host-side fancy-indexed copy for every batch.
@@ -95,7 +108,7 @@ def main() -> int:
     rows = []
     for width in map(int, config["width_multipliers"]):
         for seed in map(int, config["training"]["seeds"]):
-            path = REPO_ROOT / config["paths"]["checkpoints"] / f"w{width}_seed{seed}.pt"
+            path = REPO_ROOT / config["paths"]["checkpoints"] / f"w{width}_seed{seed}_nobias.pt"
             run_started = time.monotonic()
             model, trace, resumed = _complete_checkpoint(path, config, width, seed, evo, fit, "cuda")
             diagnostics = crosscoder_diagnostics(
@@ -107,6 +120,7 @@ def main() -> int:
                 "features": diagnostics.features, "positions": len(evo),
                 "samples_per_feature": len(evo) / diagnostics.features,
                 "nominal_k": int(config["batch_topk"]["k"]),
+                "decoder_bias": bool(config["decoder_bias"]),
                 "realized_l0": diagnostics.realized_l0,
                 "dead_feature_fraction": diagnostics.dead_feature_fraction,
                 "active_features": diagnostics.active_features,
@@ -154,6 +168,7 @@ def main() -> int:
         "status": "complete", "dataset": str(config["dataset"]),
         "width_multipliers": list(map(int, config["width_multipliers"])),
         "nominal_k": int(config["batch_topk"]["k"]),
+        "decoder_bias": bool(config["decoder_bias"]),
         "k_reasoning": str(config["batch_topk"]["reasoning"]),
         "seeds": list(map(int, config["training"]["seeds"])),
         "gpu_wall_hours": (time.monotonic() - started) / 3600.0,

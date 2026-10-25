@@ -2,6 +2,7 @@
 dataset: IRED
 dimension: 960
 width_multiplier: 1
+decoder_bias: false
 batch_topk:
   k: 32
   reasoning: "Published BatchTopK operating point; 3.3% of d, fixed before outcomes and across the width sweep."
@@ -15,6 +16,5 @@ training:
   delta_tolerance: 1.0e-7
 paths:
   cache: Cache/step4/IRED
-  checkpoint: Models/step6/IRED/self_pair_w1_seed20261301.pt
+  checkpoint: Models/step6/IRED/self_pair_w1_seed20261301_nobias.pt
   report: Reports/step6/self_pair_null.json
-

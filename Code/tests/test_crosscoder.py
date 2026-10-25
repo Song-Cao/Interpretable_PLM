@@ -22,7 +22,7 @@ def test_batch_topk_has_registered_batch_level_l0():
 
 def test_crosscoder_self_pair_delta_is_exactly_half_after_update():
     torch.manual_seed(5)
-    model = CrossCoder(dimension=4, width_multiplier=2, k=2)
+    model = CrossCoder(dimension=4, width_multiplier=2, k=2, decoder_bias=False)
     values = torch.randn(9, 4)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.0)
     _, left, right = model(values, values)
@@ -35,9 +35,15 @@ def test_crosscoder_self_pair_delta_is_exactly_half_after_update():
 
 def test_crosscoder_diagnostics_reports_realized_l0_and_dead_features():
     torch.manual_seed(7)
-    model = CrossCoder(dimension=3, width_multiplier=2, k=1)
+    model = CrossCoder(dimension=3, width_multiplier=2, k=1, decoder_bias=False)
     values = np.random.default_rng(7).normal(size=(11, 3)).astype(np.float32)
     result = crosscoder_diagnostics(model, values, values, batch_size=4, device="cpu")
     assert np.isclose(result.realized_l0, 1.0)
     assert 0 <= result.dead_feature_fraction <= 1
     assert result.features == 6
+
+
+def test_registered_decoder_is_the_bias_free_matrix_in_the_plan():
+    model = CrossCoder(dimension=3, width_multiplier=1, k=1, decoder_bias=False)
+    assert model.evo_decoder.bias is None
+    assert model.fit_decoder.bias is None
