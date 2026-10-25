@@ -1,0 +1,10 @@
+{
+  "arm": "onehot_positional_conv",
+  "representative_fits": 10,
+  "mean_fit_seconds": 28.969002975901823,
+  "configuration_count": 30,
+  "projected_search_gpu_hours": 1.2070417906625759,
+  "sampling_seed": 20418363,
+  "one_time_fold_preparation_seconds": 0.16189460398163646,
+  "reused_completed_timing_audit": true
+}
