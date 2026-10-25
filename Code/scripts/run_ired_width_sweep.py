@@ -32,15 +32,15 @@ def _fit(model, evo, fit, train, seed, device):
         model.parameters(), lr=float(train["learning_rate"]),
         weight_decay=float(train["weight_decay"]),
     )
-    rng = np.random.default_rng(seed)
+    generator = torch.Generator(device=device).manual_seed(seed)
     trace = []
     for epoch in range(int(train["epochs"])):
-        order = rng.permutation(len(evo))
+        order = torch.randperm(len(evo), generator=generator, device=device)
         losses = []
         for start in range(0, len(order), int(train["batch_size"])):
             indices = order[start : start + int(train["batch_size"])]
-            left = torch.as_tensor(evo[indices], dtype=torch.float32, device=device)
-            right = torch.as_tensor(fit[indices], dtype=torch.float32, device=device)
+            left = evo.index_select(0, indices)
+            right = fit.index_select(0, indices)
             code, left_hat, right_hat = model(left, right)
             loss = reconstruction_loss(left, right, left_hat, right_hat)
             optimizer.zero_grad(set_to_none=True)
@@ -86,7 +86,12 @@ def main() -> int:
     self_pair = json.loads((REPO_ROOT / "Reports/step6/self_pair_null.json").read_text())
     if not self_pair.get("passed"):
         raise RuntimeError("the self-pair null did not pass; real-pair training is forbidden")
-    evo, fit = load_cached_pair(REPO_ROOT / config["paths"]["cache"])
+    evo_array, fit_array = load_cached_pair(REPO_ROOT / config["paths"]["cache"])
+    # The 1.99-GB float32 pair fits comfortably on the 80-GB A100. Keeping it
+    # resident avoids making a host-side fancy-indexed copy for every batch.
+    evo = torch.as_tensor(evo_array, dtype=torch.float32, device="cuda")
+    fit = torch.as_tensor(fit_array, dtype=torch.float32, device="cuda")
+    del evo_array, fit_array
     rows = []
     for width in map(int, config["width_multipliers"]):
         for seed in map(int, config["training"]["seeds"]):

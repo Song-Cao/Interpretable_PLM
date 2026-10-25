@@ -105,8 +105,8 @@ class CrossCoderDiagnostics:
 @torch.inference_mode()
 def crosscoder_diagnostics(
     model: CrossCoder,
-    evo: np.ndarray,
-    fit: np.ndarray,
+    evo: np.ndarray | torch.Tensor,
+    fit: np.ndarray | torch.Tensor,
     *,
     batch_size: int,
     device: str | torch.device,
