@@ -1,0 +1,19 @@
+{
+  "dataset": "IRED",
+  "pair": "h_evo_h_evo",
+  "width_multiplier": 1,
+  "nominal_k": 32,
+  "decoder_bias": false,
+  "k_reasoning": "Published BatchTopK operating point; 3.3% of d, fixed before outcomes and across the width sweep.",
+  "positions": 259550,
+  "delta_min": 0.5,
+  "delta_max": 0.5,
+  "maximum_absolute_delta_deviation_from_half": 0.0,
+  "numerical_tolerance": 1e-07,
+  "passed": true,
+  "realized_l0": 32.0,
+  "final_reconstruction_loss": 0.001989350178898642,
+  "checkpoint": "Models/step6/IRED/self_pair_w1_seed20261301_nobias.pt",
+  "checkpoint_sha256": "737f390da8a2e0ea421e4ed05d95c4322d80422c2cd010cb1c3d192c0d89720e",
+  "gpu_wall_hours": 0.03354137826499128
+}

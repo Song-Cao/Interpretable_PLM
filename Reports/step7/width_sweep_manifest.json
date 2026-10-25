@@ -1,0 +1,20 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "width_multipliers": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "nominal_k": 32,
+  "decoder_bias": false,
+  "k_reasoning": "Published BatchTopK operating point; 3.3% of d, fixed before outcomes so width alone changes.",
+  "seeds": [
+    20261311,
+    20261312,
+    20261313
+  ],
+  "gpu_wall_hours": 0.10493141972167197,
+  "partial_results_reported": false
+}
