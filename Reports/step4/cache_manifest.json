@@ -1,0 +1,178 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "split": "pg_kfold_fold_0_training_only",
+  "analysis_layer": 26,
+  "training_variants": 895,
+  "sequence_length": 290,
+  "positions": 259550,
+  "dimension": 960,
+  "dtype": "float16",
+  "adapter_checkpoint_sha256": "38da4c4aec3cbec958e866679be078c24948cd434be0d65b50ba2a337a02e4b4",
+  "token_alignment": "exact",
+  "raw_adapted_to_base_mean_norm_ratio": 0.9175812965806011,
+  "models": {
+    "evo": {
+      "raw_mean_norm": 1137.8933538817184,
+      "normalization_scalar": 0.027229148200895496,
+      "normalized_mean_norm": 30.98391052422462,
+      "shards": [
+        {
+          "name": "shard_0000.npy",
+          "bytes": 35635328,
+          "sha256": "963c4aa4d337ccdd64eff492840a89452f7c5008d60581ec072aae299e465b88"
+        },
+        {
+          "name": "shard_0001.npy",
+          "bytes": 35635328,
+          "sha256": "603bb32361b2748f6c9afbee11bfc8d3b911d171533f14917cf512ee0e47dbca"
+        },
+        {
+          "name": "shard_0002.npy",
+          "bytes": 35635328,
+          "sha256": "9e4084b2738bc5453fcfa015127ea7113654cfe195c836d964297d86b404c2c2"
+        },
+        {
+          "name": "shard_0003.npy",
+          "bytes": 35635328,
+          "sha256": "24bbfc07a8ba3b2dd3f9c7f3686f1dd8a2e23cd2ce844cbc1f0077c82f2f8330"
+        },
+        {
+          "name": "shard_0004.npy",
+          "bytes": 35635328,
+          "sha256": "1dd1a8e01d55759ae15227f1dfb2f8d16e6ac1a51295b8907c9804b742540ad1"
+        },
+        {
+          "name": "shard_0005.npy",
+          "bytes": 35635328,
+          "sha256": "abc563a4ba914d9ed2d127a87a87c07c0d6ca2015d0f65468e0ece53bb842516"
+        },
+        {
+          "name": "shard_0006.npy",
+          "bytes": 35635328,
+          "sha256": "ee5e88088e3da5daa07b93d50ddc9aa388ad0c50bb996ec6987b24dc6d321f3a"
+        },
+        {
+          "name": "shard_0007.npy",
+          "bytes": 35635328,
+          "sha256": "55c2250eae2e3bacb467da236dd81e098e0909e13b3fb02f3f1f75b2ab1a2f5e"
+        },
+        {
+          "name": "shard_0008.npy",
+          "bytes": 35635328,
+          "sha256": "71f08c2c6282b2df0006a6e1ed26be26186b438acbc52500e5202a3892c61c28"
+        },
+        {
+          "name": "shard_0009.npy",
+          "bytes": 35635328,
+          "sha256": "67080cfdda5a0d99b7a640dcc6f9103179967b59290b2921814ee874cc3a94b1"
+        },
+        {
+          "name": "shard_0010.npy",
+          "bytes": 35635328,
+          "sha256": "0a9e9378c1bf7e366857a5026920d4482edb58745df33009f68ffa0a7ddde381"
+        },
+        {
+          "name": "shard_0011.npy",
+          "bytes": 35635328,
+          "sha256": "2e470c0bbda5907383006adb838e48e182e7239768202f3063be87261c9bfc38"
+        },
+        {
+          "name": "shard_0012.npy",
+          "bytes": 35635328,
+          "sha256": "61fe4a0451ea7a433267c9edd9e35a3997ad315ae2591d2cdc4366c02d3906af"
+        },
+        {
+          "name": "shard_0013.npy",
+          "bytes": 35078528,
+          "sha256": "d1059949929844d65e9af0806ca397f81d1d75f8a7ecbfaf5466e8d1d77e8749"
+        }
+      ]
+    },
+    "fit": {
+      "raw_mean_norm": 1044.109659025236,
+      "normalization_scalar": 0.029674916328793835,
+      "normalized_mean_norm": 30.984205821975536,
+      "shards": [
+        {
+          "name": "shard_0000.npy",
+          "bytes": 35635328,
+          "sha256": "2b02d86125f9c1b2d279444c0de65f7179fdf21866fcfe77363136dbfe27525b"
+        },
+        {
+          "name": "shard_0001.npy",
+          "bytes": 35635328,
+          "sha256": "e45d378857982d8b5974e76472a252b16481cd700969ce11b9e342dadac2deaf"
+        },
+        {
+          "name": "shard_0002.npy",
+          "bytes": 35635328,
+          "sha256": "38994130579b7ef2c52270ba6426fa9af639ab73978408314bcf8e9c8ba51ce0"
+        },
+        {
+          "name": "shard_0003.npy",
+          "bytes": 35635328,
+          "sha256": "09f31c9c13d0c1e67deb1130a332d02c6810803bdbb087de806e9ec8c6d9f972"
+        },
+        {
+          "name": "shard_0004.npy",
+          "bytes": 35635328,
+          "sha256": "fec281c2526ca37a893a89f4bc2b88467274a064638e3d1c38710c5e2fef01ca"
+        },
+        {
+          "name": "shard_0005.npy",
+          "bytes": 35635328,
+          "sha256": "859d44061644033ab8217026a5521f899930dcee3c367e176a5df9ba6679a78e"
+        },
+        {
+          "name": "shard_0006.npy",
+          "bytes": 35635328,
+          "sha256": "30941422da71d17d34c81d8c9956f82eb2b10c347058e8d5e73a6b9d3eeda9ea"
+        },
+        {
+          "name": "shard_0007.npy",
+          "bytes": 35635328,
+          "sha256": "7101ab197d859eba1c6761bab423fa1c50e1af362d6d03a8308bb93980389ab7"
+        },
+        {
+          "name": "shard_0008.npy",
+          "bytes": 35635328,
+          "sha256": "c155a7da88eba99a2ba0dd0fa94484d5fcbd8b50ebf2afa5a24b0f9d34e917fe"
+        },
+        {
+          "name": "shard_0009.npy",
+          "bytes": 35635328,
+          "sha256": "a4d5df5c490dc18178f4d271080b395656a47ea16e8edff82ff53870de40be69"
+        },
+        {
+          "name": "shard_0010.npy",
+          "bytes": 35635328,
+          "sha256": "799adfa2267b8d0c791f7cda3270bbafb446bc89237fa148b5eb7775e6034bd5"
+        },
+        {
+          "name": "shard_0011.npy",
+          "bytes": 35635328,
+          "sha256": "5bbdc08f3264784f4d98bcfbfc626e5ab50632b92d4e550313f5b7390bc4b094"
+        },
+        {
+          "name": "shard_0012.npy",
+          "bytes": 35635328,
+          "sha256": "c560962369ca3f1f9f00614647c36010a8c8ff3de7339039464cbf0b45442809"
+        },
+        {
+          "name": "shard_0013.npy",
+          "bytes": 35078528,
+          "sha256": "83443412cbf8a11a04c87e9ebdf55fd8f0fdcdff2d0a1769199dc080bff8f6e5"
+        }
+      ]
+    }
+  },
+  "payload_bytes": 996675584,
+  "gpu_wall_hours": 0.02681999419471443,
+  "excluded": [
+    "pg_kfold_test",
+    "layer_freeze_reserve",
+    "round_held_out_test",
+    "plate"
+  ]
+}
