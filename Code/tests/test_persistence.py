@@ -122,3 +122,4 @@ def test_gate1_checkpoint_backfill_is_inference_only():
     assert "load_trainable_state" in source
     assert "predict_adapter" in source
     assert "fit_adapter" not in source
+    assert "SequenceFitnessAdapter(adapted, int(backbone.embed.embedding_dim)).to(device)" in source

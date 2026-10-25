@@ -39,7 +39,8 @@ def _model(config: dict, device: str, seed: int):
         alpha=int(config["adapter"]["alpha"]),
         dropout=float(config["adapter"]["dropout"]),
     )
-    return SequenceFitnessAdapter(adapted, int(backbone.embed.embedding_dim)), backbone._tokenize
+    model = SequenceFitnessAdapter(adapted, int(backbone.embed.embedding_dim)).to(device)
+    return model, backbone._tokenize
 
 
 def main() -> int:

@@ -846,3 +846,8 @@ the prediction track needs 0 or 3 crosscoders.
   dead fractions rising with `w` and low participation ratio are pre-registered as expected
   consequences of only 259,550 position samples. If every width is mostly dead, IRED is reported
   as unable to support a dictionary; the crosscoder architecture will not be changed to hide it.
+- `[FINDING]` The first inference-only Gate 1 fold-0 backfill attempt exposed a device-placement
+  defect before writing predictions: the reconstructed ESM-C backbone was on CUDA while its
+  linear head remained on CPU. The checkpoint and training artifacts were unaffected. The
+  backfill loader now moves the complete wrapper to the requested device and reruns inference
+  from the beginning; no model is retrained and no partial prediction file is retained.
