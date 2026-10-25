@@ -1,6 +1,6 @@
 {
   "dataset": "IRED",
-  "status": "budget_only_cache_not_started",
+  "status": "approved_for_caching",
   "split": "pg_kfold_fold_0_training_only",
   "analysis_layer": 26,
   "position_policy": "all_training_residues",
@@ -14,12 +14,28 @@
   "two_model_bytes": 996672000,
   "two_model_gb_decimal": 0.996672,
   "two_model_gib_binary": 0.9282231330871582,
-  "dictionary_width_diagnostic": {
-    "reference_alpha": 8.0,
-    "reference_features": 7680,
-    "position_samples_per_feature": 33.795572916666664,
-    "selection_status": "not_selected_pending_participation_ratio_and_dead_feature_fraction"
-  },
+  "dictionary_width_diagnostic": [
+    {
+      "width_multiplier": 1,
+      "features": 960,
+      "position_samples_per_feature": 270.3645833333333
+    },
+    {
+      "width_multiplier": 2,
+      "features": 1920,
+      "position_samples_per_feature": 135.18229166666666
+    },
+    {
+      "width_multiplier": 4,
+      "features": 3840,
+      "position_samples_per_feature": 67.59114583333333
+    },
+    {
+      "width_multiplier": 8,
+      "features": 7680,
+      "position_samples_per_feature": 33.795572916666664
+    }
+  ],
   "excluded": [
     "pg_kfold_test",
     "layer_freeze_reserve",

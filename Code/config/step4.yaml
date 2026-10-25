@@ -1,4 +1,4 @@
-# CROSSFIT v12 Step 4 — IRED activation-cache budget only; caching awaits approval.
+# CROSSFIT v13 Step 4 — approved IRED training-pool activation cache.
 
 dataset: IRED
 analysis_layer: 26
@@ -9,8 +9,14 @@ embedding_dimension: 960
 storage_dtype: float16
 bytes_per_value: 2
 model_count: 2
-dictionary_reference_expansion: 8
+width_multipliers: [1, 2, 4, 8]
+extraction_batch_size: 4
+variants_per_shard: 64
 paths:
+  cache: Cache/step4/IRED
+  adapter_checkpoint: Models/step3/IRED/real_adapter.pt
+  checkpoint_verification: Reports/step3/gate1_checkpoint_verification.json
+  cache_manifest: Reports/step4/cache_manifest.json
   report_json: Reports/step4/step4_budget_ired.json
   report_csv: Reports/step4/step4_budget_ired.csv
   report_markdown: Reports/step4/step4_budget_ired.md

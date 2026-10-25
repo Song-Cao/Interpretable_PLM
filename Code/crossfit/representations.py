@@ -132,7 +132,7 @@ def esm_mutpool(activations: np.ndarray, mutations: str | Sequence[str]) -> np.n
 
 
 def encode_representation(name: str, **inputs: object) -> np.ndarray:
-    """Select a v12 representation by its config name."""
+    """Select a registered representation by its config name."""
     if name == "onehot":
         return onehot(inputs["sequences"])
     if name == "onehot_positional":

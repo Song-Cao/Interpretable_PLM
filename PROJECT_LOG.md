@@ -802,11 +802,11 @@ the prediction track needs 0 or 3 crosscoders.
   latent scaling, the per-decoder norm floor, classification precedence, and patching hygiene,
   and every implementation defect found must be reported. GB1 starts only after the IRED
   sequence is complete and never in parallel.
-- `[DECISION]` IRED dictionary width will be sized to effective sample size rather than the
-  alpha=8 default. The training pool contains 259,550 residue-position samples before any cache
-  exclusion, so alpha=8 would create 7,680 features with only 33.8 position-samples per feature.
+- `[DECISION]` IRED dictionary width will be sized to effective sample size rather than assuming
+  width multiplier `w=8`. The training pool contains 259,550 residue-position samples before any
+  cache exclusion, so `w=8` would create 7,680 features with only 33.8 position-samples per feature.
   Width selection must use participation ratio and dead-feature fraction as diagnostics and is
-  expected to require alpha far below 8. A high dead-feature fraction at this data volume is a
+  expected to require a much smaller `w`. A high dead-feature fraction at this data volume is a
   sample-size consequence, not a biological or methodological finding.
 - `[FINDING]` The approved pre-cache arithmetic for IRED uses all 895 pg_kfold fold-0 training
   variants at all 290 residues: 259,550 positions. At d=960, fp16, and two models, the realized
@@ -819,3 +819,30 @@ the prediction track needs 0 or 3 crosscoders.
   105.35 seconds. The new enforcement tests validate the common prediction schema, atomic CSV
   and parquet writes, checkpoint hashing, legacy exceptions, inference-only backfill, and the
   presence of condition predictions for every historical Step 2 result.
+
+### v13 IRED activation cache and dictionary-width sweep (2026-10-25)
+
+- `[ADJUST]` Replaced v12 with `CROSSFIT_Implementation_Plan_v13.docx` (SHA-256
+  `1ac8f00a3cb6bfc90626aa9ecb796477132d0f48e481e60dc22e010535ce6b1d`). v13 is the sole
+  implementation plan. Gate 2 moves from Step 5 to Step 7 because pooled sparse features do not
+  exist until then; Step 5 now fits the dense references and pre-commits the comparison rule.
+- `[DECISION]` Gate 2 uses pg_kfold test Spearman per dataset. Dense dominates only if its
+  paired-bootstrap interval for the difference from the best sparse-feature arm excludes zero in
+  the dense-favouring direction; sparse is competitive when the interval contains zero or favours
+  sparse. Sample-efficiency curves are reporting-only and never decide the gate. This rule was
+  written before any Step 7 sparse result was produced.
+- `[ADJUST]` Dictionary expansion is named `width_multiplier` (`w`, with `m=w*d`) everywhere in
+  Steps 4, 6, and 7. It is distinct from the Step 3 LoRA scaling factor, and no dictionary config
+  uses the name alpha. The registered IRED sweep is `w in {1, 2, 4, 8}`.
+- `[DECISION]` Fixed BatchTopK `k=32` before looking at any crosscoder result. This is the
+  published BatchTopK operating point, is sparse relative to the 960-channel activation
+  (`32/960=3.33%`), and remains constant across the width sweep so only dictionary width changes.
+  Realized L0 is reported rather than assumed.
+- `[DECISION]` The approved Step 4 cache contains all 290 positions for only the 895 variants in
+  IRED's pg_kfold fold-0 training pool: 259,550 positions and 0.996672 decimal GB for two fp16
+  models. Each model receives one fixed dataset/layer scalar making its training-pool mean
+  activation norm `sqrt(960)`; test, reserve, round-held-out test, and plate variants are excluded.
+- `[DECISION]` The IRED width curve is diagnostic, not an architecture-tuning opportunity. High
+  dead fractions rising with `w` and low participation ratio are pre-registered as expected
+  consequences of only 259,550 position samples. If every width is mostly dead, IRED is reported
+  as unable to support a dictionary; the crosscoder architecture will not be changed to hide it.

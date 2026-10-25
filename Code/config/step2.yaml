@@ -1,4 +1,4 @@
-# CROSSFIT v12 Step 2 — IRED architecture search and baseline suite.
+# CROSSFIT v13 Step 2 — IRED architecture search and baseline suite.
 
 datasets: [IRED, SPG1_STRSG_Olson_2014, GFP_AEQVI_Sarkisyan_2016, RASK_HUMAN_Weng_2022_abundance, OXDA_RHOTO_Vanella_2023_activity]
 paths:

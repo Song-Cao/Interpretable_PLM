@@ -67,11 +67,26 @@ def test_frozen_aaindex_table_matches_recorded_hash():
     assert observed == config["representations"]["aaindex_sha256"]
 
 
-def test_v12_excluded_architectures_stay_absent():
+def test_registered_excluded_architectures_stay_absent():
     config = yaml.safe_load((REPO_ROOT / "Code" / "config" / "step2.yaml").read_text())
     text = _production_text() + "\n" + str(config)
     assert "gradient_boosted_trees" not in text
     assert "attention_pooling" not in text
+
+
+def test_v13_is_the_only_plan_and_dictionary_uses_width_terminology():
+    plans = sorted(path.name for path in REPO_ROOT.glob("CROSSFIT_Implementation_Plan_v*.docx"))
+    assert plans == ["CROSSFIT_Implementation_Plan_v13.docx"]
+    step4 = yaml.safe_load((REPO_ROOT / "Code/config/step4.yaml").read_text())
+    assert step4["width_multipliers"] == [1, 2, 4, 8]
+    assert not any("alpha" in key.lower() for key in _keys(step4))
+    step6 = yaml.safe_load((REPO_ROOT / "Code/config/step6.yaml").read_text())
+    step7 = yaml.safe_load((REPO_ROOT / "Code/config/step7.yaml").read_text())
+    assert step6["batch_topk"]["k"] == step7["batch_topk"]["k"] == 32
+    assert step7["width_multipliers"] == [1, 2, 4, 8]
+    assert not any("alpha" in key.lower() for config in (step6, step7) for key in _keys(config))
+    source = (REPO_ROOT / "Code/crossfit/crosscoder.py").read_text().lower()
+    assert "l1" not in source
 
 
 def test_scheduler_metric_is_validation_spearman_everywhere():

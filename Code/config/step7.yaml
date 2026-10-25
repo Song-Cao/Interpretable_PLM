@@ -1,0 +1,19 @@
+# CROSSFIT v13 Step 7 — IRED real-pair dictionary-width sweep.
+dataset: IRED
+dimension: 960
+width_multipliers: [1, 2, 4, 8]
+batch_topk:
+  k: 32
+  reasoning: "Published BatchTopK operating point; 3.3% of d, fixed before outcomes so width alone changes."
+training:
+  seeds: [20261311, 20261312, 20261313]
+  epochs: 20
+  batch_size: 1024
+  evaluation_batch_size: 2048
+  learning_rate: 0.001
+  weight_decay: 0.0
+  gradient_clip_norm: 1.0
+paths:
+  cache: Cache/step4/IRED
+  checkpoints: Models/step7/IRED
+  report_dir: Reports/step7

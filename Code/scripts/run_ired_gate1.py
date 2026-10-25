@@ -179,7 +179,7 @@ def main() -> int:
     )
     if projected_hours > budget_limit:
         raise RuntimeError(
-            f"projected Gate 1 cost {projected_hours:.2f} GPU-hours exceeds the v12 "
+            f"projected Gate 1 cost {projected_hours:.2f} GPU-hours exceeds the registered "
             f"Step 3 limit {budget_limit:.2f}; no measurement was weakened"
         )
 

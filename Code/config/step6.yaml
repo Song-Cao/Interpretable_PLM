@@ -1,0 +1,20 @@
+# CROSSFIT v13 Step 6 — IRED self-pair null before any real-pair crosscoder.
+dataset: IRED
+dimension: 960
+width_multiplier: 1
+batch_topk:
+  k: 32
+  reasoning: "Published BatchTopK operating point; 3.3% of d, fixed before outcomes and across the width sweep."
+training:
+  seed: 20261301
+  epochs: 20
+  batch_size: 1024
+  learning_rate: 0.001
+  weight_decay: 0.0
+  gradient_clip_norm: 1.0
+  delta_tolerance: 1.0e-7
+paths:
+  cache: Cache/step4/IRED
+  checkpoint: Models/step6/IRED/self_pair_w1_seed20261301.pt
+  report: Reports/step6/self_pair_null.json
+

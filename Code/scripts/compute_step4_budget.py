@@ -44,11 +44,10 @@ def main() -> int:
     mutable = _positions(training["mutated_positions"])
     realized_positions = len(training) * sequence_length
     per_model_bytes = realized_positions * dimension * bytes_per_activation
-    reference_alpha = float(config["dictionary_reference_expansion"])
-    reference_features = int(reference_alpha * dimension)
+    width_multipliers = [int(value) for value in config["width_multipliers"]]
     output = {
         "dataset": dataset,
-        "status": "budget_only_cache_not_started",
+        "status": "approved_for_caching",
         "split": f"{config['source_split']}_fold_{config['source_fold']}_training_only",
         "analysis_layer": int(config["analysis_layer"]),
         "position_policy": str(config["position_policy"]),
@@ -62,12 +61,14 @@ def main() -> int:
         "two_model_bytes": per_model_bytes * model_count,
         "two_model_gb_decimal": per_model_bytes * model_count / 1e9,
         "two_model_gib_binary": per_model_bytes * model_count / (1024 ** 3),
-        "dictionary_width_diagnostic": {
-            "reference_alpha": reference_alpha,
-            "reference_features": reference_features,
-            "position_samples_per_feature": realized_positions / reference_features,
-            "selection_status": "not_selected_pending_participation_ratio_and_dead_feature_fraction",
-        },
+        "dictionary_width_diagnostic": [
+            {
+                "width_multiplier": width,
+                "features": width * dimension,
+                "position_samples_per_feature": realized_positions / (width * dimension),
+            }
+            for width in width_multipliers
+        ],
         "excluded": ["pg_kfold_test", "layer_freeze_reserve", "round_held_out_test", "plate"],
         "rows": [row("realized_all_training_residues", realized_positions)],
     }
@@ -79,7 +80,7 @@ def main() -> int:
     pd.DataFrame(output["rows"]).to_csv(csv_path, index=False)
     markdown_path.write_text(
         "# IRED Step 4 realized caching budget\n\n"
-        "Status: budget computed; activation caching has not started.\n\n"
+        "Status: budget approved for activation caching.\n\n"
         "| training variants | residues per variant | positions | dimension | dtype | models | GB |\n"
         "|---:|---:|---:|---:|---|---:|---:|\n"
         f"| {len(training)} | {sequence_length} | {realized_positions} | {dimension} | "
@@ -88,11 +89,12 @@ def main() -> int:
         "test, and plate variants are excluded. The arithmetic is positions x dimension x "
         "2 bytes x 2 models. IRED is small enough to retain every residue position; this avoids "
         "introducing an unapproved window or distant-position sampling rule.\n"
-        f"\nAt the reference alpha={reference_alpha:g}, the dictionary would contain "
-        f"{reference_features:,} features and only {realized_positions / reference_features:.1f} "
-        "position-samples per feature. Alpha is not selected at the budget stage; the "
-        "exploratory shakedown must choose a substantially smaller width using participation "
-        "ratio and dead-feature fraction as evidence.\n"
+        "\nThe registered dictionary width multipliers are 1, 2, 4, and 8. They provide "
+        + ", ".join(
+            f"{realized_positions / (width * dimension):.1f} samples/feature at w={width}"
+            for width in width_multipliers
+        )
+        + ". Width is selected only after reporting dead-feature fraction and participation ratio.\n"
     )
     print(json.dumps(output, indent=2))
     return 0

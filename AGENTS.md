@@ -1,6 +1,6 @@
 # CROSSFIT repository rules
 
-`CROSSFIT_Implementation_Plan_v12.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
+`CROSSFIT_Implementation_Plan_v13.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
 
 - Run one independent pipeline per dataset and report every result per dataset. Never pool fitness values, training data, or metrics across datasets.
 - Use `pg_kfold` as the only model-selection split. Low-N, unseen-position, mutation-count, round-held-out, and external data are evaluation conditions only.
