@@ -122,7 +122,8 @@ Checkpoint provenance is in `Reports/step3/gate1_checkpoint_verification.json`.
 `Cache/step3/IRED/` remains on the pod. The all-depth reserve tensors have shape
 `[59,30,290,960]`. The existing full-corpus selected-layer tensors have shape
 `[1182,290,960]` but are depth 29 and explicitly superseded; they must not be consumed
-as depth-26 data. No Step 4 cache was written.
+as depth-26 data. The separate authoritative Step 4 depth-26 training-only cache is documented
+in `Reports/step4/step4_handoff.md`; it does not include test or reserve variants.
 
 ## Deferred and incomplete
 
@@ -135,10 +136,11 @@ The first fixed-80-epoch Gate attempt and the train-mode shuffled extraction are
 archived and never used. No incomplete fold or interrupted training result is reported.
 All bounded task-gain configurations completed, and none passed. The preliminary Step 4
 bounds are superseded by the realized training-only table at
-`Reports/step4/step4_budget_ired.md`; no Step 4 cache exists.
+`Reports/step4/step4_budget_ired.md`; the approved cache has now completed.
 
-Historical out-of-fold predictions were not persisted. Only fold-level Spearman summaries
-survive for the registered and bounded-sweep configurations. Fold 0's registered real and
-shuffled adapters are the only surviving Step 3 checkpoints; the other fitted models are
-unrecoverable without retraining, which is explicitly not authorized. The persistence audit
-and future enforcement contract are in `Reports/step3/prediction_persistence_audit.md`.
+Historical out-of-fold predictions were not persisted. Fold 0's registered real and shuffled
+checkpoint predictions have now been backfilled by inference at
+`Reports/step3/rank16_lr1e-4_fold0_checkpoint_backfill_predictions.csv`; the other four folds
+and all bounded-sweep fits remain unrecoverable without retraining, which is explicitly not
+authorized. The persistence audit and future enforcement contract are in
+`Reports/step3/prediction_persistence_audit.md`.

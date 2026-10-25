@@ -1,6 +1,6 @@
 # Prediction persistence audit
 
-Date: 2026-10-24
+Date: 2026-10-25
 
 This audit describes the completed historical IRED runs. It does not imply that missing
 predictions were reconstructed. The replacement contract applies to every future fit and is
@@ -20,14 +20,14 @@ implemented in `crossfit.persistence`.
 | 2 | ESM residue convolution | missing | pg test, round, plate: ensemble mean available | missing | five selected pg members, pod-only | members can be inferred when pod returns; CV requires refit |
 | 2 | ESM residue-delta convolution | missing | pg test, round, plate: ensemble mean available | missing | five selected pg members, pod-only | members can be inferred when pod returns; CV requires refit |
 | 2 | one-hot positional convolution | missing | pg test, round, plate: ensemble mean available | missing | five selected pg members, pod-only | members can be inferred when pod returns; CV requires refit |
-| 3 | registered rank 16, lr 1e-4 | missing | not applicable: Step 3 measured CV task gain | not applicable | fold 0 real and shuffled only, pod-only | fold 0 inference deferred; other folds require refit |
+| 3 | registered rank 16, lr 1e-4 | fold 0 real and shuffled available; four folds missing | not applicable: Step 3 measured CV task gain | not applicable | fold 0 real and shuffled only, pod-only | fold 0 backfilled by inference; other folds require refit |
 | 3 | rank 16, lr 3e-4 | missing | not applicable | not applicable | none | requires refit |
 | 3 | rank 32, lr 1e-4 | missing | not applicable | not applicable | none | requires refit |
 | 3 | rank 32, lr 3e-4 | missing | not applicable | not applicable | none | requires refit |
-| 4 | activation caching | not started | not started | not applicable | no fitted models yet | not applicable |
-| 5 | self-pair null | not started | not started | not started | no fitted models yet | not applicable |
-| 6 | shuffled-null threshold | not started | not started | not started | no fitted models yet | not applicable |
-| 7 | main crosscoder | not started | not started | not started | no fitted models yet | not applicable |
+| 4 | activation caching | not applicable | not applicable | not applicable | complete pod-only cache | no prediction model |
+| 5 | dense probes | not started | not started | not started | not started | pending |
+| 6 | self-pair null | not applicable | not applicable | not applicable | complete pod-only checkpoint | no fitness predictions |
+| 7 | width diagnostic | not applicable | not applicable | not applicable | 12 complete pod-only checkpoints | no phi predictor fitted |
 | 8 | causal patching | not started | not started | not started | no fitted models yet | not applicable |
 
 Step 2's `<arm>_search.csv` files contain configuration-fold metrics, not predictions.
@@ -37,9 +37,11 @@ discarded the predictions. The sweep discarded every adapter; the registered run
 only fold 0's real adapter for drift and its matched shuffled control. Frozen heads and the
 other four registered adapters were not retained.
 
-`Code/scripts/backfill_ired_gate1_fold0_predictions.py` is the inference-only backfill for
-the two surviving Step 3 checkpoints. It verifies their recorded SHA-256 hashes and writes
-fold-0 rows without fitting. It is intentionally not run until the pod is next available.
+`Code/scripts/backfill_ired_gate1_fold0_predictions.py` performed the inference-only backfill
+for the two surviving Step 3 checkpoints. It verified their recorded SHA-256 hashes and wrote
+179 held-out rows for each checkpoint without fitting. The result is
+`Reports/step3/rank16_lr1e-4_fold0_checkpoint_backfill_predictions.csv`. The other four folds
+remain unrecoverable without retraining.
 
 For future runs, the common committed schema is
 `dataset,step,arm,config_id,fold,seed,condition,variant_row,target,prediction`, plus

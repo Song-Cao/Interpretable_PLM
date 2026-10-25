@@ -857,3 +857,32 @@ the prediction track needs 0 or 3 crosscoders.
   Those results and checkpoints are archived as invalid, `decoder_bias: false` is now asserted in
   both configs and tests, and the self-pair plus every width/seed run restarts from the beginning.
   The activation cache and Gate 1 inference backfill are unaffected.
+- `[FINDING]` The approved IRED depth-26 cache completed with 259,550 positions. The fp16 tensor
+  payload is 0.996672 decimal GB (0.996676 GB including NPY headers). Fixed normalization scalars
+  are 0.0272291482 for E_evo and 0.0296749163 for E_fit, giving mean normalized norms 30.983911
+  and 30.984206 against `sqrt(960)=30.983867`. The raw adapted/base mean-norm ratio is 0.917581.
+  Token alignment and the real-adapter checkpoint hash both passed.
+- `[FINDING]` The authoritative bias-free `(h_evo,h_evo)` self-pair null gives Delta minimum and
+  maximum 0.5 with maximum absolute deviation 0.0 at tolerance `1e-7`. Realized L0 is exactly
+  32. This clears the alignment/normalization check; it does not supply shuffled-null tau.
+- `[FINDING]` The bias-free three-seed width sweep completed every registered run. Mean dead
+  fractions at `w={1,2,4,8}` are `{0.3267,0.4993,0.6623,0.7815}`; participation-ratio effective
+  ranks are `{122.8,112.8,99.1,95.0}`; samples/feature are `{270.4,135.2,67.6,33.8}`. Per-model
+  FVE remains 0.9959-0.9987 and realized L0 remains 31.91-32.00. The monotone dead-fraction curve
+  is the expected consequence of IRED's limited position count, not evidence against crosscoders.
+- `[DECISION]` No IRED dictionary width is selected. `w=1` is not overcomplete and still has
+  32.7% dead features; every overcomplete setting is at least 49.9% dead and worsens with width.
+  Under v13's no-working-width rule, IRED cannot support an overcomplete dictionary at this data
+  volume. Taxonomy, latent scaling, phi predictors, and Gate 2 are not run on a mostly-dead model.
+- `[FINDING]` Gate 1 fold-0 checkpoint inference now persists 179 held-out rows each for the real
+  and shuffled adapters in the common prediction schema. The remaining four registered folds and
+  every sweep fold are still unrecoverable without retraining, which remains unauthorized.
+- `[COST]` Authoritative runs consumed 0.02682 A100 wall-hours for caching, 0.03354 for the
+  bias-free self-pair, and 0.10493 for the bias-free width sweep. The archived affine-decoder
+  null and sweep consumed 0.14219 hours; the failed and corrected inference-only backfills used
+  approximately 0.043 hours. Total GPU occupancy for this continuation was approximately 0.351
+  A100 wall-hours. No seed, null, width, or epoch count was cut.
+- `[FINDING]` Final repository verification passes all 225 tests in 94.85 seconds. The suite now
+  enforces v13 as the sole plan, fixed `k=32`, registered width terminology, bias-free decoder
+  matrices, exact self-pair symmetry, cache normalization, checkpoint-only backfill device
+  placement, and the 179+179 persisted fold-0 prediction rows.

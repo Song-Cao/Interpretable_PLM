@@ -35,6 +35,7 @@ Data/raw/            Pinned ProteinGym sources (large bundles gitignored)
 Data/processed/      Curated tables, manifests, QC, and split metadata
 Reports/step1/       ProteinGym and IRED curation reports
 Reports/step2/       Step 2 reports; pre-v10 fits are isolated under Reports/archive/
+Reports/step4-7/     IRED cache, null, and dictionary-width diagnostics
 Cache/               Activation and dPLL caches (gitignored)
 Models/              Tuned artifacts and checkpoints (gitignored)
 PROJECT_LOG.md       Decisions, adjustments, findings, and compute costs
@@ -62,6 +63,10 @@ and leaves all tensors and checkpoints under the gitignored `Cache/` and `Models
 .venv/bin/python Code/scripts/run_neural_step2.py --arm onehot_positional_conv --device cuda --search-count 30
 .venv/bin/python Code/scripts/summarize_step2.py
 .venv/bin/python Code/scripts/run_ired_gate1.py --device cuda
+.venv/bin/python Code/scripts/cache_ired_crosscoder_activations.py
+.venv/bin/python Code/scripts/backfill_ired_gate1_fold0_predictions.py
+.venv/bin/python Code/scripts/run_ired_self_pair_null.py
+.venv/bin/python Code/scripts/run_ired_width_sweep.py
 ```
 
 Committed results are summarized in `Reports/step2/step2_handoff.md` and
@@ -70,5 +75,7 @@ one-hot positional convolutional arm use atomic fold-state caching: only complet
 resumed, while an interrupted fold starts again from its registered initialization.
 
 `Reports/step3/ired_conclusion.md` is the standalone IRED campaign conclusion. The Step 4
-training-only cache budget is `Reports/step4/step4_budget_ired.md`; it is a calculation only,
-and no Step 4 activation cache has been created.
+training-only cache is documented in `Reports/step4/step4_handoff.md` and stays on the pod.
+The exact self-pair null passes, but the width curve in `Reports/step7/step7_handoff.md` shows
+that IRED cannot support an overcomplete dictionary: every `w>=2` model is at least 49.9% dead.
+No taxonomy or Gate 2 result is reported from that mostly-dead representation.

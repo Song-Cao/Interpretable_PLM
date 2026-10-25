@@ -114,7 +114,18 @@ def test_step3_historical_fold_results_are_explicitly_audited_as_unrecoverable()
     assert set(step3["arm"]) == {
         "rank16_lr1e-4_registered", "rank16_lr3e-4", "rank32_lr1e-4", "rank32_lr3e-4",
     }
-    assert step3["cv_heldout_predictions"].str.startswith("missing_").all()
+    registered = step3.loc[step3["arm"] == "rank16_lr1e-4_registered"].iloc[0]
+    assert registered["cv_heldout_predictions"].startswith("fold0_")
+    unavailable = step3.loc[step3["arm"] != "rank16_lr1e-4_registered"]
+    assert unavailable["cv_heldout_predictions"].str.startswith("missing_").all()
+    backfill = pd.read_csv(
+        REPO_ROOT / "Reports/step3/rank16_lr1e-4_fold0_checkpoint_backfill_predictions.csv"
+    )
+    assert len(backfill) == 358
+    assert backfill.groupby("arm").size().to_dict() == {
+        "real_adapter": 179,
+        "shuffled_adapter": 179,
+    }
 
 
 def test_gate1_checkpoint_backfill_is_inference_only():
