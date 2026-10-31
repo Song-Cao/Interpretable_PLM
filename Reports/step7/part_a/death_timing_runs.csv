@@ -1,0 +1,13 @@
+dataset,width_multiplier,seed,features,initially_dead,never_active,crowded_out,revived,live_at_initialization,live_at_final,final_dead_fraction,exact_reproduction,loaded_complete_artifact,counts_artifact,counts_sha256
+IRED,1,20261311,960,34,11,307,17,926,642,0.33125000000000004,True,False,Reports/step7/part_a/death_timing/w1_seed20261311.npz,aefa55beaa15050623abae0fc4eda7fff1bcbdb47c75df4b28eee159032d8814
+IRED,1,20261312,960,26,16,307,8,934,637,0.3364583333333333,True,False,Reports/step7/part_a/death_timing/w1_seed20261312.npz,0be74e27d088e49346f665cdca5fe614dad6c49e4cd769b6fbbb7c650a6cea8b
+IRED,1,20261313,960,31,16,284,7,929,660,0.3125,True,False,Reports/step7/part_a/death_timing/w1_seed20261313.npz,7a7c5c60aac1850974dc5760686c53c57cf31cb3dcd7b9c474552c2c451c5b97
+IRED,2,20261311,1920,200,139,807,22,1720,974,0.4927083333333333,True,False,Reports/step7/part_a/death_timing/w2_seed20261311.npz,8b70ae338b7a37bd0ecdce20964167daeb7f6599b3a1d1da9890c925a313d6f0
+IRED,2,20261312,1920,208,155,805,18,1712,960,0.5,True,False,Reports/step7/part_a/death_timing/w2_seed20261312.npz,f12d60f3f9a3f3bc6a7103b57b91c78d0442db0608dd7555c66f382a6511bcf0
+IRED,2,20261313,1920,197,140,830,12,1723,950,0.5052083333333333,True,False,Reports/step7/part_a/death_timing/w2_seed20261313.npz,4765d2e35094837ccbb993e903801de6a860a6d6111b57d2fc8f76031b8afa2e
+IRED,4,20261311,3840,872,665,1871,3,2968,1304,0.6604166666666667,True,False,Reports/step7/part_a/death_timing/w4_seed20261311.npz,d5f036691e2e7c966f1d2dc209c3d95862aa904c4f185153dda4041f62aa4212
+IRED,4,20261312,3840,836,641,1909,3,3004,1290,0.6640625,True,False,Reports/step7/part_a/death_timing/w4_seed20261312.npz,9c9890f9b9c54c86b9d5e399b9fda63e9a3ecf6140877b8abd3f846e09f4273a
+IRED,4,20261313,3840,870,651,1893,1,2970,1296,0.6625,True,False,Reports/step7/part_a/death_timing/w4_seed20261313.npz,e1f0c29740e9ef103999feb30de781a39ff1ab0a0657b91c8f495fa92612739b
+IRED,8,20261311,7680,2885,2059,3967,10,4795,1654,0.7846354166666667,True,False,Reports/step7/part_a/death_timing/w8_seed20261311.npz,8d52c974b690784d73a126b75e4bad99175c3fb1bf6b08dfa09f37acb62abb6b
+IRED,8,20261312,7680,2845,2036,3967,6,4835,1677,0.781640625,True,False,Reports/step7/part_a/death_timing/w8_seed20261312.npz,0abc7c528a1715457c1da3e64507d0c96d067cf7ea66d6401e4b11961f37351e
+IRED,8,20261313,7680,2903,2003,3974,12,4777,1703,0.7782552083333334,True,False,Reports/step7/part_a/death_timing/w8_seed20261313.npz,62c3a553a35a7f60b8508748fa2b45caa9a418652cb90a997b04c5afbe69ded3

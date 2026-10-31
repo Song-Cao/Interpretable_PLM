@@ -1,0 +1,80 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "positions": 259550,
+  "dimension": 960,
+  "nominal_k": 32,
+  "working_widths": [
+    1,
+    2
+  ],
+  "raw_activation_summary": {
+    "evo": {
+      "participation_ratio_effective_rank": 66.94286056981342,
+      "components_for_variance": {
+        "0.5": 30,
+        "0.8": 98,
+        "0.9": 148,
+        "0.95": 192,
+        "0.99": 256
+      }
+    },
+    "fit": {
+      "participation_ratio_effective_rank": 61.23833825433164,
+      "components_for_variance": {
+        "0.5": 31,
+        "0.8": 106,
+        "0.9": 162,
+        "0.95": 212,
+        "0.99": 309
+      }
+    }
+  },
+  "resampling_result": {
+    "dataset": "IRED",
+    "width_multiplier": 4,
+    "seed": 20261311,
+    "resampling_epochs": [
+      5,
+      10,
+      15
+    ],
+    "baseline_same_seed_dead_fraction": 0.6604166666666667,
+    "resampled_dead_fraction": 0.66796875,
+    "absolute_dead_fraction_reduction": -0.007552083333333348,
+    "substantial_reduction_threshold": 0.1,
+    "substantial_reduction": false,
+    "baseline_w2_mean_dead_fraction": 0.4993055555555555,
+    "no_worse_than_baseline_w2_mean": false,
+    "qualifies_as_working_width": false,
+    "participation_ratio_effective_rank": 98.79252583566493,
+    "evo_fraction_variance_explained": 0.998538679360725,
+    "fit_fraction_variance_explained": 0.9969923157830186,
+    "realized_l0": 31.954594490464267,
+    "final_reconstruction_loss": 0.003659121144020299,
+    "checkpoint": "Models/step7/IRED/diagnostics/w4_seed20261311_resampled_nobias.pt",
+    "checkpoint_sha256": "1278de923a2c19bc837ced1abfbf823f8e7a6872cf7b6f90d041c89f91e74433",
+    "loaded_complete_checkpoint": false,
+    "gpu_wall_hours": 0.00970702655500241,
+    "resampling_events": [
+      {
+        "epoch": 5,
+        "resampled_features": 2454,
+        "dead_fraction_before_resampling": 0.6390625
+      },
+      {
+        "epoch": 10,
+        "resampled_features": 2524,
+        "dead_fraction_before_resampling": 0.6572916666666667
+      },
+      {
+        "epoch": 15,
+        "resampled_features": 2549,
+        "dead_fraction_before_resampling": 0.6638020833333333
+      }
+    ]
+  },
+  "all_baseline_runs_exactly_reproduced": true,
+  "gpu_wall_hours_this_invocation": 0.1405902618594377,
+  "partial_results_reported": false
+}

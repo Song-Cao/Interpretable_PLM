@@ -1,0 +1,22 @@
+{
+  "evo": {
+    "participation_ratio_effective_rank": 66.94286056981342,
+    "components_for_variance": {
+      "0.5": 30,
+      "0.8": 98,
+      "0.9": 148,
+      "0.95": 192,
+      "0.99": 256
+    }
+  },
+  "fit": {
+    "participation_ratio_effective_rank": 61.23833825433164,
+    "components_for_variance": {
+      "0.5": 31,
+      "0.8": 106,
+      "0.9": 162,
+      "0.95": 212,
+      "0.99": 309
+    }
+  }
+}
