@@ -1,4 +1,4 @@
-# CROSSFIT v14 Step 7 — IRED real-pair dictionary-width diagnostics.
+# CROSSFIT v15 Step 7 — IRED taxonomy and effective-rank width diagnostics.
 dataset: IRED
 dimension: 960
 width_multipliers: [1, 2, 4, 8]
@@ -27,6 +27,12 @@ diagnostics:
     require_no_worse_than_baseline_w2_mean: true
   default_working_widths: [1, 2]
   selected_working_widths: [1, 2]
+  adapter_rank:
+    layer: 26
+    batch_size: 4096
+    reserve_base: Cache/step2/IRED/representations/reserve_all_layers_base.npy
+    reserve_real: Cache/step3/IRED/reserve_all_layers_adapted.npy
+    reserve_shuffled: Cache/step3/IRED/reserve_all_layers_shuffled.npy
 paths:
   cache: Cache/step4/IRED
   checkpoints: Models/step7/IRED

@@ -938,3 +938,26 @@ the prediction track needs 0 or 3 crosscoders.
   exact-reproduction replays, and the `w=4` resampling run. The intervention fit itself used
   0.00971 hours. Cumulative documented IRED GPU occupancy through Part A is approximately 13.3
   A100 wall-hours, including retained superseded and diagnostic work recorded above.
+
+### v15 effective-rank width correction and IRED Part B (2026-10-31)
+
+- `[ADJUST]` Replaced v14 with `CROSSFIT_Implementation_Plan_v15.docx` (SHA-256
+  `fcdbaf82f2774176717dd541d2b6f3279f5505726058ff9e9b28924214c81422`). v15 is the sole
+  implementation plan. Overcompleteness is measured against raw activation effective rank, not
+  ambient dimension `d`.
+- `[ADJUST]` The earlier description of `w=1` as non-overcomplete was wrong. With 960 features
+  and raw participation ratios 66.94 for E_evo and 61.24 for E_fit, `w=1` is already 14.34x and
+  15.68x overcomplete; `w=2` is 28.68x and 31.35x. All future datasets, including GB1, report
+  dictionary width divided by raw activation effective rank.
+- `[DECISION]` Add “does fitness adaptation reduce representational effective rank?” to the GB1
+  pre-check. Compare E_evo, the real fitness adapter, and the step-matched shuffled-label adapter
+  at the same frozen layer and on the same sequences before interpreting any rank contraction as
+  label-driven.
+- `[FINDING]` On the matched 59-variant layer-freeze reserve at depth 26 (17,110 residue
+  observations), participation ratios are 66.9329 for E_evo, 60.6730 for the real adapter, and
+  60.2912 for the step-matched shuffled-label adapter. Relative to E_evo, the contractions are
+  9.35% real and 9.92% shuffled. The shuffled adapter contracts at least as much despite its CKA
+  of 0.9811 versus 0.9189 for the real adapter. IRED's effective-rank contraction is therefore a
+  generic consequence of fine-tuning, not label-driven dimensionality reduction. The existing
+  training-pool ranks 66.94 and 61.24 remain the width-denominator estimates; the reserve triplet
+  is the matched causal comparison.

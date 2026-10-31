@@ -1,0 +1,28 @@
+{
+  "dataset": "IRED",
+  "layer": 26,
+  "sample": "layer_freeze_reserve",
+  "models": {
+    "evo": {
+      "participation_ratio": 66.93289547475096,
+      "observations": 17110,
+      "components_90_percent": 148,
+      "components_99_percent": 257
+    },
+    "fit": {
+      "participation_ratio": 60.67298410094469,
+      "observations": 17110,
+      "components_90_percent": 161,
+      "components_99_percent": 313
+    },
+    "shuffled": {
+      "participation_ratio": 60.29115007888259,
+      "observations": 17110,
+      "components_90_percent": 147,
+      "components_99_percent": 256
+    }
+  },
+  "real_change_percent": -9.352518413263166,
+  "shuffled_change_percent": -9.922991301599726,
+  "interpretation": "generic_finetuning_contraction"
+}

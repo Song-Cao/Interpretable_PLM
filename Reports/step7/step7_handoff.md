@@ -25,11 +25,20 @@ The raw 960-channel activations therefore have a small effective rank before any
 introduced. For comparison, the prior code-level participation ratios were 122.83, 112.78,
 99.12, and 95.02 at `w=1,2,4,8`. Those code values describe the covariance of nonlinear sparse
 coordinates and are not PCA dimensions in the input space; the raw spectrum is the relevant
-intrinsic-rank constraint.
+intrinsic-rank constraint. Under v15, overcompleteness is measured against raw effective rank,
+not ambient dimension. The 960-feature `w=1` dictionary is already 14.34 times overcomplete
+against E_evo and 15.68 times against E_fit; `w=2` is 28.68 and 31.35 times overcomplete.
 
 Exact eigenvalues and cumulative spectra are in
 `Reports/step7/part_a/raw_activation_pca_spectrum.csv`; the summary is
 `raw_activation_pca_summary.json`.
+
+The matched layer-freeze reserve provides the corresponding shuffled-label control. At depth 26
+over the same 17,110 residue observations, PR is 66.93 for E_evo, 60.67 for E_fit, and 60.29 for
+the shuffled adapter. The real and shuffled contractions are 9.35% and 9.92%, respectively.
+Together with CKA 0.9189 real and 0.9811 shuffled, this shows that rank contraction is generic to
+fine-tuning here rather than label-driven. The matched result is in
+`Reports/step7/adapter_rank_comparison.json`.
 
 ## When features died
 
@@ -46,9 +55,9 @@ initialization or an earlier epoch.
 
 Crowding is the majority source of final death at every width: among final-dead features, the
 crowded-out share is 95.4%, 84.9%, 74.4%, and 66.1% for `w=1,2,4,8`. Never-active features also
-rise sharply with width. Thus the original monotone width curve is partly a fixed-`k` competition
-and optimization phenomenon, not evidence that IRED lacks representational variation. The raw
-rank nevertheless shows that the available variation is intrinsically concentrated.
+rise sharply with width. The deaths occur through competition, but random resampling did not
+recover them and the raw effective rank is only 61-67. The rising dead fraction is therefore not
+treated as a recoverable BatchTopK artifact: the available variation is genuinely concentrated.
 
 Per-run categories, every epoch trajectory, and compressed per-feature counts are under
 `Reports/step7/part_a/death_timing/` and the two `death_timing_*.csv` files.
@@ -70,13 +79,14 @@ pod-only at `Models/step7/IRED/diagnostics/w4_seed20261311_resampled_nobias.pt`,
 ## Width choice
 
 The exploratory Part B dictionaries are `w=1` and `w=2`, both run rather than selecting a single
-one. `w=1` supplies the lowest-death, non-overcomplete reference. `w=2` tests an overcomplete
-dictionary at the edge of what this cache supports. `w=4` and `w=8` are excluded because the
+one. Both are strongly overcomplete relative to the 61-67-dimensional raw activations: `w=1`
+supplies the lowest-death 14-16-times-overcomplete reference, while `w=2` tests a 29-31-times
+overcomplete dictionary at the edge of what this cache supports. `w=4` and `w=8` are excluded because the
 registered intervention did not recover `w=4`, and feature death worsens further at `w=8`.
 
 This supersedes the earlier statement that IRED empirically “cannot support an overcomplete
 dictionary.” That statement implemented v13's pre-committed stopping rule. It was not an
-impossibility result, and v14 explicitly permits the exploratory comparison.
+impossibility result, and v15 explicitly permits the exploratory comparison.
 
 ## Cost
 
