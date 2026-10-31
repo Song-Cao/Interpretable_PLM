@@ -911,3 +911,30 @@ the prediction track needs 0 or 3 crosscoders.
   external plate set because all Step 2 ESM-derived arms transferred at Spearman 0.23-0.44 while
   one-hot and AAIndex reached 0.53-0.57. Any reversal requires explanation and is not treated as
   an unqualified success.
+- `[FINDING]` Dictionary-free PCA over all 259,550 training-pool positions gives raw activation
+  participation ratios of 66.94 for E_evo and 61.24 for E_fit. The numbers of components needed
+  for 90% variance are 148 and 162; for 99% they are 256 and 309. The 960-channel activations
+  therefore have concentrated intrinsic variance before a dictionary is introduced. The prior
+  sparse-code participation ratios of 122.83, 112.78, 99.12, and 95.02 are reported alongside
+  this input-space reference but are not PCA dimensions in the same space.
+- `[FINDING]` All 12 registered width/seed fits were replayed with full-pool activation counts at
+  initialization and every epoch. Every loss trace and final parameter tensor exactly reproduced
+  its authoritative checkpoint. Mean initially-dead fractions at `w={1,2,4,8}` are
+  `{0.0316,0.1050,0.2238,0.3747}`, while mean final-dead fractions remain
+  `{0.3267,0.4993,0.6623,0.7815}`. Of final-dead features, `{95.4%,84.9%,74.4%,66.1%}` had been
+  active at least once. Most deaths at every width are therefore crowd-out during optimization,
+  although never-active features rise strongly with width.
+- `[FINDING]` The registered random dead-feature-resampling diagnostic at `w=4`, seed 20261311,
+  reset 2,454, 2,524, and 2,549 full-pool-dead features after epochs 5, 10, and 15 and cleared
+  their Adam moments without changing the objective. Final death was 0.66797 versus 0.66042 in
+  the matched baseline, an absolute reduction of -0.00755. It fails the pre-registered 0.10
+  recovery criterion and is worse than the `w=2` mean 0.49931, so random resampling did not
+  rescue `w=4`.
+- `[DECISION]` The two exploratory Part B dictionaries are `w=1` and `w=2`. Both will be run:
+  `w=1` is the lowest-death non-overcomplete reference, while `w=2` tests the edge of supported
+  overcompleteness. `w=4` and `w=8` are excluded after the failed registered recovery diagnostic.
+  This choice does not revise Gate 1 or create confirmatory evidence from IRED.
+- `[COST]` v14 Part A consumed 0.14059 A100 wall-hours, including raw PCA, all 12 instrumented
+  exact-reproduction replays, and the `w=4` resampling run. The intervention fit itself used
+  0.00971 hours. Cumulative documented IRED GPU occupancy through Part A is approximately 13.3
+  A100 wall-hours, including retained superseded and diagnostic work recorded above.

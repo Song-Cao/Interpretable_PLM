@@ -82,6 +82,7 @@ def test_v14_is_the_only_plan_and_dictionary_uses_width_terminology():
     assert not any("alpha" in key.lower() for key in _keys(step4))
     step6 = yaml.safe_load((REPO_ROOT / "Code/config/step6.yaml").read_text())
     step7 = yaml.safe_load((REPO_ROOT / "Code/config/step7.yaml").read_text())
+    assert step7["diagnostics"]["selected_working_widths"] == [1, 2]
     assert step6["batch_topk"]["k"] == step7["batch_topk"]["k"] == 32
     assert step6["decoder_bias"] is step7["decoder_bias"] is False
     assert step7["width_multipliers"] == [1, 2, 4, 8]

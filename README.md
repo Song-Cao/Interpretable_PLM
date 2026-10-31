@@ -79,5 +79,5 @@ training-only cache is documented in `Reports/step4/step4_handoff.md` and stays 
 The exact self-pair null passes. The initial fixed-`k` width curve in
 `Reports/step7/step7_handoff.md` found at least 49.9% dead features for every `w>=2`; v14
 treats the earlier stopping statement as a pre-committed rule rather than an empirical
-impossibility. Raw-rank, death-timing, and dead-feature-resampling diagnostics determine the
-two exploratory working widths before taxonomy or Gate 2 is run.
+impossibility. Raw-rank, death-timing, and dead-feature-resampling diagnostics select `w=1`
+and `w=2` as the two exploratory working widths. Taxonomy and Gate 2 have not yet run.

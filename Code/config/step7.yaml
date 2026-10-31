@@ -26,6 +26,7 @@ diagnostics:
     minimum_absolute_dead_fraction_reduction: 0.10
     require_no_worse_than_baseline_w2_mean: true
   default_working_widths: [1, 2]
+  selected_working_widths: [1, 2]
 paths:
   cache: Cache/step4/IRED
   checkpoints: Models/step7/IRED
