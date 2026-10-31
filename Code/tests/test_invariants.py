@@ -74,9 +74,9 @@ def test_registered_excluded_architectures_stay_absent():
     assert "attention_pooling" not in text
 
 
-def test_v13_is_the_only_plan_and_dictionary_uses_width_terminology():
+def test_v14_is_the_only_plan_and_dictionary_uses_width_terminology():
     plans = sorted(path.name for path in REPO_ROOT.glob("CROSSFIT_Implementation_Plan_v*.docx"))
-    assert plans == ["CROSSFIT_Implementation_Plan_v13.docx"]
+    assert plans == ["CROSSFIT_Implementation_Plan_v14.docx"]
     step4 = yaml.safe_load((REPO_ROOT / "Code/config/step4.yaml").read_text())
     assert step4["width_multipliers"] == [1, 2, 4, 8]
     assert not any("alpha" in key.lower() for key in _keys(step4))

@@ -1,4 +1,4 @@
-# CROSSFIT v13 Step 7 — IRED real-pair dictionary-width sweep.
+# CROSSFIT v14 Step 7 — IRED real-pair dictionary-width diagnostics.
 dataset: IRED
 dimension: 960
 width_multipliers: [1, 2, 4, 8]
@@ -14,7 +14,20 @@ training:
   learning_rate: 0.001
   weight_decay: 0.0
   gradient_clip_norm: 1.0
+diagnostics:
+  pca_variance_thresholds: [0.5, 0.8, 0.9, 0.95, 0.99]
+  raw_pca_batch_size: 4096
+  death_timing_rerun_all_registered_seeds: true
+  dead_feature_resampling:
+    width_multiplier: 4
+    seed: 20261311
+    resampling_rng_seed: 20261404
+    epochs: [5, 10, 15]
+    minimum_absolute_dead_fraction_reduction: 0.10
+    require_no_worse_than_baseline_w2_mean: true
+  default_working_widths: [1, 2]
 paths:
   cache: Cache/step4/IRED
   checkpoints: Models/step7/IRED
   report_dir: Reports/step7
+  diagnostic_checkpoints: Models/step7/IRED/diagnostics

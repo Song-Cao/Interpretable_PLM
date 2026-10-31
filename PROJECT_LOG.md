@@ -886,3 +886,28 @@ the prediction track needs 0 or 3 crosscoders.
   enforces v13 as the sole plan, fixed `k=32`, registered width terminology, bias-free decoder
   matrices, exact self-pair symmetry, cache normalization, checkpoint-only backfill device
   placement, and the 179+179 persisted fold-0 prediction rows.
+
+### v14 IRED width diagnostics and exploratory continuation (2026-10-31)
+
+- `[ADJUST]` Replaced v13 with `CROSSFIT_Implementation_Plan_v14.docx` (SHA-256
+  `3688be0d0bceadc955aa92fb18395c6487cf5ccc8822554d2b189030971e78d2`). v14 is the sole
+  implementation plan. Step 8 now uses residue-level static aggregation, class-level tests,
+  mutation-responsive codes, a six-block panel, and the revised semantic hypothesis.
+- `[ADJUST]` The statement "IRED cannot support an overcomplete dictionary" was the consequence
+  of a pre-committed stopping rule, not an empirical impossibility. For exploratory IRED work we
+  proceed past it to distinguish data rank, BatchTopK competition, and optimization death. Gate 1
+  remains failed, nothing here is confirmatory, and no later result may revise that verdict.
+- `[FINDING]` The authoritative width checkpoints persist 20 scalar reconstruction losses but no
+  per-epoch activation counts or intermediate states. Death timing cannot be reconstructed from
+  final weights. The registered width/seed fits will therefore be rerun deterministically with a
+  fixed-model full-pool activation-count pass at initialization and after every epoch; final state
+  and loss traces must reproduce the existing checkpoints before those counts are accepted.
+- `[DECISION]` The single optimization diagnostic uses random dead-feature resampling at `w=4`,
+  seed 20261311, after epochs 5, 10, and 15. It changes no loss term and introduces no L1. A
+  reduction of at least 0.10 in final dead fraction is pre-registered as substantial; a recovered
+  `w=4` must also be no worse than the baseline `w=2` mean dead fraction to replace either default
+  working width. Otherwise the exploratory working dictionaries are `w=1` and `w=2`.
+- `[DECISION]` Before Part B, expect phi prediction to underperform the Step 2 one-hot arm on the
+  external plate set because all Step 2 ESM-derived arms transferred at Spearman 0.23-0.44 while
+  one-hot and AAIndex reached 0.53-0.57. Any reversal requires explanation and is not treated as
+  an unqualified success.
