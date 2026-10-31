@@ -14,7 +14,29 @@ training:
   weight_decay: 0.0
   gradient_clip_norm: 1.0
   delta_tolerance: 1.0e-7
+calibration:
+  fdr_q: 0.05
+  exclude_dead_before_fit: true
+  decoder_norm_floor_fraction: 0.1
+  beta_fit_per_null_run: true
+  pool_null_runs: false
+  tails: [lower, upper]
+  conservative_across_null_runs: true
+  leave_one_seed_out: true
+  shuffled_crosscoder_seeds: [20261311, 20261312, 20261313]
+  latent_scaling_rule: both_ratios_must_pass
+  latent_scaling_tail: lower
+  latent_scaling_reasoning: "A candidate must show significantly less recoverable evo information than each shuffled null in both residual-error and reconstruction tests."
+  rotation_tail: lower
+  activation_frequency_tail: two_sided_absolute
 paths:
   cache: Cache/step4/IRED
+  step4_cache: Cache/step4/IRED
   checkpoint: Models/step6/IRED/self_pair_w1_seed20261301_nobias.pt
   report: Reports/step6/self_pair_null.json
+  shuffled_cache: Cache/step6/IRED/shuffled
+  shuffled_checkpoints: Models/step6/IRED/shuffled
+  shuffled_adapter_checkpoint: Models/step3/IRED/shuffled_adapter.pt
+  gate1_checkpoint_verification: Reports/step3/gate1_checkpoint_verification.json
+  shuffled_cache_manifest: Reports/step6/shuffled_activation_cache_manifest.json
+  calibration_report_dir: Reports/step6/calibration

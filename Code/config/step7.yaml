@@ -33,6 +33,15 @@ diagnostics:
     reserve_base: Cache/step2/IRED/representations/reserve_all_layers_base.npy
     reserve_real: Cache/step3/IRED/reserve_all_layers_adapted.npy
     reserve_shuffled: Cache/step3/IRED/reserve_all_layers_shuffled.npy
+taxonomy:
+  fdr_q: 0.05
+  decoder_norm_floor_fraction: 0.1
+  activation_floor_count: 1
+  classification_precedence:
+    [dead, emergent_candidate, evolution_only, rotated, re_weighted, conserved]
+  emergent_candidate_requires: [upper_delta_tail, error_ratio, reconstruction_ratio]
+  final_emergent_requires_causal_validation: true
+  provisional_until_step8: true
 paths:
   cache: Cache/step4/IRED
   checkpoints: Models/step7/IRED

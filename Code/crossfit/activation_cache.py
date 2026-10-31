@@ -78,3 +78,22 @@ def load_cached_pair(cache_dir: str | Path) -> tuple[np.ndarray, np.ndarray]:
     evo = np.concatenate([left.reshape(-1, left.shape[-1]) for left, _ in pairs])
     fit = np.concatenate([right.reshape(-1, right.shape[-1]) for _, right in pairs])
     return evo, fit
+
+
+def load_cached_model(cache_dir: str | Path, model_name: str) -> np.ndarray:
+    """Materialize one named model cache as a position-by-channel array."""
+    root = Path(cache_dir)
+    manifest = load_cache_manifest(root)
+    if model_name not in manifest.get("models", {}):
+        raise KeyError(f"model is absent from activation cache: {model_name}")
+    rows = manifest["models"][model_name].get("shards", [])
+    if not rows:
+        raise ValueError(f"activation cache has no shards for model: {model_name}")
+    arrays = []
+    dimension = int(manifest["dimension"])
+    for row in rows:
+        values = np.load(root / model_name / row["name"], mmap_mode="r")
+        if values.ndim != 3 or values.shape[-1] != dimension:
+            raise ValueError(f"unexpected cached activation shape: {values.shape}")
+        arrays.append(values.reshape(-1, dimension))
+    return np.concatenate(arrays)

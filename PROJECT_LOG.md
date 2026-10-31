@@ -949,10 +949,10 @@ the prediction track needs 0 or 3 crosscoders.
   and raw participation ratios 66.94 for E_evo and 61.24 for E_fit, `w=1` is already 14.34x and
   15.68x overcomplete; `w=2` is 28.68x and 31.35x. All future datasets, including GB1, report
   dictionary width divided by raw activation effective rank.
-- `[DECISION]` Add “does fitness adaptation reduce representational effective rank?” to the GB1
-  pre-check. Compare E_evo, the real fitness adapter, and the step-matched shuffled-label adapter
-  at the same frozen layer and on the same sequences before interpreting any rank contraction as
-  label-driven.
+- `[ADJUST]` The GB1 base/real/shuffled effective-rank comparison remains a required control
+  measurement but is no longer a directional hypothesis or pre-check. IRED already shows that
+  rank contraction is generic to fine-tuning, not label-driven; GB1 repeats the control only to
+  verify that the nuisance effect is measured there.
 - `[FINDING]` On the matched 59-variant layer-freeze reserve at depth 26 (17,110 residue
   observations), participation ratios are 66.9329 for E_evo, 60.6730 for the real adapter, and
   60.2912 for the step-matched shuffled-label adapter. Relative to E_evo, the contractions are
@@ -961,3 +961,24 @@ the prediction track needs 0 or 3 crosscoders.
   generic consequence of fine-tuning, not label-driven dimensionality reduction. The existing
   training-pool ranks 66.94 and 61.24 remain the width-denominator estimates; the reserve triplet
   is the matched causal comparison.
+- `[DECISION]` Step 6 uses `q=0.05`. After excluding dead and own-decoder-norm-floor failures,
+  fit one Beta distribution to each shuffled-null run's Delta values, never pool runs, compute
+  one-sided p-values separately for the lower and upper tails, and apply Benjamini-Hochberg
+  within each tail. The Delta value at the BH cutoff defines that tail's threshold. Take the
+  more conservative threshold across null runs, and report QQ diagnostics plus leave-one-seed-out
+  variability.
+- `[DECISION]` Latent scaling is a conjunctive artifact gate. A prospective emergent feature is
+  excluded if either its error ratio or reconstruction ratio is flagged against its own Step 6
+  shuffled null at `q=0.05`. Evidence of either complete shrinkage or latent decoupling is enough
+  to withhold the headline class.
+- `[DECISION]` Decoder rotation and activation-frequency change each receive a dataset- and
+  backbone-specific threshold from the shuffled-label runs, using null p-values and
+  Benjamini-Hochberg at `q=0.05`. Neither threshold may be imported across datasets or backbones.
+- `[DECISION]` Part B reports `emergent candidate`, defined as Delta-emergent and passing both
+  latent-scaling tests but not yet causally validated. Every Part B class proportion is
+  provisional. The final `emergent` label is unavailable until Part C supplies causal patching.
+- `[DECISION]` Run Step 9 regardless of IRED's Gate 2 verdict and report that verdict unchanged.
+  This is an IRED-only resource-allocation override: the protocol is already built, compute is
+  negligible, and the requested scientific output is the sparse-feature prediction increment.
+  It does not weaken a validity criterion. On GB1 and later datasets, obey Gate 2's conditional
+  branch exactly; Gates 1 and 3 remain validity gates everywhere.
