@@ -35,7 +35,7 @@ Data/raw/            Pinned ProteinGym sources (large bundles gitignored)
 Data/processed/      Curated tables, manifests, QC, and split metadata
 Reports/step1/       ProteinGym and IRED curation reports
 Reports/step2/       Step 2 reports; pre-v10 fits are isolated under Reports/archive/
-Reports/step4-7/     IRED cache, null, and dictionary-width diagnostics
+Reports/step4-9/     IRED cache, null, taxonomy, annotation preparation, and predictors
 Cache/               Activation and dPLL caches (gitignored)
 Models/              Tuned artifacts and checkpoints (gitignored)
 PROJECT_LOG.md       Decisions, adjustments, findings, and compute costs
@@ -67,6 +67,16 @@ and leaves all tensors and checkpoints under the gitignored `Cache/` and `Models
 .venv/bin/python Code/scripts/backfill_ired_gate1_fold0_predictions.py
 .venv/bin/python Code/scripts/run_ired_self_pair_null.py
 .venv/bin/python Code/scripts/run_ired_width_sweep.py
+.venv/bin/python Code/scripts/diagnose_ired_dictionary_width.py
+.venv/bin/python Code/scripts/cache_ired_shuffled_activations.py
+.venv/bin/python Code/scripts/run_ired_shuffled_crosscoder_nulls.py
+.venv/bin/python Code/scripts/analyze_ired_taxonomy.py
+.venv/bin/python Code/scripts/cache_ired_phi.py
+.venv/bin/python Code/scripts/run_ired_part_b_prediction.py
+.venv/bin/python Code/scripts/run_ired_step9_ladder.py
+.venv/bin/python Code/scripts/run_ired_step9_sample_efficiency.py
+.venv/bin/python Code/scripts/prepare_ired_annotations.py
+.venv/bin/python Code/scripts/cache_ired_delta_z.py
 ```
 
 Committed results are summarized in `Reports/step2/step2_handoff.md` and
@@ -80,4 +90,7 @@ The exact self-pair null passes. The initial fixed-`k` width curve in
 `Reports/step7/step7_handoff.md` found at least 49.9% dead features for every `w>=2`; v15
 treats the earlier stopping statement as a pre-committed rule rather than an empirical
 impossibility. Raw-rank, death-timing, and dead-feature-resampling diagnostics select `w=1`
-and `w=2` as the two exploratory working widths. Taxonomy and Gate 2 have not yet run.
+and `w=2` as the two exploratory working widths. The provisional taxonomy and Gate 2 are
+complete; Gate 2 finds sparse features competitive with the dense probe. Step 9 and the Step 8
+annotation preparation are complete. Structural enrichment, patching, and oracle validation
+have not run and remain outside the current authorization boundary.
