@@ -1,4 +1,4 @@
-# CROSSFIT v15 Step 8 preparation — IRED annotation tracks only.
+# CROSSFIT v16 Step 8 — IRED annotation and causal-validation configuration.
 dataset: IRED
 analysis_layer: 26
 dimension: 960

@@ -29,7 +29,7 @@ calibration:
   latent_scaling_reasoning: "A candidate must show significantly less recoverable evo information than each shuffled null in both residual-error and reconstruction tests."
   rotation_tail: lower
   activation_frequency_tail: two_sided_absolute
-  rotation_drift_matched:
+  drift_matched:
     enabled: true
     target_source: Reports/step3/gate1_report.json
     target_field: selected_real_relative_drift
@@ -38,7 +38,11 @@ calibration:
     matching_rule: closest_epoch_through_first_target_crossing
     optimizer_schedule: constant_registered_learning_rate
     concentration_bins: 5
-    reasoning: "Rotation cosine is recalibrated against a shuffled-label adapter matched to real activation drift; Delta and latent-scaling thresholds remain on the registered step-matched null."
+    comfortable_norm_fraction: 1.0
+    threshold_scope: [delta, latent_error, latent_reconstruction, decoder_cosine, activation_frequency_change]
+    headline_rule: fewer_shifted_features
+    shifted_classes: [emergent_candidate, evolution_only, rotated, re_weighted]
+    reasoning: "v16 requires the shuffled-label adapter to match real activation drift unconditionally; every fitted threshold uses this null, and the more conservative taxonomy is headline when matched and step-matched nulls disagree."
 paths:
   cache: Cache/step4/IRED
   step4_cache: Cache/step4/IRED

@@ -74,9 +74,9 @@ def test_registered_excluded_architectures_stay_absent():
     assert "attention_pooling" not in text
 
 
-def test_v15_is_the_only_plan_and_dictionary_uses_width_terminology():
+def test_v16_is_the_only_plan_and_dictionary_uses_width_terminology():
     plans = sorted(path.name for path in REPO_ROOT.glob("CROSSFIT_Implementation_Plan_v*.docx"))
-    assert plans == ["CROSSFIT_Implementation_Plan_v15.docx"]
+    assert plans == ["CROSSFIT_Implementation_Plan_v16.docx"]
     step4 = yaml.safe_load((REPO_ROOT / "Code/config/step4.yaml").read_text())
     assert step4["width_multipliers"] == [1, 2, 4, 8]
     assert not any("alpha" in key.lower() for key in _keys(step4))
@@ -85,6 +85,10 @@ def test_v15_is_the_only_plan_and_dictionary_uses_width_terminology():
     assert step7["diagnostics"]["selected_working_widths"] == [1, 2]
     assert step6["batch_topk"]["k"] == step7["batch_topk"]["k"] == 32
     assert step6["decoder_bias"] is step7["decoder_bias"] is False
+    assert step6["calibration"]["drift_matched"]["threshold_scope"] == [
+        "delta", "latent_error", "latent_reconstruction", "decoder_cosine",
+        "activation_frequency_change",
+    ]
     assert step7["width_multipliers"] == [1, 2, 4, 8]
     assert not any("alpha" in key.lower() for config in (step6, step7) for key in _keys(config))
     source = (REPO_ROOT / "Code/crossfit/crosscoder.py").read_text().lower()
