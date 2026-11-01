@@ -9,6 +9,7 @@ from crossfit.adaptation import (
     SequenceFitnessAdapter,
     fit_adapter_early_stopping,
     fit_adapter_for_steps,
+    fit_adapter_to_drift,
     fit_adapter,
     load_trainable_state,
     predict_adapter,
@@ -139,3 +140,29 @@ def test_real_early_stop_and_shuffled_control_have_matched_steps():
         learning_rates=real.learning_rates_to_best, seed=9, device="cpu",
     )
     assert shuffled.optimizer_steps == real.best_optimizer_steps
+
+
+def test_drift_matching_restores_closest_epoch_after_first_crossing():
+    sequences = ["AA", "AC", "CA", "CC"] * 2
+    target = np.asarray([0.0, 1.0, 1.0, 2.0] * 2, dtype=np.float32)
+    objective = {
+        "margin_sd": 0.1, "temperature": 1.0, "magnitude_mode": "huber",
+        "huber_delta": 1.0, "residual_scale": {"initial": 1.0, "floor": 1e-4},
+        "weights": {"rank": 1.0, "magnitude": 1.0, "censoring": 1.0, "regularization": 0.0},
+    }
+    settings = {
+        "batch_size": 2, "gradient_accumulation_steps": 2, "learning_rate": 0.01,
+        "weight_decay": 1e-4, "gradient_clip_norm": 1.0,
+    }
+    measured = iter([0.0, 0.4, 0.62])
+    fit = fit_adapter_to_drift(
+        SequenceFitnessAdapter(_Backbone(), 4), sequences, target, ["none"] * len(sequences),
+        backbone_tokenize=_tokenize, objective_config=objective, adapter_config=settings,
+        drift_measure=lambda _: next(measured), target_drift=0.6, max_epochs=5,
+        seed=12, device="cpu",
+    )
+    assert fit.selected_epoch == 1
+    assert fit.selected_drift == 0.62
+    assert fit.executed_optimizer_steps == 4
+    assert fit.selected_optimizer_steps == 4
+    assert [row["activation_drift"] for row in fit.trace] == [0.0, 0.4, 0.62]
