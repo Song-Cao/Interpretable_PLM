@@ -507,7 +507,8 @@ def fit_adapter_to_drift(
             break
     if not crossed:
         raise RuntimeError(
-            f"activation drift did not reach target {target_drift:.6g} in {max_epochs} epochs"
+            f"activation drift did not reach target {target_drift:.6g} in {max_epochs} epochs; "
+            f"last={previous_drift:.6g}, closest={best_drift:.6g} at epoch {best_epoch + 1}"
         )
     _restore_trainable_state(model, best_model)
     objective.residual_scale.load_state_dict(best_scale)
