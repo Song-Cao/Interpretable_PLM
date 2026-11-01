@@ -27,7 +27,13 @@ from crossfit.feature_pooling import select_feature_set
 from crossfit.models import build_model
 from crossfit.persistence import prediction_frame, write_prediction_csv, write_prediction_parquet
 from crossfit.search import training_pool_folds
-from crossfit.training import fit_torch_fixed_epochs, fit_torch_predictor, predict_torch, seed_everything
+from crossfit.training import (
+    FeatureNormalizer,
+    fit_torch_fixed_epochs,
+    fit_torch_predictor,
+    predict_torch,
+    seed_everything,
+)
 from crossfit.utils import REPO_ROOT, load_config
 
 
@@ -91,6 +97,18 @@ def _torch_checkpoint(fit, path: Path, family: str, parameters: dict) -> None:
     os.replace(temporary, path)
 
 
+def _load_torch_checkpoint(path: Path, family: str, input_dim: int, parameters: dict, device: str):
+    artifact = torch.load(path, map_location="cpu", weights_only=False)
+    if artifact["family"] != family or artifact["parameters"] != parameters:
+        raise AssertionError(f"checkpoint identity mismatch: {path}")
+    model = _model(family, input_dim, parameters, 0).to(device)
+    model.load_state_dict(artifact["state_dict"])
+    normalizer = FeatureNormalizer(
+        mean=np.asarray(artifact["normalizer_mean"]), scale=np.asarray(artifact["normalizer_scale"])
+    )
+    return model, normalizer, int(artifact["epochs"])
+
+
 def _fit_cv(
     arm: str,
     family: str,
@@ -123,12 +141,35 @@ def _fit_cv(
                 fold_pca = PCA(n_components=pca_variance, svd_solver="full")
                 train_features = fold_pca.fit_transform(features[train])
                 validation_features = fold_pca.transform(features[validation])
+            suffix = "joblib" if family == "random_forest" else "pt"
+            checkpoint = checkpoint_root / f"config_{config_id:03d}_fold_{fold:02d}.{suffix}"
+            prediction_path = prediction_root / f"config_{config_id:03d}_fold_{fold:02d}.parquet"
+            if checkpoint.exists() and prediction_path.exists():
+                held_out = pd.read_parquet(prediction_path)
+                expected_rows = frame.iloc[validation]["variant_row"].to_numpy(np.int64)
+                if not np.array_equal(held_out["variant_row"].to_numpy(np.int64), expected_rows):
+                    raise AssertionError(f"cached held-out rows differ: {prediction_path}")
+                prediction = held_out["prediction"].to_numpy(float)
+                if family == "random_forest":
+                    best_epoch = 0
+                else:
+                    artifact = torch.load(checkpoint, map_location="cpu", weights_only=False)
+                    if artifact["family"] != family or artifact["parameters"] != parameters:
+                        raise AssertionError(f"checkpoint identity mismatch: {checkpoint}")
+                    best_epoch = int(artifact["epochs"])
+                rows.append({
+                    "arm": arm, "family": family, "config_id": config_id, "fold": fold,
+                    "validation_spearman": float(spearmanr(prediction, target[validation]).statistic),
+                    "best_epoch": best_epoch, "checkpoint": str(checkpoint.relative_to(REPO_ROOT)),
+                    "checkpoint_sha256": hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
+                    "resumed_complete_fit": True, **parameters,
+                })
+                continue
             if family == "random_forest":
                 fitted = _model(family, train_features.shape[1], parameters, seed)
                 fitted.fit(train_features, target[train])
                 prediction = fitted.predict(validation_features)
                 best_epoch = 0
-                checkpoint = checkpoint_root / f"config_{config_id:03d}_fold_{fold:02d}.joblib"
                 checkpoint.parent.mkdir(parents=True, exist_ok=True)
                 joblib.dump(fitted, checkpoint)
             else:
@@ -141,10 +182,9 @@ def _fit_cv(
                     parameters=parameters, seed=seed, device=device,
                 )
                 prediction = predict_torch(
-                    fitted.model, fitted.normalizer, features[validation], device=device
+                    fitted.model, fitted.normalizer, validation_features, device=device
                 )
                 best_epoch = int(fitted.best_epoch) + 1
-                checkpoint = checkpoint_root / f"config_{config_id:03d}_fold_{fold:02d}.pt"
                 _torch_checkpoint(fitted, checkpoint, family, parameters)
             prediction_rows = prediction_frame(
                 dataset="IRED", step=9 if arm.startswith("phi_") else 5, arm=arm,
@@ -155,13 +195,14 @@ def _fit_cv(
             if persist_search:
                 write_prediction_parquet(
                     prediction_rows,
-                    prediction_root / f"config_{config_id:03d}_fold_{fold:02d}.parquet",
+                    prediction_path,
                 )
             rows.append({
                 "arm": arm, "family": family, "config_id": config_id, "fold": fold,
                 "validation_spearman": float(spearmanr(prediction, target[validation]).statistic),
                 "best_epoch": best_epoch, "checkpoint": str(checkpoint.relative_to(REPO_ROOT)),
                 "checkpoint_sha256": hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
+                "resumed_complete_fit": False,
                 **parameters,
             })
     search = pd.DataFrame(rows)
@@ -217,34 +258,54 @@ def _fit_final_members(
         round_train_features = round_pca.fit_transform(campaign_features[round_train])
         round_test_features = round_pca.transform(campaign_features[round_test])
     for seed in map(int, config["ensemble_seeds"]):
+        pg_suffix = "joblib" if family == "random_forest" else "pt"
+        pg_path = model_dir / f"seed_{seed}.{pg_suffix}"
+        round_path = model_dir / f"seed_{seed}_round.{pg_suffix}"
         if family == "random_forest":
-            pg_fit = _model(family, pg_train_features.shape[1], parameters, seed)
-            round_fit = _model(family, round_train_features.shape[1], parameters, seed)
-            pg_fit.fit(pg_train_features, target[train_pool])
-            round_fit.fit(round_train_features, target[round_train])
+            if pg_path.exists() and round_path.exists():
+                pg_fit, round_fit = joblib.load(pg_path), joblib.load(round_path)
+            else:
+                pg_fit = _model(family, pg_train_features.shape[1], parameters, seed)
+                round_fit = _model(family, round_train_features.shape[1], parameters, seed)
+                pg_fit.fit(pg_train_features, target[train_pool])
+                round_fit.fit(round_train_features, target[round_train])
+                model_dir.mkdir(parents=True, exist_ok=True)
+                joblib.dump(pg_fit, pg_path)
+                joblib.dump(round_fit, round_path)
             predictions = {
                 "pg_kfold_test": pg_fit.predict(pg_test_features),
                 "round_held_out": round_fit.predict(round_test_features),
                 "plate": pg_fit.predict(pg_plate_features),
             }
-            model_dir.mkdir(parents=True, exist_ok=True)
-            joblib.dump(pg_fit, model_dir / f"seed_{seed}.joblib")
-            joblib.dump(round_fit, model_dir / f"seed_{seed}_round.joblib")
         else:
-            seed_everything(seed)
-            pg_fit = fit_torch_fixed_epochs(
-                _model(family, pg_train_features.shape[1], parameters, seed),
-                pg_train_features, target[train_pool], censoring[train_pool],
-                objective_config=objective, optimization_config=config["optimization"],
-                parameters=parameters, epochs=epochs, seed=seed, device=device,
-            )
-            seed_everything(seed)
-            round_fit = fit_torch_fixed_epochs(
-                _model(family, round_train_features.shape[1], parameters, seed),
-                round_train_features, target[round_train], censoring[round_train],
-                objective_config=objective, optimization_config=config["optimization"],
-                parameters=parameters, epochs=epochs, seed=seed, device=device,
-            )
+            if pg_path.exists() and round_path.exists():
+                pg_model, pg_normalizer, pg_epochs = _load_torch_checkpoint(
+                    pg_path, family, pg_train_features.shape[1], parameters, device
+                )
+                round_model, round_normalizer, round_epochs = _load_torch_checkpoint(
+                    round_path, family, round_train_features.shape[1], parameters, device
+                )
+                if pg_epochs != epochs or round_epochs != epochs:
+                    raise AssertionError(f"final checkpoint epoch policy differs: {arm} seed {seed}")
+                pg_fit = type("LoadedFit", (), {"model": pg_model, "normalizer": pg_normalizer})()
+                round_fit = type("LoadedFit", (), {"model": round_model, "normalizer": round_normalizer})()
+            else:
+                seed_everything(seed)
+                pg_fit = fit_torch_fixed_epochs(
+                    _model(family, pg_train_features.shape[1], parameters, seed),
+                    pg_train_features, target[train_pool], censoring[train_pool],
+                    objective_config=objective, optimization_config=config["optimization"],
+                    parameters=parameters, epochs=epochs, seed=seed, device=device,
+                )
+                seed_everything(seed)
+                round_fit = fit_torch_fixed_epochs(
+                    _model(family, round_train_features.shape[1], parameters, seed),
+                    round_train_features, target[round_train], censoring[round_train],
+                    objective_config=objective, optimization_config=config["optimization"],
+                    parameters=parameters, epochs=epochs, seed=seed, device=device,
+                )
+                _torch_checkpoint(pg_fit, pg_path, family, parameters)
+                _torch_checkpoint(round_fit, round_path, family, parameters)
             predictions = {
                 "pg_kfold_test": predict_torch(
                     pg_fit.model, pg_fit.normalizer, pg_test_features, device=device
@@ -256,8 +317,6 @@ def _fit_final_members(
                     pg_fit.model, pg_fit.normalizer, pg_plate_features, device=device
                 ),
             }
-            _torch_checkpoint(pg_fit, model_dir / f"seed_{seed}.pt", family, parameters)
-            _torch_checkpoint(round_fit, model_dir / f"seed_{seed}_round.pt", family, parameters)
         for condition, prediction in predictions.items():
             if condition == "pg_kfold_test":
                 variant_rows, values = frame.iloc[test]["variant_row"], target[test]
