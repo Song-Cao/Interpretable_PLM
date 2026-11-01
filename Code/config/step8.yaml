@@ -1,0 +1,49 @@
+# CROSSFIT v15 Step 8 preparation — IRED annotation tracks only.
+dataset: IRED
+analysis_layer: 26
+dimension: 960
+primary_crosscoder_seed: 20261311
+width_multipliers: [1, 2]
+structure:
+  pdb_id: 5OCM
+  deposited_mmcif: Data/raw/structures/5ocm.cif
+  deposited_mmcif_sha256: 1f6f6360a215cc4c5492002cc1da143fbf58ff53d4617aaac5ac357c495049cd
+  assembly_1_mmcif: Data/raw/structures/5ocm-assembly1.cif
+  assembly_1_mmcif_sha256: 029e2a1c4c7b37402b12dfe6f7526a0467f9921f7e3803a5958c755b233b1fd8
+  biological_assembly_chain_sets:
+    "1": [A, F]
+    "2": [B, C]
+    "3": [D, E]
+  campaign_length: 290
+  contact_cutoff_angstrom: 5.0
+  first_shell_cutoff_angstrom: 5.0
+  second_shell_cutoff_angstrom: 8.0
+  ketone_analogue_resname: 9RH
+  cofactor_resname: NAP
+  pdb_reported_context_positions: [208, 238]
+annotation_tracks:
+  catalytic_proposed: [S94, D170, W178]
+  substrate_direct_contact: [T241]
+  NADPH_direct_contact: [K38]
+  NADPH_proximal_or_functionally_coupled: [G37, S68, D69, A72]
+  evolutionary_peak_residue: [S68, P203, T241, H244]
+track_roles:
+  catalytic_proposed: mechanistic_test
+  substrate_direct_contact: mechanistic_test
+  NADPH_direct_contact: mechanistic_test
+  NADPH_proximal_or_functionally_coupled: mechanistic_test
+  evolutionary_peak_residue: positive_control_only
+delta_z:
+  batch_semantics: per_sequence
+  output_dtype: float32
+  reasoning: "Encode each 290-position sequence independently so BatchTopK competition is fixed within sequence before subtracting the independently encoded wild type."
+paths:
+  reports: Reports/step8
+  delta_z_cache: Cache/step8/IRED/delta_z
+  campaign_base: Cache/step3/IRED/full_selected_layer_base.npy
+  campaign_fit: Cache/step3/IRED/full_selected_layer_adapted.npy
+  campaign_rows: Cache/step3/IRED/full_variant_rows.npy
+  step4_manifest: Cache/step4/IRED/manifest.json
+  crosscoder_checkpoints: Models/step7/IRED
+  step3_adapter: Models/step3/IRED/real_adapter.pt
+  gate1_checkpoint_verification: Reports/step3/gate1_checkpoint_verification.json

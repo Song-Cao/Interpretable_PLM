@@ -1,0 +1,4 @@
+arm,family,features,validation_spearman,selected_config_id,selected_configuration,selected_epochs,pg_kfold_test_spearman,round_held_out_spearman,plate_spearman
+dense_fit_mean,ridge,960,0.6230639457069064,0,"{""learning_rate"": 0.0003, ""weight_decay"": 0.01, ""batch_size"": 32}",34,0.5006885760470586,0.5147854715376718,0.2423861254049933
+dense_evo_mean,ridge,960,0.60770783379537,0,"{""learning_rate"": 0.0003, ""weight_decay"": 0.01, ""batch_size"": 32}",21,0.554287054976893,0.49347725154943733,0.1802553840289689
+dense_delta_pcs,ridge,1,0.3947929180041692,4,"{""learning_rate"": 0.0003, ""weight_decay"": 0.0001, ""batch_size"": 64}",1,0.4882012827086818,0.505315041714075,0.4733752620545073

@@ -1,0 +1,11 @@
+{
+  "method": "Friedman-H-style additive residual with feature-permutation null",
+  "top_feature_indices": [
+    283,
+    79
+  ],
+  "observed_h_squared": 0.9356921720152405,
+  "permutation_pvalue": 1.0,
+  "permutations": 200,
+  "passes": false
+}

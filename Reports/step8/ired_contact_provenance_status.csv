@@ -1,0 +1,3 @@
+track,provenance_kind,status,residue_count,claim_eligible
+docking_derived_substrate_contact,docking_derived,not_provided_not_inferred,0,False
+evolutionary_peak_residue,experimentally_observed,positive_control_only,4,False

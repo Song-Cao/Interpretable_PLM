@@ -1,11 +1,12 @@
-# Step 7 handoff — IRED Part A width diagnostics
+# Step 7 handoff — IRED width diagnostics, provisional taxonomy, and Gate 2
 
 ## Status and scope
 
-Part A is complete and Parts B and C have not started. IRED remains exploratory because Gate 1
-failed on task gain; these diagnostics do not revise that verdict. The fixed-`k` width sweep,
-raw-activation rank, feature-death timing, and one registered dead-feature-resampling run select
-`w=1` and `w=2` as the two working dictionaries for Part B.
+Parts A and B are complete. IRED remains exploratory because Gate 1 failed on task gain; none of
+these results revise that verdict. The fixed-`k` width sweep, raw-activation rank,
+feature-death timing, and one registered dead-feature-resampling run selected `w=1` and `w=2`.
+Both widths then completed the null-calibrated provisional taxonomy. Gate 2 reports sparse
+features competitive with the dense reference under the rule committed in Step 5.
 
 All 12 death-timing replays exactly reproduced both the authoritative scalar loss traces and
 every final state tensor before their epochwise activation counts were accepted. A complete NPZ
@@ -106,30 +107,46 @@ the project log, the v13 cache/null/width work, and this diagnostic.
 - `Reports/step7/part_a/w4_resampling.json`: intervention decision and checkpoint hash.
 - `Models/step7/IRED/w{1,2}_seed{seed}_nobias.pt`: pod-only authoritative Part B inputs.
 
-Part B must run the complete taxonomy, latent-scaling artifact gate, each decoder's own-median
-norm floor, exact classification precedence, Gate 2, and Step 9 at both working widths. It has
-not started.
+## Provisional taxonomy
 
-## Blocked Step 8 inputs
+Every threshold was fitted from its own three-seed shuffled-label null at `q=0.05`; null runs
+were fitted separately and the conservative cutoff was retained. The artifact gate is
+conjunctive: either latent-scaling ratio can exclude a candidate. The decoder norm floor uses
+each decoder's own median. Classification follows `dead`, `emergent candidate`,
+`evolution-only`, `rotated`, `re-weighted`, then `conserved`. “Emergent candidate” is explicitly
+not the final causal class.
 
-Part C remains blocked and has not started. Supply:
+| w | dead | emergent candidate | evolution-only | rotated | re-weighted | conserved |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 32.67% | 28.16% | 1.63% | 36.04% | 0.00% | 1.49% |
+| 2 | 49.93% | 0.00% | 0.94% | 47.81% | 0.05% | 1.27% |
 
-1. A WT IRED structure as PDB or mmCIF, with the relevant chain identified, all possible 290
-   sequence positions mapped, and substrate/cofactor atoms retained. If structure numbering is
-   not identical to 1-based curated sequence positions, include a mapping CSV with
-   `sequence_position,chain_id,structure_resseq,insertion_code`.
-2. A curated residue-panel CSV with one row per annotation and columns
-   `sequence_position,wild_type_residue,site_class,evidence,source`. `site_class` must use
-   `catalytic`, `substrate_contact`, `cofactor_contact`, or `access_pathway`. Multiple classes per
-   residue may use multiple rows. Optional structure identifiers and `ligand_id` may be included.
-3. Provenance for the structure and every residue designation, including the contact definition
-   used for substrate/cofactor residues and how access-pathway residues were established.
+Values are means across three real crosscoder seeds. The strong width instability is itself an
+inconvenient result: no `w=2` feature passed the reconstruction-ratio component of latent
+scaling, so `w=2` has no emergent candidates. Exact counts, null thresholds, QQ plots, and
+leave-one-null-seed-out calibration are in `taxonomy_w*_seed*.csv` and the calibration artifacts
+under `Reports/step6/calibration/`.
 
-No residues, contacts, or generic distance tracks will be inferred or substituted.
+Reconstruction remains high but is reported separately by model. Across real seeds, `w=1`
+explains 99.85% (E_evo) and 99.59% (E_fit) of variance; `w=2` explains 99.86% and 99.68%.
+These values do not rescue dead or artifact-failing features.
+
+## Gate 2
+
+The best dense reference selected only by five-fold validation Spearman was `dense_fit_mean`;
+the best sparse arm by the same rule was `phi_w1_max_all_live`. Their pg_kfold test Spearman
+values were 0.5007 and 0.5495. The paired bootstrap interval for dense minus sparse was
+`[-0.0956, -0.00153]`, point estimate -0.0488. Gate 2 therefore returns
+`sparse_competitive` (the interval actually favours sparse). The exact decision record is
+`Reports/step7/gate2_result.json`.
+
+Step 9 was run regardless under the pre-recorded IRED-only resource-allocation override. This
+does not weaken Gate 1 or Gate 3 and does not apply to GB1.
 
 ## Incomplete or uncertain
 
-Part B and all of Step 8 are incomplete by design. The resampling result tests one registered
-random-reset intervention, not every possible anti-death optimizer. No architecture or loss was
-tuned to reduce death. Gate 1 remains failed, and no Part A result is confirmatory evidence for
-the central claim.
+All class proportions remain provisional until causal validation. The width-dependent loss of
+emergent candidates means the taxonomy is not stable to dictionary width on IRED. The
+resampling result tests one registered random-reset intervention, not every anti-death optimizer.
+No architecture or loss was tuned to reduce death. Gate 1 remains failed, and no Step 7 result
+is confirmatory evidence for the central claim.
