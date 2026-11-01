@@ -417,7 +417,8 @@ def main() -> int:
     floor = float(step7["taxonomy"]["decoder_norm_floor_fraction"])
     q = float(step6["calibration"]["fdr_q"])
     reconstruction_rows, reconstruction_plot = [], []
-    matched_thresholds, rotation_rows, concentration_rows, concentration_tests = [], [], [], []
+    matched_thresholds, rotation_rows, class_rows = [], [], []
+    concentration_rows, concentration_tests = [], []
     for width in widths:
         step_stats = []
         for seed in seeds:
@@ -476,6 +477,24 @@ def main() -> int:
                 activation_floor_count=int(step7["taxonomy"]["activation_floor_count"]),
             )
             original = frame_real["provisional_class"].to_numpy(str)
+            updated = frame_real.copy()
+            updated["drift_matched_rotation_shift"] = flags
+            updated["drift_matched_provisional_class"] = labels
+            updated.to_csv(
+                report / f"taxonomy_rotation_drift_matched_w{width}_seed{seed}.csv",
+                index=False,
+            )
+            for label in (
+                "dead", "emergent_candidate", "evolution_only", "rotated",
+                "re_weighted", "conserved",
+            ):
+                class_rows.append({
+                    "width_multiplier": width,
+                    "seed": seed,
+                    "provisional_class": label,
+                    "count": int((labels == label).sum()),
+                    "fraction": float(np.mean(labels == label)),
+                })
             rotation_rows.append({
                 "width_multiplier": width, "seed": seed,
                 "original_shuffled_rotated_count": int((original == "rotated").sum()),
@@ -520,6 +539,14 @@ def main() -> int:
         drift_matched_cosine_cutoff_mean=("drift_matched_decoder_cosine_cutoff", "mean"),
     )
     rotation_summary.to_csv(report / "rotation_null_comparison_summary.csv", index=False)
+    class_frame = pd.DataFrame(class_rows)
+    class_frame.to_csv(report / "drift_matched_class_proportions_by_seed.csv", index=False)
+    class_frame.groupby(
+        ["width_multiplier", "provisional_class"], as_index=False
+    ).agg(
+        fraction_mean=("fraction", "mean"), fraction_sd=("fraction", "std"),
+        count_mean=("count", "mean"),
+    ).to_csv(report / "drift_matched_class_proportions_summary.csv", index=False)
     pd.DataFrame(concentration_rows).to_csv(report / "rotation_concentration_by_quintile.csv", index=False)
     pd.DataFrame(concentration_tests).to_csv(report / "rotation_concentration_tests.csv", index=False)
     (report / "rotation_thresholds.json").write_text(
