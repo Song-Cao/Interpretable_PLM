@@ -77,7 +77,11 @@ def _configurations(family: str, config: dict) -> list[dict]:
 def _model(family: str, input_dim: int, parameters: dict, seed: int):
     if family == "random_forest":
         return RandomForestRegressor(**parameters, random_state=seed, n_jobs=-1)
-    architecture = "ridge" if family == "ridge" else "mlp"
+    architecture = (
+        "ridge" if family == "ridge"
+        else "low_rank_multiplicative" if family == "low_rank_multiplicative"
+        else "mlp"
+    )
     model_parameters = {
         key: value for key, value in parameters.items()
         if key not in {"learning_rate", "weight_decay", "batch_size"}
