@@ -1,0 +1,15 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "width_multipliers": [
+    1,
+    2
+  ],
+  "seeds": [
+    20261311,
+    20261312,
+    20261313
+  ],
+  "gpu_wall_hours": 0.032953412418072626,
+  "partial_results_reported": false
+}

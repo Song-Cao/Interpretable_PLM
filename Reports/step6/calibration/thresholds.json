@@ -1,0 +1,992 @@
+[
+  {
+    "dataset": "IRED",
+    "width_multiplier": 1,
+    "seed": 20261311,
+    "fdr_q": 0.05,
+    "tau": 0.4804381728172302,
+    "lower_delta_cutoff": 0.4828993082046509,
+    "upper_delta_cutoff": 0.5195618271827698,
+    "latent_error_cutoff": 0.844535786705245,
+    "latent_reconstruction_cutoff": 0.7827528619665479,
+    "decoder_cosine_cutoff": 0.8771666147943087,
+    "activation_frequency_change_cutoff": 0.23691388942400307,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.4806823134422302
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.4804381728172302
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.4804381728172302
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 2148.701383249025,
+        "beta_b": 2095.5982011258284,
+        "cutoff": 0.4828993082046509,
+        "rejections": 23.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 2270.5396215857018,
+        "beta_b": 2212.376429851779,
+        "cutoff": 0.4828993082046509,
+        "rejections": 23.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 2648.453308285355,
+        "beta_b": 2582.791846134919,
+        "cutoff": 0.4861098825931549,
+        "rejections": 24.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 2148.701383249025,
+        "beta_b": 2095.5982011258284,
+        "cutoff": 0.5195618271827698,
+        "rejections": 555.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 2270.5396215857018,
+        "beta_b": 2212.376429851779,
+        "cutoff": 0.5193176865577698,
+        "rejections": 558.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 2648.453308285355,
+        "beta_b": 2582.791846134919,
+        "cutoff": 0.5183762907981873,
+        "rejections": 561.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.844535786705245,
+        "rejections": 637.0,
+        "null_features": 645.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.844535786705245,
+        "rejections": 637.0,
+        "null_features": 647.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.8578714337900765,
+        "rejections": 638.0,
+        "null_features": 631.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.8131813790342138,
+        "rejections": 366.0,
+        "null_features": 645.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.7827528619665479,
+        "rejections": 298.0,
+        "null_features": 647.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.8150749663826955,
+        "rejections": 368.0,
+        "null_features": 631.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 143.67538864020446,
+        "beta_b": 4.928271669416295,
+        "cutoff": 0.9385833073971543,
+        "rejections": 623.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 150.89177548794672,
+        "beta_b": 5.233083866554209,
+        "cutoff": 0.9395883437572254,
+        "rejections": 624.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 161.5570953584846,
+        "beta_b": 5.586871274622818,
+        "cutoff": 0.9403664704450103,
+        "rejections": 625.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.10620023594188478,
+        "beta_b": 20.92936010491262,
+        "cutoff": 0.23691388942400307,
+        "rejections": 2.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.10524173355805878,
+        "beta_b": 24.66272732236188,
+        "cutoff": 0.16168753612020806,
+        "rejections": 5.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.1137850551770032,
+        "beta_b": 28.074546914084856,
+        "cutoff": 0.16168753612020806,
+        "rejections": 5.0
+      }
+    ],
+    "real_checkpoint_sha256": "95071782c1fda0a4dc40bb489f4fdaba144a21ce4eb2fa4e3a9efa8b01935f17",
+    "null_checkpoint_sha256": [
+      "cdd8f023e097dbb5df215bf0f6e9b75016b0c4674356adf86b114cb987eddff5",
+      "6e8f4e84a4742fe2e4c2468e7068fdba7f33ea85767c922bb14de153afb562e4",
+      "100ce7cb6f96f5b5cf5f834aac4357793655aac8e79533cf44b2d1513ba9941d"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 1,
+    "seed": 20261312,
+    "fdr_q": 0.05,
+    "tau": 0.4805101752281189,
+    "lower_delta_cutoff": 0.4824722111225128,
+    "upper_delta_cutoff": 0.5194898247718811,
+    "latent_error_cutoff": 0.8157562895552039,
+    "latent_reconstruction_cutoff": 0.7848550325185366,
+    "decoder_cosine_cutoff": 0.8767614098166829,
+    "activation_frequency_change_cutoff": 0.2289578115969948,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.48066139221191406
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.4805101752281189
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.4805101752281189
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 2148.701383249025,
+        "beta_b": 2095.5982011258284,
+        "cutoff": 0.4824722111225128,
+        "rejections": 15.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 2270.5396215857018,
+        "beta_b": 2212.376429851779,
+        "cutoff": 0.4824722111225128,
+        "rejections": 15.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 2648.453308285355,
+        "beta_b": 2582.791846134919,
+        "cutoff": 0.48567038774490356,
+        "rejections": 19.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 2148.701383249025,
+        "beta_b": 2095.5982011258284,
+        "cutoff": 0.5194898247718811,
+        "rejections": 544.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 2270.5396215857018,
+        "beta_b": 2212.376429851779,
+        "cutoff": 0.5193386077880859,
+        "rejections": 546.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 2648.453308285355,
+        "beta_b": 2582.791846134919,
+        "cutoff": 0.5182662010192871,
+        "rejections": 552.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.8561700128459585,
+        "rejections": 631.0,
+        "null_features": 645.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.8157562895552039,
+        "rejections": 629.0,
+        "null_features": 647.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.8606076289433421,
+        "rejections": 632.0,
+        "null_features": 631.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.8128597525849414,
+        "rejections": 370.0,
+        "null_features": 645.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.7848550325185366,
+        "rejections": 319.0,
+        "null_features": 647.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.8142464935090232,
+        "rejections": 371.0,
+        "null_features": 631.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 143.67538864020446,
+        "beta_b": 4.928271669416295,
+        "cutoff": 0.9383807049083415,
+        "rejections": 623.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 150.89177548794672,
+        "beta_b": 5.233083866554209,
+        "cutoff": 0.9383807049083415,
+        "rejections": 623.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 161.5570953584846,
+        "beta_b": 5.586871274622818,
+        "cutoff": 0.9383807049083415,
+        "rejections": 623.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.10620023594188478,
+        "beta_b": 20.92936010491262,
+        "cutoff": 0.2289578115969948,
+        "rejections": 3.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.10524173355805878,
+        "beta_b": 24.66272732236188,
+        "cutoff": 0.17466769408591795,
+        "rejections": 5.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.1137850551770032,
+        "beta_b": 28.074546914084856,
+        "cutoff": 0.17466769408591795,
+        "rejections": 5.0
+      }
+    ],
+    "real_checkpoint_sha256": "45dad35db7d719729edb314902539ad1efdb1bd87fe8a9fac74fd0b56d728732",
+    "null_checkpoint_sha256": [
+      "cdd8f023e097dbb5df215bf0f6e9b75016b0c4674356adf86b114cb987eddff5",
+      "6e8f4e84a4742fe2e4c2468e7068fdba7f33ea85767c922bb14de153afb562e4",
+      "100ce7cb6f96f5b5cf5f834aac4357793655aac8e79533cf44b2d1513ba9941d"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 1,
+    "seed": 20261313,
+    "fdr_q": 0.05,
+    "tau": 0.48065173625946045,
+    "lower_delta_cutoff": 0.4828172028064728,
+    "upper_delta_cutoff": 0.5193482637405396,
+    "latent_error_cutoff": 0.8400381221087547,
+    "latent_reconstruction_cutoff": 0.784423587797025,
+    "decoder_cosine_cutoff": 0.8775036112858718,
+    "activation_frequency_change_cutoff": Infinity,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.48065173625946045
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.48065173625946045
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.48065173625946045
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 2148.701383249025,
+        "beta_b": 2095.5982011258284,
+        "cutoff": 0.4828172028064728,
+        "rejections": 17.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 2270.5396215857018,
+        "beta_b": 2212.376429851779,
+        "cutoff": 0.4828172028064728,
+        "rejections": 17.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 2648.453308285355,
+        "beta_b": 2582.791846134919,
+        "cutoff": 0.4828172028064728,
+        "rejections": 17.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 2148.701383249025,
+        "beta_b": 2095.5982011258284,
+        "cutoff": 0.5193482637405396,
+        "rejections": 583.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 2270.5396215857018,
+        "beta_b": 2212.376429851779,
+        "cutoff": 0.5193482637405396,
+        "rejections": 583.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 2648.453308285355,
+        "beta_b": 2582.791846134919,
+        "cutoff": 0.5183647274971008,
+        "rejections": 585.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.8400381221087547,
+        "rejections": 650.0,
+        "null_features": 645.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.8400381221087547,
+        "rejections": 650.0,
+        "null_features": 647.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.8400381221087547,
+        "rejections": 650.0,
+        "null_features": 631.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.8124677060940275,
+        "rejections": 374.0,
+        "null_features": 645.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.784423587797025,
+        "rejections": 330.0,
+        "null_features": 647.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.8151372101519926,
+        "rejections": 377.0,
+        "null_features": 631.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 143.67538864020446,
+        "beta_b": 4.928271669416295,
+        "cutoff": 0.9387518056429359,
+        "rejections": 646.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 150.89177548794672,
+        "beta_b": 5.233083866554209,
+        "cutoff": 0.9387518056429359,
+        "rejections": 646.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 161.5570953584846,
+        "beta_b": 5.586871274622818,
+        "cutoff": 0.9387518056429359,
+        "rejections": 646.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.10620023594188478,
+        "beta_b": 20.92936010491262,
+        "cutoff": Infinity,
+        "rejections": 0.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.10524173355805878,
+        "beta_b": 24.66272732236188,
+        "cutoff": 0.19214409554999035,
+        "rejections": 2.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.1137850551770032,
+        "beta_b": 28.074546914084856,
+        "cutoff": 0.19214409554999035,
+        "rejections": 2.0
+      }
+    ],
+    "real_checkpoint_sha256": "74340fbe6c5de2d5def9af656dcf740ec224610665fa6e34a3c46d69aa4721e8",
+    "null_checkpoint_sha256": [
+      "cdd8f023e097dbb5df215bf0f6e9b75016b0c4674356adf86b114cb987eddff5",
+      "6e8f4e84a4742fe2e4c2468e7068fdba7f33ea85767c922bb14de153afb562e4",
+      "100ce7cb6f96f5b5cf5f834aac4357793655aac8e79533cf44b2d1513ba9941d"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 2,
+    "seed": 20261311,
+    "fdr_q": 0.05,
+    "tau": 0.47540104389190674,
+    "lower_delta_cutoff": 0.47626081109046936,
+    "upper_delta_cutoff": 0.5245989561080933,
+    "latent_error_cutoff": 0.8255693516087769,
+    "latent_reconstruction_cutoff": -Infinity,
+    "decoder_cosine_cutoff": 0.8729506443709314,
+    "activation_frequency_change_cutoff": 0.1317125794644577,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.4770207405090332
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.47540104389190674
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.47540104389190674
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 1286.0435300455963,
+        "beta_b": 1249.6973624230418,
+        "cutoff": 0.47626081109046936,
+        "rejections": 21.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 1489.305289342459,
+        "beta_b": 1448.3278145616762,
+        "cutoff": 0.4783911406993866,
+        "rejections": 23.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 1624.1550685309282,
+        "beta_b": 1578.739237588437,
+        "cutoff": 0.48004505038261414,
+        "rejections": 24.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 1286.0435300455963,
+        "beta_b": 1249.6973624230418,
+        "cutoff": 0.5245989561080933,
+        "rejections": 801.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 1489.305289342459,
+        "beta_b": 1448.3278145616762,
+        "cutoff": 0.5229792594909668,
+        "rejections": 815.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 1624.1550685309282,
+        "beta_b": 1578.739237588437,
+        "cutoff": 0.5229792594909668,
+        "rejections": 815.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.8255693516087769,
+        "rejections": 941.0,
+        "null_features": 948.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.8370462279146859,
+        "rejections": 945.0,
+        "null_features": 904.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.8370462279146859,
+        "rejections": 945.0,
+        "null_features": 905.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 948.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.7545553957906703,
+        "rejections": 414.0,
+        "null_features": 904.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.7911872172496012,
+        "rejections": 519.0,
+        "null_features": 905.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 136.21705993213507,
+        "beta_b": 4.811396259343309,
+        "cutoff": 0.9364753221854657,
+        "rejections": 939.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 152.59244347881068,
+        "beta_b": 5.483815782301492,
+        "cutoff": 0.9364753221854657,
+        "rejections": 939.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 156.4180891686101,
+        "beta_b": 5.541181537223614,
+        "cutoff": 0.9391982306305686,
+        "rejections": 941.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.10339014984805091,
+        "beta_b": 33.15983960351176,
+        "cutoff": 0.1317125794644577,
+        "rejections": 9.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.101605200156071,
+        "beta_b": 31.384726836143454,
+        "cutoff": 0.1317125794644577,
+        "rejections": 9.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.10275725941208173,
+        "beta_b": 33.92021892964339,
+        "cutoff": 0.1317125794644577,
+        "rejections": 9.0
+      }
+    ],
+    "real_checkpoint_sha256": "72da09e411f68976d7ee8c932256f5adf34b63d46e54a28e170abc83d1f39edd",
+    "null_checkpoint_sha256": [
+      "914347bbfa6fd974ef4216b2ed54082ad6e58fedca1289587552ff3e8dc0b9ea",
+      "509904a3a825cedf6221c066203fbd97e4aac5db36716485ee81360871725da4",
+      "2b70eee24262bf8096e0cb86292b5988c6b7a4931a8dab3096566cc99c40c213"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 2,
+    "seed": 20261312,
+    "fdr_q": 0.05,
+    "tau": 0.47531986236572266,
+    "lower_delta_cutoff": 0.47531986236572266,
+    "upper_delta_cutoff": 0.5244626402854919,
+    "latent_error_cutoff": 0.8258948023738829,
+    "latent_reconstruction_cutoff": -Infinity,
+    "decoder_cosine_cutoff": 0.8739362974683877,
+    "activation_frequency_change_cutoff": 0.1330957426314775,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.4770408272743225
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.47531986236572266
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.47531986236572266
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 1286.0435300455963,
+        "beta_b": 1249.6973624230418,
+        "cutoff": 0.47531986236572266,
+        "rejections": 16.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 1489.305289342459,
+        "beta_b": 1448.3278145616762,
+        "cutoff": 0.4777562618255615,
+        "rejections": 17.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 1624.1550685309282,
+        "beta_b": 1578.739237588437,
+        "cutoff": 0.47941508889198303,
+        "rejections": 18.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 1286.0435300455963,
+        "beta_b": 1249.6973624230418,
+        "cutoff": 0.5244626402854919,
+        "rejections": 800.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 1489.305289342459,
+        "beta_b": 1448.3278145616762,
+        "cutoff": 0.5229591727256775,
+        "rejections": 807.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 1624.1550685309282,
+        "beta_b": 1578.739237588437,
+        "cutoff": 0.5223617553710938,
+        "rejections": 811.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.8258948023738829,
+        "rejections": 936.0,
+        "null_features": 948.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.8370640449835673,
+        "rejections": 938.0,
+        "null_features": 904.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.8370640449835673,
+        "rejections": 938.0,
+        "null_features": 905.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 948.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 904.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.7898733064130211,
+        "rejections": 481.0,
+        "null_features": 905.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 136.21705993213507,
+        "beta_b": 4.811396259343309,
+        "cutoff": 0.9369681487341939,
+        "rejections": 937.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 152.59244347881068,
+        "beta_b": 5.483815782301492,
+        "cutoff": 0.937875223306833,
+        "rejections": 940.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 156.4180891686101,
+        "beta_b": 5.541181537223614,
+        "cutoff": 0.9390967064819573,
+        "rejections": 941.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.10339014984805091,
+        "beta_b": 33.15983960351176,
+        "cutoff": 0.1330957426314775,
+        "rejections": 9.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.101605200156071,
+        "beta_b": 31.384726836143454,
+        "cutoff": 0.1330957426314775,
+        "rejections": 9.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.10275725941208173,
+        "beta_b": 33.92021892964339,
+        "cutoff": 0.1330957426314775,
+        "rejections": 9.0
+      }
+    ],
+    "real_checkpoint_sha256": "a10a90fd26bef4aeb58dcf122b1f45515368974ee880008628ce299ac8e55087",
+    "null_checkpoint_sha256": [
+      "914347bbfa6fd974ef4216b2ed54082ad6e58fedca1289587552ff3e8dc0b9ea",
+      "509904a3a825cedf6221c066203fbd97e4aac5db36716485ee81360871725da4",
+      "2b70eee24262bf8096e0cb86292b5988c6b7a4931a8dab3096566cc99c40c213"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 2,
+    "seed": 20261313,
+    "fdr_q": 0.05,
+    "tau": 0.4754750728607178,
+    "lower_delta_cutoff": 0.4758322536945343,
+    "upper_delta_cutoff": 0.5245249271392822,
+    "latent_error_cutoff": 0.8254963706583899,
+    "latent_reconstruction_cutoff": -Infinity,
+    "decoder_cosine_cutoff": 0.874625690612997,
+    "activation_frequency_change_cutoff": 0.1524060874590638,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.4758322536945343
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.4754750728607178
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.4754750728607178
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 1286.0435300455963,
+        "beta_b": 1249.6973624230418,
+        "cutoff": 0.4758322536945343,
+        "rejections": 19.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 1489.305289342459,
+        "beta_b": 1448.3278145616762,
+        "cutoff": 0.4758322536945343,
+        "rejections": 19.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 1624.1550685309282,
+        "beta_b": 1578.739237588437,
+        "cutoff": 0.4797879159450531,
+        "rejections": 20.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 1286.0435300455963,
+        "beta_b": 1249.6973624230418,
+        "cutoff": 0.5245249271392822,
+        "rejections": 787.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 1489.305289342459,
+        "beta_b": 1448.3278145616762,
+        "cutoff": 0.5229478478431702,
+        "rejections": 798.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 1624.1550685309282,
+        "beta_b": 1578.739237588437,
+        "cutoff": 0.522505521774292,
+        "rejections": 804.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.8254963706583899,
+        "rejections": 932.0,
+        "null_features": 948.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.8323097364610562,
+        "rejections": 933.0,
+        "null_features": 904.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.8323097364610562,
+        "rejections": 933.0,
+        "null_features": 905.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 948.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.755819602059089,
+        "rejections": 401.0,
+        "null_features": 904.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.7915739364497798,
+        "rejections": 496.0,
+        "null_features": 905.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 136.21705993213507,
+        "beta_b": 4.811396259343309,
+        "cutoff": 0.9373128453064985,
+        "rejections": 929.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 152.59244347881068,
+        "beta_b": 5.483815782301492,
+        "cutoff": 0.9375606780338835,
+        "rejections": 930.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 156.4180891686101,
+        "beta_b": 5.541181537223614,
+        "cutoff": 0.9375606780338835,
+        "rejections": 930.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.10339014984805091,
+        "beta_b": 33.15983960351176,
+        "cutoff": 0.1524060874590638,
+        "rejections": 5.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.101605200156071,
+        "beta_b": 31.384726836143454,
+        "cutoff": 0.1524060874590638,
+        "rejections": 5.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.10275725941208173,
+        "beta_b": 33.92021892964339,
+        "cutoff": 0.1524060874590638,
+        "rejections": 5.0
+      }
+    ],
+    "real_checkpoint_sha256": "076a3ffb1bacdb80026f753df63ff0ee72cc9f1d44220fdf96326bb522f26d10",
+    "null_checkpoint_sha256": [
+      "914347bbfa6fd974ef4216b2ed54082ad6e58fedca1289587552ff3e8dc0b9ea",
+      "509904a3a825cedf6221c066203fbd97e4aac5db36716485ee81360871725da4",
+      "2b70eee24262bf8096e0cb86292b5988c6b7a4931a8dab3096566cc99c40c213"
+    ]
+  }
+]
