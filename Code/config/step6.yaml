@@ -34,7 +34,7 @@ calibration:
     target_source: Reports/step3/gate1_report.json
     target_field: selected_real_relative_drift
     analysis_layer: 26
-    maximum_epochs: 30
+    maximum_epochs: 120
     matching_rule: closest_epoch_through_first_target_crossing
     optimizer_schedule: constant_registered_learning_rate
     concentration_bins: 5
