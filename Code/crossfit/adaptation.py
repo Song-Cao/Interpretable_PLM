@@ -5,7 +5,7 @@ import copy
 import random
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Sequence
+from typing import Callable, Sequence
 
 import numpy as np
 import torch
@@ -119,6 +119,20 @@ class EarlyStoppedAdapterFit:
     executed_optimizer_steps: int
     validation_spearman: float
     learning_rates_to_best: list[float]
+
+
+@dataclass
+class DriftMatchedAdapterFit:
+    """An adapter restored to the epoch closest to a target activation drift."""
+
+    model: SequenceFitnessAdapter
+    objective: CompositeFitnessLoss
+    trace: list[dict[str, float]]
+    selected_epoch: int
+    selected_optimizer_steps: int
+    executed_optimizer_steps: int
+    selected_drift: float
+    target_drift: float
 
 
 def _trainable_state(model: SequenceFitnessAdapter) -> dict[str, torch.Tensor]:
@@ -395,6 +409,113 @@ def fit_adapter_for_steps(
         trace.append({"epoch": float(epoch), "loss": float(np.mean(totals))})
         epoch += 1
     return AdapterFit(model, objective, trace, completed)
+
+
+def fit_adapter_to_drift(
+    model: SequenceFitnessAdapter,
+    sequences: Sequence[str],
+    target: np.ndarray,
+    censoring: Sequence[str],
+    *,
+    backbone_tokenize,
+    objective_config: dict,
+    adapter_config: dict,
+    drift_measure: Callable[[SequenceFitnessAdapter], float],
+    target_drift: float,
+    max_epochs: int,
+    seed: int,
+    device: str | torch.device,
+) -> DriftMatchedAdapterFit:
+    """Train until drift first crosses its target and restore the closest checked epoch."""
+    if not np.isfinite(target_drift) or target_drift <= 0 or max_epochs < 1:
+        raise ValueError("drift target and maximum epochs must be positive")
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    dataset = _SequenceDataset(sequences, target, censoring)
+    loader = DataLoader(
+        dataset, batch_size=int(adapter_config["batch_size"]), shuffle=True,
+        generator=torch.Generator().manual_seed(seed), collate_fn=lambda rows: rows,
+    )
+    model = model.to(device)
+    objective = _objective(objective_config).to(device)
+    trainable = [parameter for parameter in model.parameters() if parameter.requires_grad]
+    trainable += list(objective.residual_scale.parameters())
+    optimizer = torch.optim.AdamW(
+        trainable, lr=float(adapter_config["learning_rate"]),
+        weight_decay=float(adapter_config["weight_decay"]),
+    )
+    accumulation = int(adapter_config["gradient_accumulation_steps"])
+    initial_drift = float(drift_measure(model))
+    if not np.isfinite(initial_drift):
+        raise ValueError("initial activation drift is not finite")
+    best_distance = abs(initial_drift - float(target_drift))
+    best_epoch = -1
+    best_steps = 0
+    best_drift = initial_drift
+    best_model = _trainable_state(model)
+    best_scale = copy.deepcopy(objective.residual_scale.state_dict())
+    trace = [{
+        "epoch": -1.0, "loss": float("nan"), "activation_drift": initial_drift,
+        "optimizer_steps": 0.0,
+    }]
+    optimizer_steps = 0
+    previous_drift = initial_drift
+    crossed = initial_drift >= float(target_drift)
+    for epoch in range(int(max_epochs)):
+        model.train()
+        optimizer.zero_grad(set_to_none=True)
+        totals = []
+        for batch_index, rows in enumerate(loader):
+            batch_sequences = [row[0] for row in rows]
+            batch_target = torch.tensor([row[1] for row in rows], dtype=torch.float32, device=device)
+            batch_censor = torch.tensor([row[2] for row in rows], dtype=torch.long, device=device)
+            output = objective(
+                model(backbone_tokenize(batch_sequences)), batch_target, batch_censor,
+                regularized_parameters=(model.head.weight, model.head.bias),
+            )
+            (output.total / accumulation).backward()
+            totals.append(float(output.total.detach()))
+            last = batch_index + 1 == len(loader)
+            if (batch_index + 1) % accumulation == 0 or last:
+                torch.nn.utils.clip_grad_norm_(trainable, float(adapter_config["gradient_clip_norm"]))
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
+                optimizer_steps += 1
+        drift = float(drift_measure(model))
+        if not np.isfinite(drift):
+            raise ValueError("measured activation drift is not finite")
+        trace.append({
+            "epoch": float(epoch), "loss": float(np.mean(totals)),
+            "activation_drift": drift, "optimizer_steps": float(optimizer_steps),
+        })
+        distance = abs(drift - float(target_drift))
+        if distance < best_distance:
+            best_distance = distance
+            best_epoch = epoch
+            best_steps = optimizer_steps
+            best_drift = drift
+            best_model = _trainable_state(model)
+            best_scale = copy.deepcopy(objective.residual_scale.state_dict())
+        crossed = (
+            (previous_drift <= float(target_drift) <= drift)
+            or (previous_drift >= float(target_drift) >= drift)
+        )
+        previous_drift = drift
+        if crossed:
+            break
+    if not crossed:
+        raise RuntimeError(
+            f"activation drift did not reach target {target_drift:.6g} in {max_epochs} epochs"
+        )
+    _restore_trainable_state(model, best_model)
+    objective.residual_scale.load_state_dict(best_scale)
+    return DriftMatchedAdapterFit(
+        model=model, objective=objective, trace=trace, selected_epoch=best_epoch,
+        selected_optimizer_steps=best_steps, executed_optimizer_steps=optimizer_steps,
+        selected_drift=best_drift, target_drift=float(target_drift),
+    )
 
 
 @torch.inference_mode()

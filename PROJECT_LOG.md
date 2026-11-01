@@ -1047,3 +1047,19 @@ the prediction track needs 0 or 3 crosscoders.
   sparse, pod-only, and indexed by persisted variant rows; residue-level means and a manifest are
   the only report artifacts. No enrichment, patching, or oracle validation is authorized in this
   preparation stage.
+- `[FINDING]` The <=5 A crystallographic proxy tracks contain 174 NAP contact rows over 29 unique
+  sequence positions and 82 9RH ketone-analogue rows over 14 positions. Of these, 24 NAP and 42
+  9RH rows cross the biological dimer interface, confirming that a single-chain calculation would
+  discard relevant geometry. The 9RH track remains explicitly a proxy for the campaign imine.
+- `[FINDING]` Residue-level mutation responses were cached for all 1,182 campaign variants at
+  both working widths. `w=1` has shape 342,780 x 960 with 17,961,806 nonzeros (5.46%); `w=2` has
+  shape 342,780 x 1,920 with 18,518,511 nonzeros (2.81%). The compressed pod-only cache is 177 MB.
+  Every row is indexed to the persisted curated `variant_row`; both crosscoder and adapter hashes
+  match the authoritative Step 7 and Gate 1 checkpoints.
+- `[COST]` Wild-type extraction and complete `Delta z` caching at `w=1,2` consumed 0.04321 L40
+  wall-hours. No enrichment, patching, oracle evaluation, or feature inspection was run.
+- `[FINDING]` Final Part B and Step 8-preparation verification passes all 242 tests in 99.57
+  seconds. The suite includes hard assertions for the 290-position 5OCM mapping, every supplied
+  residue, official three-dimer assembly membership, shell precedence, and mutant-minus-WT code
+  arithmetic. Two expected constant-input warnings verify that undefined rank correlations are
+  recorded as undefined rather than silently replaced.

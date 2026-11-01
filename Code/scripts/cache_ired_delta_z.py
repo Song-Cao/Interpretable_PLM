@@ -11,7 +11,6 @@ import time
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import torch
 from scipy import sparse
 
@@ -89,8 +88,8 @@ def _cache_width(
     value_blocks: list[np.ndarray] = []
     length = wild_code.shape[0]
     for variant in range(len(evo)):
-        left = torch.as_tensor(np.asarray(evo[variant]), dtype=torch.float32, device=device)
-        right = torch.as_tensor(np.asarray(fit[variant]), dtype=torch.float32, device=device)
+        left = torch.tensor(np.asarray(evo[variant]), dtype=torch.float32, device=device)
+        right = torch.tensor(np.asarray(fit[variant]), dtype=torch.float32, device=device)
         code = model.encode(left, right).cpu().numpy().astype(np.float32)
         residue_sum += code
         delta = mutation_responsive_codes(code, wild_code)

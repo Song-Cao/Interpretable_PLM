@@ -1,0 +1,49 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "definition": "z_j(x_mutant) - z_j(x_WT)",
+  "batch_semantics": "per_sequence",
+  "reasoning": "Encode each 290-position sequence independently so BatchTopK competition is fixed within sequence before subtracting the independently encoded wild type.",
+  "analysis_layer": 26,
+  "variants": 1182,
+  "positions": 290,
+  "adapter_checkpoint_sha256": "38da4c4aec3cbec958e866679be078c24948cd434be0d65b50ba2a337a02e4b4",
+  "widths": {
+    "1": {
+      "shape": [
+        342780,
+        960
+      ],
+      "nnz": 17961806,
+      "density": 0.054583740543011065,
+      "wild_type_shape": [
+        290,
+        960
+      ],
+      "residue_mean_shape": [
+        290,
+        960
+      ],
+      "crosscoder_checkpoint_sha256": "95071782c1fda0a4dc40bb489f4fdaba144a21ce4eb2fa4e3a9efa8b01935f17"
+    },
+    "2": {
+      "shape": [
+        342780,
+        1920
+      ],
+      "nnz": 18518511,
+      "density": 0.028137749613454693,
+      "wild_type_shape": [
+        290,
+        1920
+      ],
+      "residue_mean_shape": [
+        290,
+        1920
+      ],
+      "crosscoder_checkpoint_sha256": "72da09e411f68976d7ee8c932256f5adf34b63d46e54a28e170abc83d1f39edd"
+    }
+  },
+  "enrichment_tests_run": false,
+  "gpu_wall_hours": 0.04320775916638215
+}
