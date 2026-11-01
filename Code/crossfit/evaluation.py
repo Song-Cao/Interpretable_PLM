@@ -120,14 +120,18 @@ def bootstrap_metric_intervals(
         )
     )
     tail = (1.0 - confidence_level) / 2.0
-    return {
-        name: {
+    output = {}
+    for name, value in point.items():
+        finite_draws = draws.get(name, [])
+        output[name] = {
             "estimate": float(value),
-            "lower": float(np.quantile(draws[name], tail)),
-            "upper": float(np.quantile(draws[name], 1.0 - tail)),
+            "lower": float(np.quantile(finite_draws, tail)) if finite_draws else float("nan"),
+            "upper": (
+                float(np.quantile(finite_draws, 1.0 - tail))
+                if finite_draws else float("nan")
+            ),
         }
-        for name, value in point.items()
-    }
+    return output
 
 
 @dataclass(frozen=True)

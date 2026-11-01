@@ -52,6 +52,16 @@ def test_bootstrap_rank_only_never_adds_scale_or_cutoff_metrics():
     )
 
 
+def test_bootstrap_rank_interval_marks_constant_prediction_undefined():
+    intervals = bootstrap_metric_intervals(
+        np.ones(8), np.arange(8), samples=20, seed=3,
+        confidence_level=0.95, rank_only=True,
+    )
+    assert np.isnan(intervals["spearman"]["estimate"])
+    assert np.isnan(intervals["spearman"]["lower"])
+    assert np.isnan(intervals["spearman"]["upper"])
+
+
 def test_ndcg_uses_full_direct_ranking():
     assert ndcg([0.0, 1.0, 2.0], [0.0, 1.0, 2.0]) == pytest.approx(1.0)
     assert ndcg([2.0, 1.0, 0.0], [0.0, 1.0, 2.0]) < 1.0
