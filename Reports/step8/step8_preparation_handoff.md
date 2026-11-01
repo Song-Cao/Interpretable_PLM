@@ -9,6 +9,11 @@ test, patch, oracle fit, or oracle validation was run. This is the requested sto
 IRED remains exploratory because Gate 1 failed. Nothing here revises that verdict or enters a
 confirmatory central-claim table.
 
+Under v16, recalibration of every taxonomy threshold against the unconditional drift-matched
+null leaves zero emergent candidates at `w=1`. The user-specified condition for beginning Part C
+is therefore not met. The prepared tracks and Delta-z cache remain intact, but no enrichment,
+patching-budget calculation, ablation, or oracle validation has been run.
+
 ## Numbering verification
 
 The 290-residue campaign wild type globally aligns to canonical 5OCM residues 1-290 with 100%

@@ -1,4 +1,4 @@
-# CROSSFIT v15 Step 7 — IRED taxonomy and effective-rank width diagnostics.
+# CROSSFIT v16 Step 7 — IRED taxonomy and effective-rank width diagnostics.
 dataset: IRED
 dimension: 960
 width_multipliers: [1, 2, 4, 8]

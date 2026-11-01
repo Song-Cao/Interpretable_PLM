@@ -2,7 +2,7 @@
 
 CROSSFIT measures the feature-level structure of representation change when a protein language model is adapted from evolutionary sequence modelling to measured fitness. Each dataset has an independent pipeline. A shared BatchTopK dictionary within that pipeline identifies evolutionary features the fitness model conserves, re-weights, rotates, abandons, or creates. Gate 1 drift is a precondition for this measurement, not the result itself.
 
-`CROSSFIT_Implementation_Plan_v15.docx` is the only implementation plan. IRED runs first, followed by GB1, GFP, KRAS, and DAAO. Models predict per-variant fitness directly; ranking comparisons exist only transiently inside a training batch. Step 2 searches the registered arms by random search with five-fold validation inside the pg_kfold training pool; the test fold is reporting-only. IRED Gate 1 is failed because its paired five-fold task gain is not significant. Depth 26 is frozen for the exploratory IRED pipeline. The Step 4 cache uses only the pg_kfold fold-0 training pool.
+`CROSSFIT_Implementation_Plan_v16.docx` is the only implementation plan. IRED runs first, followed by GB1, GFP, KRAS, and DAAO. Models predict per-variant fitness directly; ranking comparisons exist only transiently inside a training batch. Step 2 searches the registered arms by random search with five-fold validation inside the pg_kfold training pool; the test fold is reporting-only. IRED Gate 1 is failed because its paired five-fold task gain is not significant. Depth 26 is frozen for the exploratory IRED pipeline. The Step 4 cache uses only the pg_kfold fold-0 training pool.
 
 Every future fitted model persists held-out predictions before metric reduction. Selected CV
 and per-member evaluation predictions are committed; full random-search predictions are
@@ -71,6 +71,8 @@ and leaves all tensors and checkpoints under the gitignored `Cache/` and `Models
 .venv/bin/python Code/scripts/cache_ired_shuffled_activations.py
 .venv/bin/python Code/scripts/run_ired_shuffled_crosscoder_nulls.py
 .venv/bin/python Code/scripts/analyze_ired_taxonomy.py
+.venv/bin/python Code/scripts/run_ired_drift_matched_rotation_null.py
+.venv/bin/python Code/scripts/recalibrate_ired_drift_matched_taxonomy.py
 .venv/bin/python Code/scripts/cache_ired_phi.py
 .venv/bin/python Code/scripts/run_ired_part_b_prediction.py
 .venv/bin/python Code/scripts/run_ired_step9_ladder.py
@@ -87,10 +89,11 @@ resumed, while an interrupted fold starts again from its registered initializati
 `Reports/step3/ired_conclusion.md` is the standalone IRED campaign conclusion. The Step 4
 training-only cache is documented in `Reports/step4/step4_handoff.md` and stays on the pod.
 The exact self-pair null passes. The initial fixed-`k` width curve in
-`Reports/step7/step7_handoff.md` found at least 49.9% dead features for every `w>=2`; v15
+`Reports/step7/step7_handoff.md` found at least 49.9% dead features for every `w>=2`; v16
 treats the earlier stopping statement as a pre-committed rule rather than an empirical
 impossibility. Raw-rank, death-timing, and dead-feature-resampling diagnostics select `w=1`
-and `w=2` as the two exploratory working widths. The provisional taxonomy and Gate 2 are
-complete; Gate 2 finds sparse features competitive with the dense probe. Step 9 and the Step 8
-annotation preparation are complete. Structural enrichment, patching, and oracle validation
-have not run and remain outside the current authorization boundary.
+and `w=2` as the two exploratory working widths. The v16 drift-matched taxonomy leaves no
+emergent candidates at `w=1`; this is a multiple-testing power limitation, not evidence of
+absence. Gate 2 finds sparse features competitive with dense probes. Step 9 and the Step 8
+annotation preparation are complete. The condition for beginning enrichment was not met, so
+enrichment, patching, patch-budget calculation, and oracle validation have not run.

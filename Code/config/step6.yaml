@@ -1,4 +1,4 @@
-# CROSSFIT v15 Step 6 — IRED self-pair and shuffled-label null calibration.
+# CROSSFIT v16 Step 6 — IRED self-pair and matched-drift null calibration.
 dataset: IRED
 dimension: 960
 width_multiplier: 1

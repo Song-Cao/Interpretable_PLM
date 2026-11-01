@@ -29,6 +29,15 @@
     "lower": -0.09564037121616129,
     "upper": -0.0015288872239100294
   },
+  "sensitivity_to_dense_reference": {
+    "sparse_pg_kfold_test_spearman": 0.5495072855376417,
+    "validation_selected_dense_pg_kfold_test_spearman": 0.5006885760470586,
+    "sparse_minus_validation_selected_dense": 0.04881870949058309,
+    "strongest_dense_on_test_arm": "dense_evo_mean",
+    "strongest_dense_on_test_spearman": 0.554287054976893,
+    "sparse_minus_strongest_dense_on_test": -0.00477976943925128,
+    "claim": "sparse features are competitive with dense probes, not superior to dense probes"
+  },
   "verdict": "sparse_competitive",
   "step9_run_despite_verdict": true,
   "override_scope": "IRED only; Gate 2 is a resource-allocation gate"

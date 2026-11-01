@@ -1,0 +1,7 @@
+width_multiplier,seed,step_matched_shifted_count,drift_matched_shifted_count,headline_null,headline_rule
+1,20261311,624,241,drift_matched,fewer_shifted_features
+1,20261312,624,244,drift_matched,fewer_shifted_features
+1,20261313,648,238,drift_matched,fewer_shifted_features
+2,20261311,940,211,drift_matched,fewer_shifted_features
+2,20261312,940,201,drift_matched,fewer_shifted_features
+2,20261313,931,219,drift_matched,fewer_shifted_features

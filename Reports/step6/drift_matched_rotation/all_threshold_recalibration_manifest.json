@@ -1,0 +1,28 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "plan": "v16",
+  "null": "drift_matched_shuffled_label",
+  "threshold_scope": [
+    "delta",
+    "latent_error",
+    "latent_reconstruction",
+    "decoder_cosine",
+    "activation_frequency_change"
+  ],
+  "headline_rule": "fewer_shifted_features",
+  "widths": [
+    1,
+    2
+  ],
+  "real_seeds": [
+    20261311,
+    20261312,
+    20261313
+  ],
+  "null_seeds": [
+    20261311,
+    20261312,
+    20261313
+  ]
+}

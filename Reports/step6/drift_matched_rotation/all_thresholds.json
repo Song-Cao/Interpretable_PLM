@@ -1,0 +1,986 @@
+[
+  {
+    "dataset": "IRED",
+    "width_multiplier": 1,
+    "seed": 20261311,
+    "fdr_q": 0.05,
+    "tau": -Infinity,
+    "lower_delta_cutoff": -Infinity,
+    "upper_delta_cutoff": 0.5533575,
+    "latent_error_cutoff": 0.4839610292130639,
+    "latent_reconstruction_cutoff": -Infinity,
+    "decoder_cosine_cutoff": 0.46639774144863555,
+    "activation_frequency_change_cutoff": 0.5021922558273936,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": -Infinity
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": -Infinity
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": -Infinity
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 251.61080595825652,
+        "beta_b": 243.00431050003112,
+        "cutoff": -Infinity,
+        "rejections": 0.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 258.3146251898034,
+        "beta_b": 249.3535143641599,
+        "cutoff": -Infinity,
+        "rejections": 0.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 231.8107555864972,
+        "beta_b": 223.30853142682562,
+        "cutoff": -Infinity,
+        "rejections": 0.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 251.61080595825652,
+        "beta_b": 243.00431050003112,
+        "cutoff": 0.55085677,
+        "rejections": 396.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 258.3146251898034,
+        "beta_b": 249.3535143641599,
+        "cutoff": 0.55026114,
+        "rejections": 397.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 231.8107555864972,
+        "beta_b": 223.30853142682562,
+        "cutoff": 0.5533575,
+        "rejections": 388.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.54127513087077,
+        "rejections": 456.0,
+        "null_features": 603.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.4839610292130639,
+        "rejections": 400.0,
+        "null_features": 610.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.5186892252127695,
+        "rejections": 426.0,
+        "null_features": 602.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 603.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 610.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 602.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 30.420883171312948,
+        "beta_b": 4.3649733100238475,
+        "cutoff": 0.7386780914505029,
+        "rejections": 253.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 29.312419203695875,
+        "beta_b": 4.258787747852396,
+        "cutoff": 0.7331988707243178,
+        "rejections": 240.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 30.683421098121816,
+        "beta_b": 4.522560578125881,
+        "cutoff": 0.7356847917230686,
+        "rejections": 247.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.15146278405444666,
+        "beta_b": 15.616956089644203,
+        "cutoff": 0.5021922558273936,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.16949535495207982,
+        "beta_b": 16.50012470304383,
+        "cutoff": 0.5021922558273936,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.1556018804246656,
+        "beta_b": 15.43333573255909,
+        "cutoff": 0.5021922558273936,
+        "rejections": 1.0
+      }
+    ],
+    "matched_null_checkpoint_sha256": [
+      "4adb1b25ba27c96697d8695580f61c0043b2bba4c40d4f96cdb1a07fdc90a609",
+      "be31366de1bab6552a982afaa697257f3fd6bdeeab8a28ad47ffb654e0727690",
+      "325b0a6afada3694ee54238a8461219567a4998391e5f9d3f1b913c86aa5966d"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 1,
+    "seed": 20261312,
+    "fdr_q": 0.05,
+    "tau": -Infinity,
+    "lower_delta_cutoff": -Infinity,
+    "upper_delta_cutoff": 0.5537677,
+    "latent_error_cutoff": 0.4830966450338209,
+    "latent_reconstruction_cutoff": -Infinity,
+    "decoder_cosine_cutoff": 0.467645151160313,
+    "activation_frequency_change_cutoff": 0.5146908110190714,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": -Infinity
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": -Infinity
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": -Infinity
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 251.61080595825652,
+        "beta_b": 243.00431050003112,
+        "cutoff": -Infinity,
+        "rejections": 0.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 258.3146251898034,
+        "beta_b": 249.3535143641599,
+        "cutoff": -Infinity,
+        "rejections": 0.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 231.8107555864972,
+        "beta_b": 223.30853142682562,
+        "cutoff": -Infinity,
+        "rejections": 0.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 251.61080595825652,
+        "beta_b": 243.00431050003112,
+        "cutoff": 0.55074936,
+        "rejections": 394.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 258.3146251898034,
+        "beta_b": 249.3535143641599,
+        "cutoff": 0.5501298,
+        "rejections": 396.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 231.8107555864972,
+        "beta_b": 223.30853142682562,
+        "cutoff": 0.5537677,
+        "rejections": 377.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.5415150434593933,
+        "rejections": 450.0,
+        "null_features": 603.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.4830966450338209,
+        "rejections": 394.0,
+        "null_features": 610.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.5199302140329058,
+        "rejections": 429.0,
+        "null_features": 602.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 603.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 610.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 602.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 30.420883171312948,
+        "beta_b": 4.3649733100238475,
+        "cutoff": 0.7406713045115076,
+        "rejections": 260.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 29.312419203695875,
+        "beta_b": 4.258787747852396,
+        "cutoff": 0.7338225755801565,
+        "rejections": 243.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 30.683421098121816,
+        "beta_b": 4.522560578125881,
+        "cutoff": 0.7361077698974147,
+        "rejections": 248.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.15146278405444666,
+        "beta_b": 15.616956089644203,
+        "cutoff": 0.5146908110190714,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.16949535495207982,
+        "beta_b": 16.50012470304383,
+        "cutoff": 0.5146908110190714,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.1556018804246656,
+        "beta_b": 15.43333573255909,
+        "cutoff": 0.5146908110190714,
+        "rejections": 1.0
+      }
+    ],
+    "matched_null_checkpoint_sha256": [
+      "4adb1b25ba27c96697d8695580f61c0043b2bba4c40d4f96cdb1a07fdc90a609",
+      "be31366de1bab6552a982afaa697257f3fd6bdeeab8a28ad47ffb654e0727690",
+      "325b0a6afada3694ee54238a8461219567a4998391e5f9d3f1b913c86aa5966d"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 1,
+    "seed": 20261313,
+    "fdr_q": 0.05,
+    "tau": 0.41375393,
+    "lower_delta_cutoff": 0.41375393,
+    "upper_delta_cutoff": 0.5534158,
+    "latent_error_cutoff": 0.4830895573249829,
+    "latent_reconstruction_cutoff": -Infinity,
+    "decoder_cosine_cutoff": 0.46143371373952635,
+    "activation_frequency_change_cutoff": Infinity,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.41375393
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.41375393
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.41375393
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 251.61080595825652,
+        "beta_b": 243.00431050003112,
+        "cutoff": 0.41375393,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 258.3146251898034,
+        "beta_b": 249.3535143641599,
+        "cutoff": 0.41375393,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 231.8107555864972,
+        "beta_b": 223.30853142682562,
+        "cutoff": 0.41375393,
+        "rejections": 1.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 251.61080595825652,
+        "beta_b": 243.00431050003112,
+        "cutoff": 0.5504019,
+        "rejections": 421.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 258.3146251898034,
+        "beta_b": 249.3535143641599,
+        "cutoff": 0.55008787,
+        "rejections": 422.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 231.8107555864972,
+        "beta_b": 223.30853142682562,
+        "cutoff": 0.5534158,
+        "rejections": 402.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.5370625133634446,
+        "rejections": 446.0,
+        "null_features": 603.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.4830895573249829,
+        "rejections": 407.0,
+        "null_features": 610.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.5093617709100664,
+        "rejections": 425.0,
+        "null_features": 602.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 603.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 610.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 602.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 30.420883171312948,
+        "beta_b": 4.3649733100238475,
+        "cutoff": 0.739521267433665,
+        "rejections": 259.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 29.312419203695875,
+        "beta_b": 4.258787747852396,
+        "cutoff": 0.7307168568697632,
+        "rejections": 237.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 30.683421098121816,
+        "beta_b": 4.522560578125881,
+        "cutoff": 0.7351160081847605,
+        "rejections": 249.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.15146278405444666,
+        "beta_b": 15.616956089644203,
+        "cutoff": Infinity,
+        "rejections": 0.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.16949535495207982,
+        "beta_b": 16.50012470304383,
+        "cutoff": Infinity,
+        "rejections": 0.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.1556018804246656,
+        "beta_b": 15.43333573255909,
+        "cutoff": Infinity,
+        "rejections": 0.0
+      }
+    ],
+    "matched_null_checkpoint_sha256": [
+      "4adb1b25ba27c96697d8695580f61c0043b2bba4c40d4f96cdb1a07fdc90a609",
+      "be31366de1bab6552a982afaa697257f3fd6bdeeab8a28ad47ffb654e0727690",
+      "325b0a6afada3694ee54238a8461219567a4998391e5f9d3f1b913c86aa5966d"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 2,
+    "seed": 20261311,
+    "fdr_q": 0.05,
+    "tau": 0.407237,
+    "lower_delta_cutoff": 0.407237,
+    "upper_delta_cutoff": 0.56597954,
+    "latent_error_cutoff": 0.4154254525522036,
+    "latent_reconstruction_cutoff": -Infinity,
+    "decoder_cosine_cutoff": 0.39689287400850803,
+    "activation_frequency_change_cutoff": 0.6549450972837604,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.407237
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.407237
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.407237
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 180.17965437845262,
+        "beta_b": 171.7596133953304,
+        "cutoff": 0.4195228,
+        "rejections": 5.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 165.59195208989917,
+        "beta_b": 157.45340468522238,
+        "cutoff": 0.407237,
+        "rejections": 2.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 168.70479385815693,
+        "beta_b": 160.76835650586492,
+        "cutoff": 0.407237,
+        "rejections": 2.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 180.17965437845262,
+        "beta_b": 171.7596133953304,
+        "cutoff": 0.56304514,
+        "rejections": 543.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 165.59195208989917,
+        "beta_b": 157.45340468522238,
+        "cutoff": 0.56597954,
+        "rejections": 530.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 168.70479385815693,
+        "beta_b": 160.76835650586492,
+        "cutoff": 0.56473446,
+        "rejections": 535.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.4254995755800992,
+        "rejections": 496.0,
+        "null_features": 864.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.4154254525522036,
+        "rejections": 488.0,
+        "null_features": 853.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.4321466780153711,
+        "rejections": 506.0,
+        "null_features": 854.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 864.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 853.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 854.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 26.658149492900993,
+        "beta_b": 4.092839695540764,
+        "cutoff": 0.698446437004254,
+        "rejections": 209.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 28.45293720757219,
+        "beta_b": 4.344034660070403,
+        "cutoff": 0.7104497640171985,
+        "rejections": 246.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 28.513428392932216,
+        "beta_b": 4.398972318373665,
+        "cutoff": 0.7089724047916689,
+        "rejections": 244.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.14702064360655065,
+        "beta_b": 18.350722305618053,
+        "cutoff": 0.6549450972837604,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.15923192688026916,
+        "beta_b": 18.676041138028335,
+        "cutoff": 0.6549450972837604,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.14741569960130335,
+        "beta_b": 17.585451013614282,
+        "cutoff": 0.6549450972837604,
+        "rejections": 1.0
+      }
+    ],
+    "matched_null_checkpoint_sha256": [
+      "6488031522d406fe03d10a678b0e31e3fba0138d59b2a316aa88e1e65535f97a",
+      "ae2488c3d1d19a4612c6daa16a37b9ab594a056562f1785da018d1016dae9f62",
+      "0e9ebe2d8ac5c8744ea16f98a6115118a5dde459ef49505c415308cf5da7c6cf"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 2,
+    "seed": 20261312,
+    "fdr_q": 0.05,
+    "tau": 0.4082785,
+    "lower_delta_cutoff": 0.4082785,
+    "upper_delta_cutoff": 0.5658781,
+    "latent_error_cutoff": 0.4150941003678821,
+    "latent_reconstruction_cutoff": -Infinity,
+    "decoder_cosine_cutoff": 0.39375523149454716,
+    "activation_frequency_change_cutoff": 0.6902600654979772,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.4082785
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.4082785
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.4082785
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 180.17965437845262,
+        "beta_b": 171.7596133953304,
+        "cutoff": 0.4082785,
+        "rejections": 4.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 165.59195208989917,
+        "beta_b": 157.45340468522238,
+        "cutoff": 0.4082785,
+        "rejections": 4.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 168.70479385815693,
+        "beta_b": 160.76835650586492,
+        "cutoff": 0.4082785,
+        "rejections": 4.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 180.17965437845262,
+        "beta_b": 171.7596133953304,
+        "cutoff": 0.56251144,
+        "rejections": 548.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 165.59195208989917,
+        "beta_b": 157.45340468522238,
+        "cutoff": 0.5658781,
+        "rejections": 529.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 168.70479385815693,
+        "beta_b": 160.76835650586492,
+        "cutoff": 0.564816,
+        "rejections": 532.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.4269276293264461,
+        "rejections": 504.0,
+        "null_features": 864.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.4150941003678821,
+        "rejections": 485.0,
+        "null_features": 853.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.4376514982500606,
+        "rejections": 524.0,
+        "null_features": 854.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 864.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 853.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 854.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 26.658149492900993,
+        "beta_b": 4.092839695540764,
+        "cutoff": 0.6968776157472736,
+        "rejections": 199.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 28.45293720757219,
+        "beta_b": 4.344034660070403,
+        "cutoff": 0.7085336127721308,
+        "rejections": 228.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 28.513428392932216,
+        "beta_b": 4.398972318373665,
+        "cutoff": 0.7055729416864691,
+        "rejections": 218.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.14702064360655065,
+        "beta_b": 18.350722305618053,
+        "cutoff": 0.6902600654979772,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.15923192688026916,
+        "beta_b": 18.676041138028335,
+        "cutoff": 0.6902600654979772,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.14741569960130335,
+        "beta_b": 17.585451013614282,
+        "cutoff": 0.6902600654979772,
+        "rejections": 1.0
+      }
+    ],
+    "matched_null_checkpoint_sha256": [
+      "6488031522d406fe03d10a678b0e31e3fba0138d59b2a316aa88e1e65535f97a",
+      "ae2488c3d1d19a4612c6daa16a37b9ab594a056562f1785da018d1016dae9f62",
+      "0e9ebe2d8ac5c8744ea16f98a6115118a5dde459ef49505c415308cf5da7c6cf"
+    ]
+  },
+  {
+    "dataset": "IRED",
+    "width_multiplier": 2,
+    "seed": 20261313,
+    "fdr_q": 0.05,
+    "tau": 0.3870023,
+    "lower_delta_cutoff": 0.3870023,
+    "upper_delta_cutoff": 0.5656437,
+    "latent_error_cutoff": 0.4155746794148136,
+    "latent_reconstruction_cutoff": -Infinity,
+    "decoder_cosine_cutoff": 0.4008644894144111,
+    "activation_frequency_change_cutoff": 0.7169370063571566,
+    "leave_one_null_seed_out_tau": [
+      {
+        "omitted_null_run": 0,
+        "tau": 0.3870023
+      },
+      {
+        "omitted_null_run": 1,
+        "tau": 0.3870023
+      },
+      {
+        "omitted_null_run": 2,
+        "tau": 0.3870023
+      }
+    ],
+    "lower_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 180.17965437845262,
+        "beta_b": 171.7596133953304,
+        "cutoff": 0.3870023,
+        "rejections": 2.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 165.59195208989917,
+        "beta_b": 157.45340468522238,
+        "cutoff": 0.3870023,
+        "rejections": 2.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 168.70479385815693,
+        "beta_b": 160.76835650586492,
+        "cutoff": 0.3870023,
+        "rejections": 2.0
+      }
+    ],
+    "upper_delta_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 180.17965437845262,
+        "beta_b": 171.7596133953304,
+        "cutoff": 0.5622626,
+        "rejections": 558.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 165.59195208989917,
+        "beta_b": 157.45340468522238,
+        "cutoff": 0.5656437,
+        "rejections": 534.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 168.70479385815693,
+        "beta_b": 160.76835650586492,
+        "cutoff": 0.5646424,
+        "rejections": 539.0
+      }
+    ],
+    "latent_error_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": 0.4262211239548624,
+        "rejections": 485.0,
+        "null_features": 864.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": 0.4155746794148136,
+        "rejections": 472.0,
+        "null_features": 853.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": 0.4317617665386698,
+        "rejections": 499.0,
+        "null_features": 854.0
+      }
+    ],
+    "latent_reconstruction_runs": [
+      {
+        "null_run": 0.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 864.0
+      },
+      {
+        "null_run": 1.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 853.0
+      },
+      {
+        "null_run": 2.0,
+        "cutoff": -Infinity,
+        "rejections": 0.0,
+        "null_features": 854.0
+      }
+    ],
+    "decoder_cosine_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 26.658149492900993,
+        "beta_b": 4.092839695540764,
+        "cutoff": 0.7004322447072056,
+        "rejections": 217.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 28.45293720757219,
+        "beta_b": 4.344034660070403,
+        "cutoff": 0.7096165175543828,
+        "rejections": 236.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 28.513428392932216,
+        "beta_b": 4.398972318373665,
+        "cutoff": 0.7085526900289176,
+        "rejections": 234.0
+      }
+    ],
+    "activation_frequency_runs": [
+      {
+        "null_run": 0.0,
+        "beta_a": 0.14702064360655065,
+        "beta_b": 18.350722305618053,
+        "cutoff": 0.7169370063571566,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 1.0,
+        "beta_a": 0.15923192688026916,
+        "beta_b": 18.676041138028335,
+        "cutoff": 0.7169370063571566,
+        "rejections": 1.0
+      },
+      {
+        "null_run": 2.0,
+        "beta_a": 0.14741569960130335,
+        "beta_b": 17.585451013614282,
+        "cutoff": 0.7169370063571566,
+        "rejections": 1.0
+      }
+    ],
+    "matched_null_checkpoint_sha256": [
+      "6488031522d406fe03d10a678b0e31e3fba0138d59b2a316aa88e1e65535f97a",
+      "ae2488c3d1d19a4612c6daa16a37b9ab594a056562f1785da018d1016dae9f62",
+      "0e9ebe2d8ac5c8744ea16f98a6115118a5dde459ef49505c415308cf5da7c6cf"
+    ]
+  }
+]

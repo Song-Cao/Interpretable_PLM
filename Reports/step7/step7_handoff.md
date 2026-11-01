@@ -109,12 +109,12 @@ the project log, the v13 cache/null/width work, and this diagnostic.
 
 ## Provisional taxonomy
 
-Every threshold was fitted from its own three-seed shuffled-label null at `q=0.05`; null runs
-were fitted separately and the conservative cutoff was retained. The artifact gate is
-conjunctive: either latent-scaling ratio can exclude a candidate. The decoder norm floor uses
-each decoder's own median. Classification follows `dead`, `emergent candidate`,
-`evolution-only`, `rotated`, `re-weighted`, then `conserved`. “Emergent candidate” is explicitly
-not the final causal class.
+Under v16, every fitted threshold uses the unconditional drift-matched shuffled-label null at
+`q=0.05`. Null runs are fitted separately and the conservative cutoff is retained. The artifact
+gate is conjunctive: either latent-scaling ratio can exclude a candidate. The decoder norm floor
+uses each decoder's own median. Classification follows `dead`, `emergent candidate`,
+`evolution-only`, `rotated`, `re-weighted`, then `conserved`. “Emergent candidate” remains
+causally unvalidated.
 
 The original step-matched shuffled null produced the following proportions:
 
@@ -123,54 +123,62 @@ The original step-matched shuffled null produced the following proportions:
 | 1 | 32.67% | 28.16% | 1.63% | 36.04% | 0.00% | 1.49% |
 | 2 | 49.93% | 0.00% | 0.94% | 47.81% | 0.05% | 1.27% |
 
-Values are means across three real crosscoder seeds. A subsequent drift-matched rotation null
-changed only the decoder-cosine threshold; Delta, latent-scaling, norm-floor, and frequency
-thresholds remain registered against the original step-matched null. The corrected provisional
-proportions are:
+Values are means across three real crosscoder seeds. They are retained as the superseded
+step-matched-null result. Recalibrating Delta, both latent-scaling ratios, decoder cosine, and
+activation-frequency change against the drift-matched null gives:
 
 | w | dead | emergent candidate | evolution-only | rotated | re-weighted | conserved |
 |---:|---:|---:|---:|---:|---:|---:|
-| 1 | 32.67% | 28.16% | 1.63% | 7.12% | 0.03% | 30.38% |
-| 2 | 49.93% | 0.00% | 0.94% | 10.45% | 0.30% | 38.39% |
+| 1 | 32.67% | 0.00% | 0.03% | 25.00% | 0.07% | 42.22% |
+| 2 | 49.93% | 0.00% | 0.14% | 10.76% | 0.05% | 39.11% |
 
-The original rotated mass was therefore largely global-drift re-reporting. The corrected
-taxonomy retains a smaller rotation signal and restores a substantial conserved class, which is
-consistent with the representation-level CKA of 0.919. Exact per-feature corrected labels are
-under `Reports/step6/drift_matched_rotation/`. The strong width instability in emergent
-candidates remains: no `w=2` feature passed the reconstruction-ratio component of latent
-scaling.
+The drift-matched taxonomy has fewer shifted features for every seed and width and is therefore
+the v16 headline. At `w=1`, emergent candidates fall from 28.16% to zero. This is not evidence
+that emergent features are absent: in two seeds the symmetric Delta threshold is undefined after
+one tail has no BH discoveries, and the reconstruction-ratio gate has no BH discoveries in all
+three seeds. It is a power-limited classification under the registered conservative rule. No
+feature can receive the final `emergent` label without first clearing these gates and later
+causal validation.
+
+Class proportions must not be compared directly across widths: `w=2` corrects 1,920 feature
+tests while `w=1` corrects 960, so dictionary width changes the multiple-testing burden as well
+as the representation. A zero after BH means no feature reached significance at that width; it
+does not establish absence. Exact per-feature labels and thresholds are under
+`Reports/step6/drift_matched_rotation/`.
 
 ### Width-matched reconstruction-ratio audit
 
-The registered null crosscoders were matched by width: three `w=1` nulls calibrated `w=1`, and
-three `w=2` nulls calibrated `w=2`. The real-pair ratio distribution did not shift materially
-with width. Across seeds, its median was 0.7849-0.7942 at `w=1` and 0.7797-0.7897 at `w=2`;
-the corresponding matched-null medians were 0.9295-0.9360 and 0.9301-0.9322. Thus doubling the
-dictionary did not mechanically make the observed ratios more reconstructible.
+Null crosscoders are matched by width: three `w=1` nulls calibrate `w=1`, and three `w=2` nulls
+calibrate `w=2`. The v16 effect-size distributions are:
 
-At `w=1`, the conservative lower-tail cutoffs were 0.7828-0.7849 and 298-330 features passed.
-At `w=2`, at least one matched-width null run produced no BH rejection for every real seed. The
-pre-committed conservative-across-nulls rule therefore set the combined cutoff to `-inf`, and
-zero features passed. The zero is caused by null/BH instability at the wider dictionary, not by
-a visible downward shift in the real reconstruction-ratio distribution. Distribution summaries
-and the ECDF are `reconstruction_ratio_distributions.csv` and
-`reconstruction_ratio_ecdf.png` under the drift-matched report directory.
+| w | source | median range | 5th percentile range | 95th percentile range |
+|---:|---|---:|---:|---:|
+| 1 | real pair | 0.7849-0.7942 | 0.3049-0.4002 | 1.0221-1.0465 |
+| 1 | drift-matched null | 0.7767-0.7909 | 0.5088-0.5141 | 1.0325-1.0448 |
+| 2 | real pair | 0.7797-0.7897 | 0.2377-0.3353 | 1.0574-1.0701 |
+| 2 | drift-matched null | 0.7818-0.7896 | 0.5092-0.5231 | 1.0457-1.0663 |
+
+The medians overlap closely at both widths. The real distributions have heavier lower tails,
+but after correction no feature reaches reconstruction-ratio significance against every null
+run. The resulting `-inf` conservative cutoff is a power limitation. It is especially important
+at `w=2`, where the number of simultaneous feature tests doubles. Full quantiles are in
+`reconstruction_ratio_effect_sizes.csv`.
 
 ### Drift-matched rotation audit
 
-The shuffled adapter used the registered rank 16, learning rate 0.0001, weight decay 0.01, and
-shuffled labels. It reached relative drift 0.6484 after 575 optimizer steps, within 2.3% of the
-real adapter's 0.6338. Rotation was recalibrated at `q=0.05` from three new crosscoders at each
-matched width. Mean rotated fractions fell from 36.04% to 7.12% at `w=1` and from 47.81% to
-10.45% at `w=2`; seedwise corrected ranges were 6.46-7.81% and 10.10-10.99%.
+The shuffled adapter used registered rank 16, learning rate 0.0001, weight decay 0.01, and
+shuffled labels. It reached relative drift 0.6484 after 575 optimizer steps, within 2.3% of real
+drift 0.6338. Recalibrating cosine alone reduced rotated fractions to 7.12% and 10.45%, but that
+v15 intermediate is not a full taxonomy: under v16, removing former emergent candidates lets
+some features fall through the precedence order into `rotated`, yielding the headline 25.00%
+and 10.76%.
 
-At the rotation stage, the original flags were close to saturated across every quintile
-(84-100%), with only weak associations with decoder norm or activation frequency
-(Spearman -0.03 to 0.27 across runs). That pattern is predominantly global. After drift
-matching, flags were concentrated among high-activation-frequency features (Spearman 0.17-0.40;
-all chi-square p-values <= 8.1e-5) and, more modestly, among lower decoder-norm features
-(Spearman -0.27 to -0.10; five of six chi-square tests p<0.05). The residual rotation signal is
-therefore feature-structured rather than uniform, but decoder-norm dependence remains a caveat.
+Residual rotation does not disappear above the decoder-norm medians. Restricting to features at
+or above each decoder's own median leaves 382-406 features at `w=1`, of which 27.3-32.2% are
+rotated, and 824-836 at `w=2`, of which 17.4-18.5% are rotated. Activation-frequency
+concentration also survives: above the medians, rotation-flag Spearman is 0.40-0.54 at `w=1`
+and 0.23-0.36 at `w=2`; the highest-frequency quintile has 35-73% rotation versus 2-11% in the
+lowest quintile. Low-norm cosine noise therefore cannot explain the surviving rotation signal.
 
 Reconstruction remains high but is reported separately by model. Across real seeds, `w=1`
 explains 99.85% (E_evo) and 99.59% (E_fit) of variance; `w=2` explains 99.86% and 99.68%.
@@ -180,10 +188,9 @@ These values do not rescue dead or artifact-failing features.
 
 The best dense reference selected only by five-fold validation Spearman was `dense_fit_mean`;
 the best sparse arm by the same rule was `phi_w1_max_all_live`. Their pg_kfold test Spearman
-values were 0.5007 and 0.5495. The paired bootstrap interval for dense minus sparse was
-`[-0.0956, -0.00153]`, point estimate -0.0488. Gate 2 therefore returns
-`sparse_competitive` (the interval actually favours sparse). The exact decision record is
-`Reports/step7/gate2_result.json`.
+values were 0.5007 and 0.5495. Sparse is ahead by 0.0488 relative to this pre-committed reference;
+the paired bootstrap interval for dense minus sparse is `[-0.0956, -0.00153]`, barely excluding
+zero. Gate 2 therefore returns `sparse_competitive`.
 
 All dense references are shown to separate the pre-committed selection rule from a post-hoc
 test ranking:
@@ -194,9 +201,11 @@ test ranking:
 | h_evo mean | 0.6077 | 0.5543 |
 | PCs of h_fit - h_evo | 0.3948 | 0.4882 |
 
-`h_evo` is strongest on test, but selecting it after reading test would violate the registered
-protocol. The accepted Gate 2 result compares validation-selected `h_fit` against
-validation-selected sparse features; the full audit is
+`h_evo` is strongest on test at 0.5543, leaving sparse 0.0048 behind it. Selecting `h_evo` after
+reading test would violate the registered protocol, but this sensitivity bounds the scientific
+claim: sparse features are competitive with dense probes, not superior to dense probes. The
+accepted Gate 2 decision still compares validation-selected `h_fit` against validation-selected
+sparse features; the full audit is
 `Reports/step7/gate2_dense_reference_audit.csv`.
 
 Step 9 was run regardless under the pre-recorded IRED-only resource-allocation override. This
@@ -216,11 +225,10 @@ corrected to distinguish the selected max-pooled arm from sum-pooled arms.
 
 ## Incomplete or uncertain
 
-All class proportions remain provisional until causal validation. The width-dependent loss of
-emergent candidates means the taxonomy is not stable to dictionary width on IRED. The `w=2`
-zero also depends on a conservative cutoff becoming undefined after one matched-width null run
-has no BH rejection; it should not be described as a mechanical width shift in the observed
-ratio. The
+All class proportions remain provisional. No emergent candidate survives v16 calibration at
+`w=1`, so the user-specified condition for Part C enrichment and ablation planning is not met;
+no enrichment, patching-budget calculation, patching, or oracle validation was run. The zeros at
+both widths are power-limited BH outcomes and do not establish absence, while cross-width class
+proportions are not directly comparable because the number of tested features differs. The
 resampling result tests one registered random-reset intervention, not every anti-death optimizer.
-No architecture or loss was tuned to reduce death. Gate 1 remains failed, and no Step 7 result
-is confirmatory evidence for the central claim.
+Gate 1 remains failed, and no Step 7 result is confirmatory evidence for the central claim.

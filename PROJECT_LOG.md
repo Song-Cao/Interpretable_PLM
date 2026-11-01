@@ -982,12 +982,14 @@ the prediction track needs 0 or 3 crosscoders.
   negligible, and the requested scientific output is the sparse-feature prediction increment.
   It does not weaken a validity criterion. On GB1 and later datasets, obey Gate 2's conditional
   branch exactly; Gates 1 and 3 remain validity gates everywhere.
-- `[FINDING]` The null-calibrated provisional taxonomy is strongly width-dependent. Across
+- `[FINDING]` The original step-matched-null provisional taxonomy, superseded by v16, is strongly
+  width-dependent. Across
   three seeds, `w=1` assigns 32.67% dead, 28.16% emergent candidate, 1.63% evolution-only,
   36.04% rotated, 0% re-weighted, and 1.49% conserved. At `w=2` the corresponding values are
-  49.93%, 0%, 0.94%, 47.81%, 0.05%, and 1.27%. No `w=2` feature clears the reconstruction-ratio
-  component of the conjunctive latent-scaling gate. All labels remain provisional pending causal
-  validation; the width instability is preserved rather than selecting the tidier taxonomy.
+  49.93%, 0%, 0.94%, 47.81%, 0.05%, and 1.27%. At `w=2`, no feature reaches reconstruction-ratio
+  significance after BH correction across 1,920 tests. This is a power limitation, not evidence
+  that emergent features are absent, and class proportions are not comparable across widths
+  because `w=1` corrects 960 tests while `w=2` corrects 1,920. All labels remain provisional.
 - `[FINDING]` Real crosscoder reconstruction is high but differs by model and is reported
   separately: mean FVE is 0.9985 for E_evo and 0.9959 for E_fit at `w=1`, and 0.9986 and 0.9968
   at `w=2`. These aggregate values do not override dead-feature, norm-floor, or latent-scaling
@@ -995,7 +997,8 @@ the prediction track needs 0 or 3 crosscoders.
 - `[FINDING]` Gate 2 returns `sparse_competitive`. The validation-selected dense reference
   (`dense_fit_mean`) and sparse arm (`phi_w1_max_all_live`) score 0.5007 and 0.5495 Spearman on
   pg_kfold test. The paired-bootstrap dense-minus-sparse difference is -0.04882 with 95% interval
-  [-0.09564, -0.00153], which favours sparse under the pre-committed rule.
+  [-0.09564, -0.00153]. This supports competitiveness against the validation-selected reference,
+  not superiority over every dense probe.
 - `[FINDING]` The Step 9 validation-selected arm is `phi_w1_max_all_live` with MLP readout. Its
   Spearman is 0.5495 on pg_kfold test, 0.5652 round-held-out, and 0.5002 on the external plate
   set (plate 95% bootstrap interval [0.2442, 0.7094]). Sparse max pooling improves on the earlier
@@ -1068,24 +1071,26 @@ the prediction track needs 0 or 3 crosscoders.
 
 - `[FINDING]` Gate 2's `sparse_competitive` verdict is accepted as a positive result. The
   validation-selected `dense_fit_mean` and `phi_w1_max_all_live` arms score 0.5007 and 0.5495
-  on pg_kfold test, and the paired dense-minus-sparse interval [-0.09564, -0.00153] favours
-  sparse. For audit, all dense references are now reported: validation/test Spearman is
+  on pg_kfold test, and the paired dense-minus-sparse interval [-0.09564, -0.00153] barely
+  excludes zero relative to that selected reference. For audit, all dense references are reported:
+  validation/test Spearman is
   0.6231/0.5007 for h_fit mean, 0.6077/0.5543 for h_evo mean, and 0.3948/0.4882 for delta PCs.
-  Although h_evo is strongest on test, selecting it after reading test would violate the
-  pre-committed validation-only selection rule and does not change the verdict.
-- `[FINDING]` Latent-scaling nulls were already matched by dictionary width. The real-pair
+  h_evo is 0.0048 ahead of sparse on test. Selecting it after reading test would violate the
+  pre-committed validation-only selection rule and does not change the verdict, but the claim is
+  “sparse features are competitive with dense probes,” never “sparse beats dense.”
+- `[FINDING]` The original latent-scaling nulls were matched by dictionary width. The real-pair
   reconstruction-ratio medians are 0.7849-0.7942 at `w=1` and 0.7797-0.7897 at `w=2`, versus
-  matched-null medians 0.9295-0.9360 and 0.9301-0.9322. The `w=2` zero is not a mechanical
-  distribution shift: at least one matched-width null run yields no BH rejection for every
-  seed, so the conservative-across-nulls lower cutoff becomes `-inf`. This null/BH instability
-  is retained as an inconvenient taxonomy result.
-- `[DECISION]` Decoder-cosine rotation is recalibrated against a rotation-only drift-matched
+  step-matched-null medians 0.9295-0.9360 and 0.9301-0.9322. At `w=2`, no feature reaches BH
+  significance against every null run, so the conservative lower cutoff becomes `-inf`. This is
+  reduced power across 1,920 tests, not a mechanical distribution shift or evidence of absence.
+- `[ADJUST]` The v15 intermediate recalibrated decoder-cosine rotation against a rotation-only drift-matched
   shuffled-label null because the original step-matched null had substantially lower global
   drift. Delta, latent-scaling, norm-floor, and activation-frequency thresholds remain on their
-  registered nulls. The null uses the registered rank 16, learning rate 0.0001, weight decay
+  registered nulls in that archived intermediate only; v16 supersedes it with matched-drift
+  calibration for every threshold. The null uses registered rank 16, learning rate 0.0001, weight decay
   0.01, and shuffled labels; it reached drift 0.6484 after 575 optimizer steps versus real
   drift 0.6338, a 2.3% mismatch.
-- `[FINDING]` Drift matching reduces mean provisional rotated fractions from 36.04% to 7.12%
+- `[FINDING]` In the archived cosine-only intermediate, drift matching reduces mean provisional rotated fractions from 36.04% to 7.12%
   at `w=1` and from 47.81% to 10.45% at `w=2`, confirming that most original rotation calls
   re-reported global drift. Original rotation-stage flags were near-saturated across quintiles.
   Residual drift-matched flags concentrate at high activation frequency and lower decoder norm,
@@ -1107,3 +1112,46 @@ the prediction track needs 0 or 3 crosscoders.
 - `[FINDING]` Post-audit verification passes all 243 tests in 103.83 seconds. The two warnings
   are the expected constant-input rank-correlation checks; no partial fit or Part C result was
   admitted.
+
+### v16 matched-drift recalibration (2026-11-01)
+
+- `[ADJUST]` `CROSSFIT_Implementation_Plan_v16.docx` replaces v15, which was deleted. The
+  matched-drift shuffled-label null is now unconditional and calibrates Delta, error ratio,
+  reconstruction ratio, decoder cosine, and activation-frequency change. The earlier
+  cosine-only matched-drift result remains archived but is not the headline taxonomy.
+- `[DECISION]` When step-matched and drift-matched nulls disagree, the headline taxonomy is the
+  one with fewer features across emergent-candidate, evolution-only, rotated, and re-weighted
+  classes. Drift-matched has fewer shifted features for every real seed at both widths and is
+  the IRED headline.
+- `[FINDING]` Mean step-matched versus drift-matched provisional proportions are, at `w=1`:
+  emergent candidate 28.16% versus 0%, evolution-only 1.63% versus 0.03%, rotated 36.04% versus
+  25.00%, re-weighted 0% versus 0.07%, and conserved 1.49% versus 42.22%. At `w=2`, the matched
+  values are 0%, 0.14%, 10.76%, 0.05%, and 39.11%, with dead fractions unchanged at 32.67% and
+  49.93%.
+- `[FINDING]` The zero emergent-candidate counts are power limitations, not evidence of absence.
+  At `w=1`, two seeds have no conservative symmetric Delta cutoff because one tail has no BH
+  discoveries, and all three have no reconstruction-ratio discoveries against every null run.
+  At `w=2`, the reconstruction gate likewise has none while correcting 1,920 simultaneous tests
+  rather than 960. Class proportions are not directly comparable across widths because the
+  multiple-testing burden scales with dictionary size.
+- `[FINDING]` Reconstruction-ratio effect sizes show closely overlapping real/null medians:
+  0.7849-0.7942 versus 0.7767-0.7909 at `w=1`, and 0.7797-0.7897 versus 0.7818-0.7896 at `w=2`.
+  Real pairs have heavier lower tails, but no feature survives the conservative all-null BH
+  requirement. The `-inf` cutoff records insufficient power after correction, not zero effect.
+- `[FINDING]` Rotation survives exclusion of low-norm decoder columns. Among features at or above
+  both decoder medians, 27.3-32.2% are rotated at `w=1` and 17.4-18.5% at `w=2`.
+  Activation-frequency concentration remains (Spearman 0.40-0.54 and 0.23-0.36); the highest
+  frequency quintile has 35-73% rotation versus 2-11% in the lowest. Surviving rotation is not
+  explained by poorly determined cosine on low-norm columns.
+- `[DECISION]` Gate 2 remains `sparse_competitive`. Sparse is 0.0488 ahead of the
+  validation-selected dense reference with an interval barely excluding zero, but 0.0048 behind
+  the strongest dense arm on test. Report only that sparse features are competitive with dense
+  probes; never claim that sparse features beat dense probes.
+- `[DECISION]` Part C does not begin because v16 leaves zero `w=1` emergent candidates, failing
+  the user's explicit condition for enrichment. Prepared annotations and Delta-z caches remain
+  intact. No enrichment, patching-budget calculation, ablation, patching, or oracle validation
+  was run.
+- `[COST]` Recomputing all five threshold families and the full taxonomy from completed caches
+  and checkpoints used approximately 0.016 L40 wall-hours. No model or crosscoder was retrained.
+- `[FINDING]` v16 recalibration verification passes all 243 tests in 106.23 seconds. The two
+  warnings are the registered constant-input rank-correlation checks.
