@@ -30,6 +30,7 @@ def test_augmented_ridge_uses_explicit_near_unpenalized_density_column():
     [
         ("ridge", (12,), {}, (3,)),
         ("mlp", (12,), {"hidden_dims": [16, 8], "dropout": 0.2}, (3,)),
+        ("low_rank_multiplicative", (12,), {"rank": 4}, (3,)),
         ("conv_residual", (20, 5), {"width": 16, "depth": 2, "kernel_size": 3, "dropout": 0.1}, (3,)),
     ],
 )

@@ -101,6 +101,24 @@ class MLPRegressor(nn.Module):
         return self.network(features).squeeze(-1)
 
 
+class LowRankMultiplicativeRegressor(nn.Module):
+    """Linear readout plus a low-rank second-order factorization term."""
+
+    def __init__(self, input_dim: int, rank: int) -> None:
+        super().__init__()
+        if input_dim <= 0 or rank <= 0:
+            raise ValueError("factorization input dimension and rank must be positive")
+        self.linear = nn.Linear(input_dim, 1)
+        self.factors = nn.Parameter(torch.empty(input_dim, rank))
+        nn.init.xavier_uniform_(self.factors)
+
+    def forward(self, features: torch.Tensor) -> torch.Tensor:
+        projected = features @ self.factors
+        diagonal = features.square() @ self.factors.square()
+        interactions = 0.5 * torch.sum(projected.square() - diagonal, dim=-1)
+        return self.linear(features).squeeze(-1) + interactions
+
+
 class ResidualConvBlock(nn.Module):
     """Two normalized convolutions with a residual connection."""
 
@@ -154,6 +172,8 @@ def build_model(name: str, input_shape: Sequence[int], parameters: Mapping[str, 
         return MLPRegressor(
             int(input_shape[-1]), parameters["hidden_dims"], float(parameters["dropout"])
         )
+    if name == "low_rank_multiplicative":
+        return LowRankMultiplicativeRegressor(int(input_shape[-1]), int(parameters["rank"]))
     if name == "random_forest":
         from sklearn.ensemble import RandomForestRegressor
 
