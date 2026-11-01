@@ -1,0 +1,44 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "pdb_id": "5OCM",
+  "campaign_length": 290,
+  "structure_sequence_length": 291,
+  "alignment_identity": 1.0,
+  "campaign_coverage": 1.0,
+  "mismatches": [],
+  "campaign_gaps": [],
+  "structure_terminal_extension": "A",
+  "biological_assemblies": {
+    "1": [
+      "A",
+      "F"
+    ],
+    "2": [
+      "B",
+      "C"
+    ],
+    "3": [
+      "D",
+      "E"
+    ]
+  },
+  "assembly_interpretation": "The deposited six-chain coordinate entry contains three RCSB-defined biological dimers (A/F, B/C, D/E). Contacts use all three copies but never cross between dimers.",
+  "supplied_residues_all_map": true,
+  "reported_5ocm_context_positions": {
+    "208": "W",
+    "238": "H"
+  },
+  "numbering_note": "W178 and H244 map exactly to 5OCM W178 and H244. They are distinct from the entry context residues W208 and H238 and were not substituted.",
+  "shell_counts": {
+    "catalytic": 3,
+    "distal_functional_network": 3,
+    "first_shell": 37,
+    "generic_distal": 211,
+    "second_shell": 36
+  },
+  "crystallographic_contact_rows": 256,
+  "enrichment_tests_run": false,
+  "patching_run": false,
+  "oracle_validation_run": false
+}

@@ -1,0 +1,6 @@
+arm,level,config_id,fold,validation_spearman,checkpoint,checkpoint_sha256,resumed_complete_fit,n_estimators,max_depth,min_samples_leaf,max_features
+phi_w1_binarized_objective_shifted,L1.5,0,0,0.5772689952297071,Models/step9/IRED/ladder_search/phi_w1_binarized_objective_shifted/L1.5/config_000_fold_00.joblib,7628a0c0bc2b16052d70988f6207e0a1298093d2bfb7deb809cb5a724ba86e5e,True,600,24,5,0.5
+phi_w1_binarized_objective_shifted,L1.5,0,1,0.6986339364679421,Models/step9/IRED/ladder_search/phi_w1_binarized_objective_shifted/L1.5/config_000_fold_01.joblib,9c307652db8ee003199bf59fc6f0457cc49f145403333976f2c117ea61581440,True,600,24,5,0.5
+phi_w1_binarized_objective_shifted,L1.5,0,2,0.6216163885149262,Models/step9/IRED/ladder_search/phi_w1_binarized_objective_shifted/L1.5/config_000_fold_02.joblib,dcff9e14fbaf335cb86f535364bff9c2ec8138ad8989a8c72e3d225548581a98,True,600,24,5,0.5
+phi_w1_binarized_objective_shifted,L1.5,0,3,0.5375479423464368,Models/step9/IRED/ladder_search/phi_w1_binarized_objective_shifted/L1.5/config_000_fold_03.joblib,2287e3ca4e9dd561321e2d3d7498dcc0584fa0cb23db51b4135e248a511abce1,True,600,24,5,0.5
+phi_w1_binarized_objective_shifted,L1.5,0,4,0.5827624568776515,Models/step9/IRED/ladder_search/phi_w1_binarized_objective_shifted/L1.5/config_000_fold_04.joblib,ec2e870e576e1f774e8500745c14ab5fe0e4bc985d14c0d1dd2c4f666ac3fbfb,True,600,24,5,0.5

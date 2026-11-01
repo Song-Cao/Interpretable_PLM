@@ -1,0 +1,14 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "selected_phi_family": "mlp",
+  "best_phi_arm_by_validation": "phi_w1_max_all_live",
+  "gate2_verdict": "sparse_competitive",
+  "gpu_wall_hours": 0.357323437193926,
+  "plate_labels_used_for_selection": false,
+  "test_labels_used_for_selection": false,
+  "expressivity_ladder_pending": false,
+  "sample_efficiency_pending": false,
+  "expressivity_gap_r2_L4_minus_L0": 0.15272483702812856,
+  "prediction_gpu_wall_hours_total": 0.4650352250221062
+}

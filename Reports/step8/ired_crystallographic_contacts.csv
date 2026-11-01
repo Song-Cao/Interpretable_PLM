@@ -1,0 +1,257 @@
+track,biological_assembly,protein_chain,campaign_position,ligand_chain,ligand_resname,ligand_auth_seq_id,minimum_distance_angstrom,provenance_kind,source,proxy_note
+crystallographic_ketone_analogue_contact,1,A,208,A,9RH,302,3.660309076309204,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,215,A,9RH,302,4.197393894195557,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,233,A,9RH,302,3.9515674114227295,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,234,A,9RH,302,4.9558234214782715,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,237,A,9RH,302,3.088273525238037,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,238,A,9RH,302,3.1924514770507812,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,241,A,9RH,302,2.828831434249878,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,94,A,9RH,302,3.6677839756011963,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,119,A,9RH,302,4.580972671508789,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,121,A,9RH,302,4.057257652282715,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,122,A,9RH,302,3.692183256149292,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,174,A,9RH,302,3.4843437671661377,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,177,A,9RH,302,3.7429776191711426,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,178,A,9RH,302,3.794450283050537,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,94,F,9RH,302,3.6512210369110107,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,119,F,9RH,302,4.369415283203125,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,121,F,9RH,302,3.9948227405548096,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,122,F,9RH,302,3.760707378387451,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,174,F,9RH,302,3.501516103744507,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,177,F,9RH,302,3.876650094985962,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,A,178,F,9RH,302,3.830264091491699,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,208,F,9RH,302,3.718149423599243,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,215,F,9RH,302,4.199293613433838,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,233,F,9RH,302,4.0001325607299805,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,234,F,9RH,302,4.959351062774658,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,237,F,9RH,302,3.0820844173431396,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,238,F,9RH,302,3.297686815261841,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,1,F,241,F,9RH,302,2.7794899940490723,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,208,B,9RH,302,3.731520891189575,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,215,B,9RH,302,4.1282758712768555,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,233,B,9RH,302,3.971646308898926,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,237,B,9RH,302,3.1284737586975098,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,238,B,9RH,302,3.346910238265991,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,241,B,9RH,302,2.7328712940216064,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,94,B,9RH,302,3.7397048473358154,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,119,B,9RH,302,4.457036972045898,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,121,B,9RH,302,3.9371674060821533,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,122,B,9RH,302,3.6612210273742676,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,174,B,9RH,302,3.446024179458618,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,177,B,9RH,302,3.8398587703704834,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,178,B,9RH,302,3.8212380409240723,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,94,C,9RH,302,3.583122491836548,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,119,C,9RH,302,4.395931243896484,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,121,C,9RH,302,3.9372832775115967,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,122,C,9RH,302,3.6560328006744385,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,174,C,9RH,302,3.483738422393799,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,177,C,9RH,302,3.829082727432251,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,B,178,C,9RH,302,3.8086509704589844,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,208,C,9RH,302,3.660442590713501,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,215,C,9RH,302,4.202342987060547,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,233,C,9RH,302,4.057920932769775,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,234,C,9RH,302,4.9745192527771,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,237,C,9RH,302,3.044323205947876,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,238,C,9RH,302,3.2237582206726074,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,2,C,241,C,9RH,302,2.7888081073760986,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,208,D,9RH,302,3.7322728633880615,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,215,D,9RH,302,4.191844463348389,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,233,D,9RH,302,3.958742618560791,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,234,D,9RH,302,4.934703826904297,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,237,D,9RH,302,3.088050603866577,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,238,D,9RH,302,3.3137991428375244,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,241,D,9RH,302,2.8375282287597656,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,94,D,9RH,302,3.708651542663574,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,119,D,9RH,302,4.390768527984619,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,121,D,9RH,302,3.9496946334838867,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,122,D,9RH,302,3.6913747787475586,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,174,D,9RH,302,3.5008647441864014,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,177,D,9RH,302,3.8616960048675537,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,178,D,9RH,302,3.7906157970428467,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,94,E,9RH,302,3.641590118408203,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,119,E,9RH,302,4.372469425201416,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,121,E,9RH,302,3.887829303741455,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,122,E,9RH,302,3.702224016189575,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,174,E,9RH,302,3.4437005519866943,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,177,E,9RH,302,3.855243444442749,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,D,178,E,9RH,302,3.8072171211242676,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,208,E,9RH,302,3.6391029357910156,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,215,E,9RH,302,4.149409770965576,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,233,E,9RH,302,4.077451705932617,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,237,E,9RH,302,3.0945699214935303,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,238,E,9RH,302,3.2335634231567383,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_ketone_analogue_contact,3,E,241,E,9RH,302,2.7818541526794434,crystallographic_contact,PDB_5OCM,5OCM 9RH ketone analogue; proxy for the campaign imine substrate
+crystallographic_NADP_contact,1,A,10,A,NAP,301,3.840418577194214,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,11,A,NAP,301,3.2619612216949463,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,12,A,NAP,301,3.2365195751190186,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,13,A,NAP,301,3.1472325325012207,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,14,A,NAP,301,2.8845291137695312,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,15,A,NAP,301,3.951061248779297,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,32,A,NAP,301,4.386791706085205,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,33,A,NAP,301,2.632223606109619,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,34,A,NAP,301,2.8522403240203857,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,35,A,NAP,301,2.6425118446350098,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,38,A,NAP,301,4.592094421386719,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,66,A,NAP,301,3.392008066177368,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,67,A,NAP,301,3.049220323562622,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,68,A,NAP,301,2.7455942630767822,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,69,A,NAP,301,4.650177478790283,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,72,A,NAP,301,3.45661997795105,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,75,A,NAP,301,4.074176788330078,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,76,A,NAP,301,3.3998844623565674,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,92,A,NAP,301,4.327332496643066,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,93,A,NAP,301,3.7914421558380127,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,94,A,NAP,301,2.5750086307525635,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,119,A,NAP,301,3.363940477371216,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,121,A,NAP,301,3.3029770851135254,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,122,A,NAP,301,3.8496205806732178,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,123,A,NAP,301,3.219813346862793,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,232,A,NAP,301,2.8291995525360107,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,233,A,NAP,301,3.63702392578125,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,237,A,NAP,301,3.8341054916381836,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,241,A,NAP,301,3.8633954524993896,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,232,F,NAP,301,2.815575122833252,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,233,F,NAP,301,3.7044765949249268,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,237,F,NAP,301,3.9365499019622803,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,A,241,F,NAP,301,3.8063855171203613,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,10,F,NAP,301,3.7331228256225586,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,11,F,NAP,301,3.2417142391204834,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,12,F,NAP,301,3.226210117340088,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,13,F,NAP,301,3.173806667327881,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,14,F,NAP,301,2.96142315864563,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,15,F,NAP,301,4.0023274421691895,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,32,F,NAP,301,4.839560508728027,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,33,F,NAP,301,2.728971004486084,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,34,F,NAP,301,2.9046630859375,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,35,F,NAP,301,2.6764984130859375,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,38,F,NAP,301,4.083650588989258,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,66,F,NAP,301,3.339520215988159,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,67,F,NAP,301,3.0021417140960693,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,68,F,NAP,301,2.801616668701172,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,69,F,NAP,301,4.714466571807861,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,72,F,NAP,301,3.44441294670105,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,75,F,NAP,301,4.270966529846191,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,76,F,NAP,301,3.3718700408935547,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,92,F,NAP,301,4.200845241546631,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,93,F,NAP,301,3.804124593734741,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,94,F,NAP,301,2.4901747703552246,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,119,F,NAP,301,3.3173351287841797,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,121,F,NAP,301,3.21311354637146,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,122,F,NAP,301,3.8907523155212402,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,1,F,123,F,NAP,301,3.3189427852630615,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,10,B,NAP,301,3.9251935482025146,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,11,B,NAP,301,3.347929000854492,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,12,B,NAP,301,3.3004379272460938,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,13,B,NAP,301,3.147432565689087,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,14,B,NAP,301,2.8438735008239746,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,15,B,NAP,301,4.066340446472168,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,32,B,NAP,301,4.5412373542785645,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,33,B,NAP,301,2.7477283477783203,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,34,B,NAP,301,2.8558669090270996,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,35,B,NAP,301,2.5513429641723633,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,38,B,NAP,301,3.6555581092834473,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,66,B,NAP,301,3.3773770332336426,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,67,B,NAP,301,3.0179219245910645,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,68,B,NAP,301,2.8087446689605713,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,69,B,NAP,301,4.719848155975342,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,72,B,NAP,301,3.4722421169281006,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,75,B,NAP,301,4.004663944244385,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,76,B,NAP,301,3.4622364044189453,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,92,B,NAP,301,4.234310150146484,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,93,B,NAP,301,3.787519931793213,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,94,B,NAP,301,2.5681941509246826,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,119,B,NAP,301,3.260305643081665,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,121,B,NAP,301,3.1790366172790527,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,122,B,NAP,301,3.9245476722717285,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,123,B,NAP,301,3.290757179260254,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,232,B,NAP,301,2.8150558471679688,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,233,B,NAP,301,3.6092095375061035,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,237,B,NAP,301,3.8175125122070312,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,241,B,NAP,301,3.8992481231689453,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,232,C,NAP,301,2.742753744125366,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,233,C,NAP,301,3.6715569496154785,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,237,C,NAP,301,3.9921300411224365,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,B,241,C,NAP,301,3.832185983657837,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,10,C,NAP,301,3.8012959957122803,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,11,C,NAP,301,3.3006110191345215,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,12,C,NAP,301,3.2856497764587402,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,13,C,NAP,301,3.0797977447509766,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,14,C,NAP,301,2.890342950820923,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,15,C,NAP,301,4.0558085441589355,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,32,C,NAP,301,4.385997295379639,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,33,C,NAP,301,2.6399335861206055,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,34,C,NAP,301,2.8576347827911377,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,35,C,NAP,301,2.611111640930176,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,38,C,NAP,301,4.5726637840271,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,66,C,NAP,301,3.444040298461914,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,67,C,NAP,301,3.027362108230591,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,68,C,NAP,301,2.758751392364502,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,69,C,NAP,301,4.67933464050293,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,72,C,NAP,301,3.4265921115875244,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,75,C,NAP,301,4.128338813781738,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,76,C,NAP,301,3.3983538150787354,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,92,C,NAP,301,4.395793437957764,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,93,C,NAP,301,3.802102565765381,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,94,C,NAP,301,2.555497646331787,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,119,C,NAP,301,3.3212661743164062,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,121,C,NAP,301,3.2172110080718994,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,122,C,NAP,301,3.8214452266693115,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,2,C,123,C,NAP,301,3.239142656326294,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,10,D,NAP,301,3.769465446472168,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,11,D,NAP,301,3.2583694458007812,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,12,D,NAP,301,3.2880630493164062,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,13,D,NAP,301,3.141505718231201,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,14,D,NAP,301,2.856541872024536,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,15,D,NAP,301,4.063486099243164,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,32,D,NAP,301,4.656087398529053,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,33,D,NAP,301,2.6122705936431885,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,34,D,NAP,301,2.7682130336761475,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,35,D,NAP,301,2.5382299423217773,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,38,D,NAP,301,4.576999664306641,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,66,D,NAP,301,3.340369701385498,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,67,D,NAP,301,3.020416021347046,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,68,D,NAP,301,2.8075108528137207,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,69,D,NAP,301,4.704301357269287,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,72,D,NAP,301,3.4544026851654053,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,75,D,NAP,301,4.171920299530029,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,76,D,NAP,301,3.4232394695281982,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,92,D,NAP,301,4.216032981872559,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,93,D,NAP,301,3.8220126628875732,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,94,D,NAP,301,2.471315383911133,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,119,D,NAP,301,3.3114676475524902,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,121,D,NAP,301,3.2526142597198486,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,122,D,NAP,301,3.92238450050354,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,123,D,NAP,301,3.248847723007202,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,232,D,NAP,301,2.7849557399749756,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,233,D,NAP,301,3.633702039718628,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,237,D,NAP,301,3.9125590324401855,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,241,D,NAP,301,3.8515331745147705,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,232,E,NAP,301,2.6566333770751953,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,233,E,NAP,301,3.684468984603882,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,237,E,NAP,301,3.8012568950653076,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,D,241,E,NAP,301,3.9066832065582275,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,10,E,NAP,301,3.7491390705108643,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,11,E,NAP,301,3.3235068321228027,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,12,E,NAP,301,3.3280155658721924,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,13,E,NAP,301,3.0002827644348145,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,14,E,NAP,301,2.9538350105285645,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,15,E,NAP,301,4.071807861328125,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,32,E,NAP,301,4.637602806091309,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,33,E,NAP,301,2.632685899734497,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,34,E,NAP,301,2.866895914077759,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,35,E,NAP,301,2.6045286655426025,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,38,E,NAP,301,4.5023698806762695,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,66,E,NAP,301,3.402973175048828,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,67,E,NAP,301,2.993617057800293,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,68,E,NAP,301,2.7405786514282227,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,69,E,NAP,301,4.648801803588867,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,72,E,NAP,301,3.3987627029418945,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,75,E,NAP,301,4.159177303314209,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,76,E,NAP,301,3.579779624938965,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,92,E,NAP,301,4.254817485809326,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,93,E,NAP,301,3.729877471923828,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,94,E,NAP,301,2.579010486602783,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,119,E,NAP,301,3.3513009548187256,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,121,E,NAP,301,3.2395219802856445,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,122,E,NAP,301,3.9564244747161865,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact
+crystallographic_NADP_contact,3,E,123,E,NAP,301,3.3106226921081543,crystallographic_contact,PDB_5OCM,5OCM NAP crystallographic cofactor contact

@@ -982,3 +982,68 @@ the prediction track needs 0 or 3 crosscoders.
   negligible, and the requested scientific output is the sparse-feature prediction increment.
   It does not weaken a validity criterion. On GB1 and later datasets, obey Gate 2's conditional
   branch exactly; Gates 1 and 3 remain validity gates everywhere.
+- `[FINDING]` The null-calibrated provisional taxonomy is strongly width-dependent. Across
+  three seeds, `w=1` assigns 32.67% dead, 28.16% emergent candidate, 1.63% evolution-only,
+  36.04% rotated, 0% re-weighted, and 1.49% conserved. At `w=2` the corresponding values are
+  49.93%, 0%, 0.94%, 47.81%, 0.05%, and 1.27%. No `w=2` feature clears the reconstruction-ratio
+  component of the conjunctive latent-scaling gate. All labels remain provisional pending causal
+  validation; the width instability is preserved rather than selecting the tidier taxonomy.
+- `[FINDING]` Real crosscoder reconstruction is high but differs by model and is reported
+  separately: mean FVE is 0.9985 for E_evo and 0.9959 for E_fit at `w=1`, and 0.9986 and 0.9968
+  at `w=2`. These aggregate values do not override dead-feature, norm-floor, or latent-scaling
+  exclusions.
+- `[FINDING]` Gate 2 returns `sparse_competitive`. The validation-selected dense reference
+  (`dense_fit_mean`) and sparse arm (`phi_w1_max_all_live`) score 0.5007 and 0.5495 Spearman on
+  pg_kfold test. The paired-bootstrap dense-minus-sparse difference is -0.04882 with 95% interval
+  [-0.09564, -0.00153], which favours sparse under the pre-committed rule.
+- `[FINDING]` The Step 9 validation-selected arm is `phi_w1_max_all_live` with MLP readout. Its
+  Spearman is 0.5495 on pg_kfold test, 0.5652 round-held-out, and 0.5002 on the external plate
+  set (plate 95% bootstrap interval [0.2442, 0.7094]). Sparse max pooling improves on the earlier
+  dense ESM plate range but remains below the registered one-hot/AAIndex range. Several
+  non-selected narrow `w=2` arms reach plate point estimates 0.56-0.57 with wide intervals;
+  because they were not validation-selected and rely on a width-unstable taxonomy, they are
+  post-hoc diagnostics rather than headline successes.
+- `[FINDING]` The headline expressivity gap is `R2(L4)-R2(L0)=0.152725` on pg_kfold test. L0,
+  L1.5, L1, and L4 test R2 values are -0.0481, 0.1646, -0.1604, and 0.1046. The interaction gate
+  failed (`H^2=0.9357`, permutation `p=1.0`, 200 permutations), so L2 was not fitted. The
+  reporting-only sample-efficiency curve rose from mean test Spearman 0.406 at N=16 to 0.539 at
+  N=512 and selected nothing.
+- `[FINDING]` One Step 5 delta-PCA fold and one Step 9 arm were interrupted. The runner now
+  requires both a complete checkpoint and aligned held-out prediction file before resuming;
+  otherwise it reruns the fold from the beginning. Every reported result completed its full
+  registered fit, and no partial state or partial metric was accepted.
+- `[COST]` Part B's instrumented IRED GPU wall time was 0.05253 hours for the shuffled activation
+  cache, 0.03295 for six shuffled-null crosscoders, 0.35732 for dense probes and feature-set
+  models, 0.09481 for the expressivity ladder, and 0.01290 for sample efficiency: 0.55052 hours.
+  The lightweight phi-cache and taxonomy-statistic passes predated wall-time instrumentation and
+  are not included; no search, seed, null, or reported arm was cut. The ten-fit ladder timing
+  projected 0.105 hours, so the registered search count required no budget reduction.
+
+### v15 IRED Step 8 preparation (2026-11-01)
+
+- `[DECISION]` The supplied Hollfelder residue designations are encoded as separate tracks:
+  catalytic proposed, substrate direct contact, NADPH direct contact, NADPH proximal/coupled,
+  and evolutionary peak. The evolutionary-peak track is a positive control only and is never
+  pooled into a claim-bearing functional block. Experimentally observed, crystallographic, and
+  docking-derived contacts retain separate provenance; no docking track is inferred in the
+  absence of docking input.
+- `[FINDING]` The 290-residue IRED campaign wild type aligns at 100% identity and 100% coverage
+  to canonical 5OCM positions 1-290; 5OCM has one extra terminal Ala at position 291. Every
+  supplied residue maps without mismatch. W178 and H244 map exactly to 5OCM W178 and H244 but
+  are distinct from the entry's contextual W208 and H238, so no residue was substituted.
+- `[DECISION]` RCSB metadata defines the deposited six-chain 5OCM coordinate entry as three
+  biological dimers: A/F, B/C, and D/E, not one biological hexamer. Structural contacts and
+  catalytic distances use all three biological copies and allow cross-subunit contacts within
+  each dimer, but never include crystal contacts between different dimers. Every contact records
+  the biological assembly and both chains of origin.
+- `[DECISION]` Functional shells are mutually exclusive in the order catalytic, first shell
+  (<=5 A), second shell (>5 to <=8 A), distal functional network, and generic distal. The distal
+  network contains the supplied substrate/cofactor mechanistic residues not already absorbed by
+  a geometric shell; evolutionary-peak controls are excluded. The realized counts are 3, 37,
+  36, 3, and 211 residues.
+- `[DECISION]` Mutation-responsive codes use the exact arithmetic `Delta z_j(x)=z_j(x)-z_j(WT)`.
+  Because BatchTopK is batch-contextual, each 290-position sequence and the wild type are encoded
+  independently so competition is fixed within one sequence before subtraction. The cache is
+  sparse, pod-only, and indexed by persisted variant rows; residue-level means and a manifest are
+  the only report artifacts. No enrichment, patching, or oracle validation is authorized in this
+  preparation stage.

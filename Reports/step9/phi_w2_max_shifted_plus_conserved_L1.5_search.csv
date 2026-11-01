@@ -1,0 +1,6 @@
+arm,level,config_id,fold,validation_spearman,checkpoint,checkpoint_sha256,resumed_complete_fit,n_estimators,max_depth,min_samples_leaf,max_features
+phi_w2_max_shifted_plus_conserved,L1.5,0,0,0.5924513214462808,Models/step9/IRED/ladder_search/phi_w2_max_shifted_plus_conserved/L1.5/config_000_fold_00.joblib,cd42e00ac57da15a9f1805b3d034e5776da599fbb3a740b8d955366127a0605b,True,600,24,5,0.5
+phi_w2_max_shifted_plus_conserved,L1.5,0,1,0.6878974023496384,Models/step9/IRED/ladder_search/phi_w2_max_shifted_plus_conserved/L1.5/config_000_fold_01.joblib,80d641c663f8c9d67b281b70e59545d04054f4dd02039133638d40b73225f354,True,600,24,5,0.5
+phi_w2_max_shifted_plus_conserved,L1.5,0,2,0.6814797375031247,Models/step9/IRED/ladder_search/phi_w2_max_shifted_plus_conserved/L1.5/config_000_fold_02.joblib,264cfcc0e105053d3a2fe68c3e9617e40bd996dac028e94e4c865900739ebdf4,True,600,24,5,0.5
+phi_w2_max_shifted_plus_conserved,L1.5,0,3,0.5549404125210626,Models/step9/IRED/ladder_search/phi_w2_max_shifted_plus_conserved/L1.5/config_000_fold_03.joblib,db70920b3f64ea9b998e94c1f01a5f80a0945af6d4e360e8cb62e39c6711316b,True,600,24,5,0.5
+phi_w2_max_shifted_plus_conserved,L1.5,0,4,0.5686790899113143,Models/step9/IRED/ladder_search/phi_w2_max_shifted_plus_conserved/L1.5/config_000_fold_04.joblib,687003c8ec772ad5785ff0a5cf0e728148f6786a1a65ca44c134d318cb38a599,True,600,24,5,0.5
