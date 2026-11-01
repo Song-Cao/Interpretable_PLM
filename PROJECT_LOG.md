@@ -1063,3 +1063,47 @@ the prediction track needs 0 or 3 crosscoders.
   residue, official three-dimer assembly membership, shell precedence, and mutant-minus-WT code
   arithmetic. Two expected constant-input warnings verify that undefined rank correlations are
   recorded as undefined rather than silently replaced.
+
+### IRED taxonomy and Gate 2 audits (2026-11-01)
+
+- `[FINDING]` Gate 2's `sparse_competitive` verdict is accepted as a positive result. The
+  validation-selected `dense_fit_mean` and `phi_w1_max_all_live` arms score 0.5007 and 0.5495
+  on pg_kfold test, and the paired dense-minus-sparse interval [-0.09564, -0.00153] favours
+  sparse. For audit, all dense references are now reported: validation/test Spearman is
+  0.6231/0.5007 for h_fit mean, 0.6077/0.5543 for h_evo mean, and 0.3948/0.4882 for delta PCs.
+  Although h_evo is strongest on test, selecting it after reading test would violate the
+  pre-committed validation-only selection rule and does not change the verdict.
+- `[FINDING]` Latent-scaling nulls were already matched by dictionary width. The real-pair
+  reconstruction-ratio medians are 0.7849-0.7942 at `w=1` and 0.7797-0.7897 at `w=2`, versus
+  matched-null medians 0.9295-0.9360 and 0.9301-0.9322. The `w=2` zero is not a mechanical
+  distribution shift: at least one matched-width null run yields no BH rejection for every
+  seed, so the conservative-across-nulls lower cutoff becomes `-inf`. This null/BH instability
+  is retained as an inconvenient taxonomy result.
+- `[DECISION]` Decoder-cosine rotation is recalibrated against a rotation-only drift-matched
+  shuffled-label null because the original step-matched null had substantially lower global
+  drift. Delta, latent-scaling, norm-floor, and activation-frequency thresholds remain on their
+  registered nulls. The null uses the registered rank 16, learning rate 0.0001, weight decay
+  0.01, and shuffled labels; it reached drift 0.6484 after 575 optimizer steps versus real
+  drift 0.6338, a 2.3% mismatch.
+- `[FINDING]` Drift matching reduces mean provisional rotated fractions from 36.04% to 7.12%
+  at `w=1` and from 47.81% to 10.45% at `w=2`, confirming that most original rotation calls
+  re-reported global drift. Original rotation-stage flags were near-saturated across quintiles.
+  Residual drift-matched flags concentrate at high activation frequency and lower decoder norm,
+  so the remaining signal is feature-structured but retains a decoder-norm caveat. Corrected
+  provisional conserved fractions are 30.38% and 38.39% at `w=1` and `w=2`.
+- `[FINDING]` The IRED expressivity gap is `R2(L4)-R2(L0)=0.152725`. The additive readout used
+  for attribution in Steps 8 and 11 is materially weaker than the nonlinear ceiling, so those
+  attributions describe the weaker additive model. Separately, IRED fitness requires nonlinear
+  sparse-feature logic under this ladder.
+- `[ADJUST]` The validation-selected Step 9 arm uses max pooling, while the plan's displayed
+  notation defines `phi_j` as a residue sum. Computation and downstream interfaces remain valid;
+  the notation must distinguish max-pooled and sum-pooled arms rather than describing the
+  selected result with the sum-only formula.
+- `[COST]` The completed drift-matched adapter, activation cache, six null crosscoders, and
+  calibration used 0.10186 L40 wall-hours; the persistence-only replay from complete artifacts
+  used 0.02423 hours. One preceding 30-epoch non-crossing attempt used approximately 0.13 hours
+  and produced no accepted checkpoint or statistic. Total diagnostic cost was approximately
+  0.26 L40 hours. No Part C enrichment, patching, or oracle validation was run.
+- `[FINDING]` Post-audit verification passes all 243 tests in 103.83 seconds. The two warnings
+  are the expected constant-input rank-correlation checks; no partial fit or Part C result was
+  admitted.

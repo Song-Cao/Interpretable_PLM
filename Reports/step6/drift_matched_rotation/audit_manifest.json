@@ -1,0 +1,23 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "step_matched_null_widths": [
+    1,
+    2
+  ],
+  "real_widths": [
+    1,
+    2
+  ],
+  "matched_width_calibration": true,
+  "step_matched_null_checkpoint_pattern": "Models/step6/IRED/shuffled/w{width}_seed{seed}_nobias.pt",
+  "drift_matched_null_checkpoint_pattern": "Models/step6/IRED/drift_matched_rotation/crosscoders/w{width}_seed{seed}_nobias.pt",
+  "real_adapter_drift": 0.6338156,
+  "drift_matched_adapter_drift": 0.6484184265136719,
+  "drift_match_relative_error": 0.02303955048388181,
+  "adapter_resumed_complete_checkpoint": true,
+  "cache_gpu_wall_hours": 0.007847707416383654,
+  "invocation_gpu_wall_hours": 0.02422755204555061,
+  "delta_and_latent_thresholds_changed": false,
+  "rotation_threshold_changed": true
+}

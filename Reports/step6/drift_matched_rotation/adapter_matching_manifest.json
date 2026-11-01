@@ -1,0 +1,178 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "null": "drift_matched_shuffled_label",
+  "target_drift": 0.6338156,
+  "selected_drift": 0.6484184265136719,
+  "absolute_mismatch": 0.01460282651367184,
+  "relative_mismatch": 0.02303955048388181,
+  "selected_epoch": 25,
+  "selected_optimizer_steps": 575,
+  "executed_optimizer_steps": 575,
+  "matching_rule": "closest_epoch_through_first_target_crossing",
+  "optimizer_schedule": "constant_registered_learning_rate",
+  "learning_rate": 0.0001,
+  "weight_decay": 0.01,
+  "rank": 16,
+  "trace": [
+    {
+      "epoch": -1.0,
+      "loss": NaN,
+      "activation_drift": 0.01962476782500744,
+      "optimizer_steps": 0.0
+    },
+    {
+      "epoch": 0.0,
+      "loss": 2.4271052148607044,
+      "activation_drift": 0.08478062599897385,
+      "optimizer_steps": 23.0
+    },
+    {
+      "epoch": 1.0,
+      "loss": 2.4086624066034954,
+      "activation_drift": 0.314041405916214,
+      "optimizer_steps": 46.0
+    },
+    {
+      "epoch": 2.0,
+      "loss": 2.389984279208713,
+      "activation_drift": 0.43474820256233215,
+      "optimizer_steps": 69.0
+    },
+    {
+      "epoch": 3.0,
+      "loss": 2.387202231089274,
+      "activation_drift": 0.40845754742622375,
+      "optimizer_steps": 92.0
+    },
+    {
+      "epoch": 4.0,
+      "loss": 2.3926443974177043,
+      "activation_drift": 0.3943120539188385,
+      "optimizer_steps": 115.0
+    },
+    {
+      "epoch": 5.0,
+      "loss": 2.3912529839409724,
+      "activation_drift": 0.32804954051971436,
+      "optimizer_steps": 138.0
+    },
+    {
+      "epoch": 6.0,
+      "loss": 2.391018033027649,
+      "activation_drift": 0.3010461628437042,
+      "optimizer_steps": 161.0
+    },
+    {
+      "epoch": 7.0,
+      "loss": 2.390551869074504,
+      "activation_drift": 0.2808990180492401,
+      "optimizer_steps": 184.0
+    },
+    {
+      "epoch": 8.0,
+      "loss": 2.3902414480845136,
+      "activation_drift": 0.3090658485889435,
+      "optimizer_steps": 207.0
+    },
+    {
+      "epoch": 9.0,
+      "loss": 2.3894539356231688,
+      "activation_drift": 0.2967914938926697,
+      "optimizer_steps": 230.0
+    },
+    {
+      "epoch": 10.0,
+      "loss": 2.3878101613786487,
+      "activation_drift": 0.32153192162513733,
+      "optimizer_steps": 253.0
+    },
+    {
+      "epoch": 11.0,
+      "loss": 2.386316588189867,
+      "activation_drift": 0.3170037269592285,
+      "optimizer_steps": 276.0
+    },
+    {
+      "epoch": 12.0,
+      "loss": 2.3881144762039184,
+      "activation_drift": 0.31196990609169006,
+      "optimizer_steps": 299.0
+    },
+    {
+      "epoch": 13.0,
+      "loss": 2.3896230618158976,
+      "activation_drift": 0.3203447759151459,
+      "optimizer_steps": 322.0
+    },
+    {
+      "epoch": 14.0,
+      "loss": 2.3887514776653713,
+      "activation_drift": 0.3134724199771881,
+      "optimizer_steps": 345.0
+    },
+    {
+      "epoch": 15.0,
+      "loss": 2.3848955074946088,
+      "activation_drift": 0.326577365398407,
+      "optimizer_steps": 368.0
+    },
+    {
+      "epoch": 16.0,
+      "loss": 2.3905271768569945,
+      "activation_drift": 0.33268454670906067,
+      "optimizer_steps": 391.0
+    },
+    {
+      "epoch": 17.0,
+      "loss": 2.3878328614764746,
+      "activation_drift": 0.3406068980693817,
+      "optimizer_steps": 414.0
+    },
+    {
+      "epoch": 18.0,
+      "loss": 2.3861273712582056,
+      "activation_drift": 0.355448454618454,
+      "optimizer_steps": 437.0
+    },
+    {
+      "epoch": 19.0,
+      "loss": 2.3831321292453342,
+      "activation_drift": 0.3814031779766083,
+      "optimizer_steps": 460.0
+    },
+    {
+      "epoch": 20.0,
+      "loss": 2.38403131696913,
+      "activation_drift": 0.43962401151657104,
+      "optimizer_steps": 483.0
+    },
+    {
+      "epoch": 21.0,
+      "loss": 2.386547401216295,
+      "activation_drift": 0.49868279695510864,
+      "optimizer_steps": 506.0
+    },
+    {
+      "epoch": 22.0,
+      "loss": 2.383725317319234,
+      "activation_drift": 0.5677639842033386,
+      "optimizer_steps": 529.0
+    },
+    {
+      "epoch": 23.0,
+      "loss": 2.3822247372733223,
+      "activation_drift": 0.5147541761398315,
+      "optimizer_steps": 552.0
+    },
+    {
+      "epoch": 24.0,
+      "loss": 2.3793241447872586,
+      "activation_drift": 0.6484184265136719,
+      "optimizer_steps": 575.0
+    }
+  ],
+  "checkpoint": "Models/step6/IRED/drift_matched_rotation/adapter.pt",
+  "checkpoint_sha256": "46bd002685bf04b02b11eef4e60253691cd00bc65f6d625c989894ff82a080c3",
+  "training_gpu_wall_hours": 0.05419425946970781
+}

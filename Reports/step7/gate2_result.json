@@ -4,6 +4,26 @@
   "selection_data": "five_fold_cv_within_pg_kfold_training_pool",
   "best_dense_arm_by_validation": "dense_fit_mean",
   "best_phi_arm_by_validation": "phi_w1_max_all_live",
+  "dense_reference_audit": [
+    {
+      "arm": "dense_fit_mean",
+      "validation_spearman": 0.6230639457069064,
+      "pg_kfold_test_spearman": 0.5006885760470586,
+      "selected_by_validation": true
+    },
+    {
+      "arm": "dense_evo_mean",
+      "validation_spearman": 0.60770783379537,
+      "pg_kfold_test_spearman": 0.554287054976893,
+      "selected_by_validation": false
+    },
+    {
+      "arm": "dense_delta_pcs",
+      "validation_spearman": 0.3947929180041692,
+      "pg_kfold_test_spearman": 0.4882012827086818,
+      "selected_by_validation": false
+    }
+  ],
   "paired_bootstrap_dense_minus_sparse": {
     "dense_minus_sparse": -0.04881870949058309,
     "lower": -0.09564037121616129,
