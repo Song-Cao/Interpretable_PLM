@@ -1,0 +1,100 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "split": "pg_kfold_fold_0_training_only",
+  "analysis_layer": 26,
+  "training_variants": 895,
+  "sequence_length": 290,
+  "positions": 259550,
+  "dimension": 960,
+  "dtype": "float16",
+  "adapter": "shuffled_label",
+  "adapter_checkpoint_sha256": "287db0b1206fa2190af0814e3a314f87966c4cf396e833239a9e7b0f9511219b",
+  "models": {
+    "shuffled": {
+      "raw_mean_norm": 1135.6861259872858,
+      "normalization_scalar": 0.02728206857570276,
+      "normalized_mean_norm": 30.984128389279523,
+      "shards": [
+        {
+          "name": "shard_0000.npy",
+          "bytes": 35635328,
+          "sha256": "e25a533163d8daf18bb95fe8d180ba44e1b455d59bbf57d57610b0e949f7b56c"
+        },
+        {
+          "name": "shard_0001.npy",
+          "bytes": 35635328,
+          "sha256": "e010da3bf72b987f84bd9f482ed698958d1440b31aaa3af7412f9f12c8f68bf8"
+        },
+        {
+          "name": "shard_0002.npy",
+          "bytes": 35635328,
+          "sha256": "ba168c045a582fdfa7a0d41b4ff4cec250aa31e4ceac5ed1048b90ba8fce3677"
+        },
+        {
+          "name": "shard_0003.npy",
+          "bytes": 35635328,
+          "sha256": "7808f27e08c2adf07cd0896c6f3026a7de5edd9fefd125fc035e572de888eeed"
+        },
+        {
+          "name": "shard_0004.npy",
+          "bytes": 35635328,
+          "sha256": "a39c2657601f7a8c71bdf04e0b03488efd17123dc2b0455aa1e9f96a68635c63"
+        },
+        {
+          "name": "shard_0005.npy",
+          "bytes": 35635328,
+          "sha256": "30b061d994bc875cb8942a6ae47589efbf93433c5627592e40f2efa4ca28654b"
+        },
+        {
+          "name": "shard_0006.npy",
+          "bytes": 35635328,
+          "sha256": "a92e6976d55434ec64dff84361b0be841c2439c155d9a8a00bdfb971ddb363df"
+        },
+        {
+          "name": "shard_0007.npy",
+          "bytes": 35635328,
+          "sha256": "3f1f238d9a274f235beb7fc7433e8f143756d83bb3961473e44e6701c8c1b4f1"
+        },
+        {
+          "name": "shard_0008.npy",
+          "bytes": 35635328,
+          "sha256": "27667cc729ee78b703d23071ff707622cc0ad39660378e0ed84450c5af1b5e6d"
+        },
+        {
+          "name": "shard_0009.npy",
+          "bytes": 35635328,
+          "sha256": "7ce5206d8a514218e28ae0c5986c2c282d0714c8395dfd412d64d58d6d3c41ff"
+        },
+        {
+          "name": "shard_0010.npy",
+          "bytes": 35635328,
+          "sha256": "df814f66463c2df280e08dd3f458caf5854df70582d133b4c556fc534df6557e"
+        },
+        {
+          "name": "shard_0011.npy",
+          "bytes": 35635328,
+          "sha256": "61500edc5bade538bd5de7b7491d34e042ab6be989df3e9c4ba71ed9d1348684"
+        },
+        {
+          "name": "shard_0012.npy",
+          "bytes": 35635328,
+          "sha256": "1e764cf989ee1c4d036eea4c1e54ccc90aa8803fb189ea45e639e7ebc55f8d02"
+        },
+        {
+          "name": "shard_0013.npy",
+          "bytes": 35078528,
+          "sha256": "a45db354ae8dcec0d2e7bf2497d846ec98ce9a7bcfb4116dc630bf70418e3c91"
+        }
+      ]
+    }
+  },
+  "payload_bytes": 498337792,
+  "gpu_wall_hours": 0.05253232288057916,
+  "excluded": [
+    "pg_kfold_test",
+    "layer_freeze_reserve",
+    "round_held_out_test",
+    "plate"
+  ]
+}
