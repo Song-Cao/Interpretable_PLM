@@ -1,0 +1,4 @@
+family,validation_spearman,selected_config_id,selected_configuration,selected_epochs
+mlp,0.6593750506527748,3,"{""hidden_dims"": [512, 256], ""dropout"": 0.25, ""learning_rate"": 0.0003, ""weight_decay"": 0.1, ""batch_size"": 32}",21
+random_forest,0.6475722052096837,4,"{""n_estimators"": 600, ""max_depth"": 12, ""min_samples_leaf"": 5, ""max_features"": 0.5}",1
+ridge,0.6360556269000504,4,"{""learning_rate"": 0.0003, ""weight_decay"": 0.0001, ""batch_size"": 64}",31

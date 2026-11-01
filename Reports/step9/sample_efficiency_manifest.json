@@ -1,0 +1,8 @@
+{
+  "status": "complete",
+  "arm": "phi_w1_max_all_live",
+  "epochs": 8,
+  "seeds_per_size": 10,
+  "gpu_wall_hours": 0.012900932311054526,
+  "selection_used_low_n": false
+}
