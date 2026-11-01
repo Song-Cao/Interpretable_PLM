@@ -269,7 +269,7 @@ def main() -> int:
     step4 = load_config(REPO_ROOT / "Code/config/step4.yaml")
     step6 = load_config(REPO_ROOT / "Code/config/step6.yaml")
     step7 = load_config(REPO_ROOT / "Code/config/step7.yaml")
-    matched = step6["calibration"]["rotation_drift_matched"]
+    matched = step6["calibration"]["drift_matched"]
     widths = list(map(int, step7["diagnostics"]["selected_working_widths"]))
     seeds = list(map(int, step6["calibration"]["shuffled_crosscoder_seeds"]))
     report = REPO_ROOT / step6["paths"]["drift_matched_report_dir"]
@@ -564,8 +564,8 @@ def main() -> int:
         "adapter_resumed_complete_checkpoint": resumed_adapter,
         "cache_gpu_wall_hours": float(cache_manifest["gpu_wall_hours"]),
         "invocation_gpu_wall_hours": (time.monotonic() - started) / 3600.0,
-        "delta_and_latent_thresholds_changed": False,
-        "rotation_threshold_changed": True,
+        "threshold_scope": list(matched["threshold_scope"]),
+        "initial_rotation_only_audit": True,
     }
     (report / "audit_manifest.json").write_text(json.dumps(audit, indent=2) + "\n")
     print(json.dumps({"audit": audit, "rotation_summary": rotation_summary.to_dict("records")}, indent=2))

@@ -1,0 +1,4 @@
+dataset,arm,validation_spearman,pg_kfold_test_spearman,selected_by_validation,strongest_on_test
+IRED,dense_fit_mean,0.6230639457069064,0.5006885760470586,true,false
+IRED,dense_evo_mean,0.60770783379537,0.554287054976893,false,true
+IRED,dense_delta_pcs,0.3947929180041692,0.4882012827086818,false,false
