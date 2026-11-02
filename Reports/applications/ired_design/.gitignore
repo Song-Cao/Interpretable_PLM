@@ -1,0 +1,4 @@
+full_lineage/
+embedding_cache/
+*.parquet
+!round1_single_scan.parquet

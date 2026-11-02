@@ -1,0 +1,78 @@
+application: ired_design
+dataset: IRED
+separation: "Application workstream; no output is CROSSFIT evidence."
+paths:
+  campaign_source: Data/processed/IRED_data/data_processed.csv
+  curated_variants: Data/processed/ired_variants.parquet
+  aaindex_table: Code/config/aaindex_georgiev_2009_standardized.csv
+  step2_representations: Cache/step2/IRED/representations
+  step2_density: Cache/step2/IRED/dpll.csv
+  step3_adapter: Models/step3/IRED/real_adapter.pt
+  step4_manifest: Cache/step4/IRED/manifest.json
+  step7_crosscoder: Models/step7/IRED/w1_seed20261311_nobias.pt
+  reports: Reports/applications/ired_design
+  models: Models/applications/ired_design
+  pod_cache: Cache/applications/ired_design
+backbone:
+  name: esmc_300m
+  repository: biohub/ESMC-300M
+  revision: e4bac860f0c502cd80f3aeac3d0ce6524c6627cb
+  selected_layer: 26
+search:
+  rounds: 4
+  winner_pool_size: 500
+  survivors_per_round: 50
+  budget_reduced_winner_pool_size: 300
+  budget_reduced_survivors_per_round: 30
+  representative_embedding_sequences: 64
+  hard_gpu_hours: 6.0
+  estimated_gpu_hours: [3.0, 6.0]
+  final_candidate_count: 30
+founders:
+  paper:
+    - S68P-T241A
+    - S68P-P203Q-T241A
+    - S68P-T241A-H244Y
+  campaign_peak: S68P-P203Q-T241A-H244Y
+controls:
+  background: S68P-T241A
+  dead_ends: [A72T, G37C]
+  positive: H244Y
+training:
+  seeds: [0, 1, 2, 3, 4]
+  device: cuda
+  gradient_clip_norm: 1.0
+  objective_config: Code/config/step2.yaml
+  selected:
+    onehot_ridge_unaugmented: {site_penalty: 425.8195125935258, density_penalty: 1.0e-8}
+    onehot_ridge_augmented: {site_penalty: 39.89484434913667, density_penalty: 1.0e-8}
+    aaindex_flat_ridge_unaugmented: {site_penalty: 8326.543793473036, density_penalty: 1.0e-8}
+    aaindex_flat_ridge_augmented: {site_penalty: 699.5256107414234, density_penalty: 1.0e-8}
+    esm_mean_ridge: {learning_rate: 0.0003, weight_decay: 0.0001, batch_size: 32, epochs: 16}
+    esm_mean_mlp: {hidden_dims: [512, 256, 128], dropout: 0.4, learning_rate: 0.001, weight_decay: 0.001, batch_size: 32, epochs: 7}
+    esm_mean_random_forest: {n_estimators: 600, max_depth: 24, min_samples_leaf: 5, max_features: 1.0}
+    esm_mutpool_ridge: {learning_rate: 0.0003, weight_decay: 0.001, batch_size: 64, epochs: 9}
+    esm_residue_conv: {width: 256, depth: 3, kernel_size: 5, dropout: 0.1, learning_rate: 0.0003, weight_decay: 0.01, batch_size: 16, epochs: 13}
+    esm_residue_delta_conv: {width: 256, depth: 5, kernel_size: 3, dropout: 0.1, learning_rate: 0.0001, weight_decay: 0.001, batch_size: 16, epochs: 2}
+    onehot_positional_conv: {width: 256, depth: 5, kernel_size: 7, dropout: 0.1, learning_rate: 0.0003, weight_decay: 0.0001, batch_size: 32, epochs: 22}
+    phi_w1_max_all_live: {hidden_dims: [512, 256], dropout: 0.25, learning_rate: 0.0003, weight_decay: 0.1, batch_size: 32, epochs: 8}
+    adapter_linear: {rank: 16, alpha: 32, dropout: 0.05, learning_rate: 0.0001, weight_decay: 0.01, batch_size: 16, gradient_accumulation_steps: 2}
+conformal:
+  alpha: 0.1
+  calibration_seed: 20261214
+  calibration_fraction: 0.15
+  minimum_stratum_rows: 5
+output:
+  full_lineage_format: parquet
+  commit_round_top: 50
+  commit_individual_top: 20
+  consensus_min: 20
+  consensus_max: 40
+biophysics:
+  stability_oracles: [ThermoMPNN, RaSP]
+  foldx_final_only: true
+  docking_optional: true
+  anchors:
+    T241A_temperature_delta_c: 10.3
+    T241A_temperature_sd_c: 0.5
+    marginally_destabilising: [S68P, P203Q, H244Y, A72T, G37C]

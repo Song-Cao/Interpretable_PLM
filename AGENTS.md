@@ -15,3 +15,10 @@
 - Keep all thresholds, seeds, paths, and hyperparameters in the step YAML. Put library logic in `Code/crossfit/`, entry points in `Code/scripts/`, tests in `Code/tests/`, and result artifacts in `Reports/stepN/`.
 - Append decisions, adjustments, findings, and GPU cost to `PROJECT_LOG.md` as they occur. Preserve inconvenient or negative results in each step handoff.
 - Respect the compute budget: random-search 30-60 configurations per Step 2 arm, tune architectures once on IRED, and report GPU-hours against each step estimate.
+
+## Separate application workstreams
+
+`Code/applications/ired_design/`, `Code/config/ired_design.yaml`,
+`Reports/applications/ired_design/`, and `Models/applications/ired_design/` form an
+isolated application workstream. Its outputs are design proposals, not CROSSFIT
+evidence, and must never enter a CROSSFIT gate, result table, or claim.
