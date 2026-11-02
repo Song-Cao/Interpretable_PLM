@@ -20,7 +20,8 @@ This log is separate from `PROJECT_LOG.md`; nothing recorded here changes CROSSF
   `8pxh42cxur`, not container overlay storage. All 65 application generation checkpoints
   (314 MB allocated), all 208 full-lineage parquets (1,147,143 rows; 76 MB allocated),
   every main-track `Models/step*` checkpoint, and every `Cache/step*` activation/runtime
-  artifact are under that mount. A root-filesystem search found no relevant artifact on
+  artifact are under that mount. All 65 checkpoint SHA-256 values match their committed
+  generation manifests. A root-filesystem search found no relevant artifact on
   container disk. Stopping or deleting the pod is safe provided the independent network
   volume is retained; deleting the volume is not safe without another backup.
 - [DECISION] The meeting-ready retained-round extraction follows the budget-authorized

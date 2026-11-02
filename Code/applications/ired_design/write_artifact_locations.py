@@ -112,7 +112,7 @@ This is an application workstream inventory. None of its outputs are CROSSFIT ev
 
 | Asset | Count | Size | Location | Git |
 |---|---:|---:|---|---|
-| Application generation checkpoints | 65 | 314 MB allocated (307 MB file bytes) | Network volume | Ignored; hashes committed in generation manifests |
+| Application generation checkpoints | 65, all hash-verified | 314 MB allocated (307 MB file bytes) | Network volume | Ignored; matching SHA-256 values committed in generation manifests |
 | Full evaluated lineage parquets | 208 / 1,147,143 rows | 76 MB allocated (50.8 MB file bytes) | Network volume | Ignored; file/row manifest committed |
 | Committed round-top detail | 6,240 rows | See index | Local, network volume after pull, and Git | Committed |
 | Step 2 checkpoints / cache | 45 / 11 files | 259 MB / 1.675 GB | Network volume | Ignored |
