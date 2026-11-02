@@ -1,0 +1,9 @@
+{
+  "status": "complete",
+  "models": 13,
+  "consensus_candidates": 30,
+  "known_winner_passages": 7,
+  "known_dead_end_passages": 8,
+  "known_campaign_recoveries": 45,
+  "ranking_interpretation": "proposal and known-trajectory audit, not a confident ranking"
+}

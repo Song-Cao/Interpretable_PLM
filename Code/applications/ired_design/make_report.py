@@ -11,6 +11,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from applications.ired_design.run_search import ARMS
+from applications.ired_design.mutations import parse_set
 from crossfit.utils import REPO_ROOT, load_config
 
 
@@ -48,9 +49,17 @@ def main() -> int:
         campaign_recoveries=("observed_in_campaign", "sum"),
     )
     consensus = pd.read_csv(report / "consensus_candidates.csv")
+    dead_ends = set(map(str, config["controls"]["dead_ends"]))
+    consensus["known_dead_end_mutations"] = [
+        ";".join(sorted(dead_ends.intersection(parse_set(value))))
+        for value in consensus["mutation_set_canonical"].astype(str)
+    ]
+    consensus["contains_known_dead_end"] = consensus["known_dead_end_mutations"].ne("")
+    consensus.to_csv(report / "consensus_candidates.csv", index=False)
     top_consensus = consensus.head(30)[[
         "mutation_set_canonical", "consensus_count", "mean_rank",
         "cross_model_rank_sd", "high_consensus_high_disagreement",
+        "known_dead_end_mutations",
     ]].copy()
     top_consensus["mean_rank"] = top_consensus["mean_rank"].map(lambda value: f"{value:.2f}")
     top_consensus["cross_model_rank_sd"] = top_consensus["cross_model_rank_sd"].map(
@@ -100,7 +109,9 @@ The maximum consensus is only {int(consensus['consensus_count'].max())} of 13 mo
 and every displayed candidate is supported only by the paired one-hot/AAIndex ridge
 arms. Those encodings span nearly the same linear space, so this is not independent
 cross-family agreement. Eight candidates are additionally flagged for high rank
-dispersion across all models. None should be treated as a confident lab recommendation.
+dispersion across all models. All {int(consensus['contains_known_dead_end'].sum())} of
+{len(consensus)} candidates contain at least one known dead-end control mutation. None
+should be treated as a confident lab recommendation.
 
 {_table(top_consensus)}
 
@@ -186,6 +197,9 @@ six-hour ceiling.
   encodings.
 - Existing Mondrian strata do not provide finite intervals for these 6-8-mutation
   designs.
+- {int(consensus['contains_known_dead_end'].sum())} of {len(consensus)} consensus
+  proposals contain A72T or G37C, the registered known dead ends; the sole remaining
+  proposal still has only 2/13 support from the equivalent unaugmented classical pair.
 - ThermoMPNN multi-mutant values are additive single-mutation checks. Geometry,
   SoluProt, FoldX, and docking were excluded rather than reported without validation.
 - Complete parquet lineages and all application checkpoints remain pod-only. Their

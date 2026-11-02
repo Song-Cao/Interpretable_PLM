@@ -339,31 +339,31 @@
       "arm": "phi_w1_max_all_live",
       "seed": 0,
       "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_0.pt",
-      "sha256": "e4fb9a4cdebd6ef65246b5df5a0b4bde2cae44d959c9718d752986a47e24bd97"
+      "sha256": "464c5e6e034d2c7ac1fa6540d1fa400c200b5c510f2fe035c9619427c9cbbd37"
     },
     {
       "arm": "phi_w1_max_all_live",
       "seed": 1,
       "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_1.pt",
-      "sha256": "70d3b3ffc0c052b613255f9ab20e98b641df25d4c82f8fe26de70d6f4b7c604c"
+      "sha256": "5f1e8627a99e0e360f7996cadbc1ba3995a3c92775d62d7d85e325e7315d645e"
     },
     {
       "arm": "phi_w1_max_all_live",
       "seed": 2,
       "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_2.pt",
-      "sha256": "77e77d6252c8e5a565b0dbfe61eea0c9c59da544c2d2ad1d780ad73d6ff614ad"
+      "sha256": "bd45a1ec7ca9faa7b1c9f19e1c42c60243537d235a8790f04f49d8bdf4063202"
     },
     {
       "arm": "phi_w1_max_all_live",
       "seed": 3,
       "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_3.pt",
-      "sha256": "b07bef9adfbfb81c310b34058f9f42e8be7eb05f7f815e7457250d0e92dbb86e"
+      "sha256": "4868fcd400ad17050c60421d12d794494b95401dc6aa8cd7afb49d14bd3ec8ab"
     },
     {
       "arm": "phi_w1_max_all_live",
       "seed": 4,
       "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_4.pt",
-      "sha256": "c2e7e8fe91cbaceca26cf4c9d117b341cf7aba019453730f58887e5ba819e92b"
+      "sha256": "580de50758659c05d8045f916152b33f07d2e06eafeb092e4c57e1eb3c1b8b9a"
     }
   ]
 }

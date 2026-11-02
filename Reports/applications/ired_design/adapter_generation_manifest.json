@@ -1,0 +1,34 @@
+{
+  "status": "complete",
+  "training_rows": 1182,
+  "epochs": 13,
+  "epoch_policy": "rounded median best epoch from the registered five CV folds",
+  "gpu_hours": 0.1916061947755386,
+  "artifacts": [
+    {
+      "seed": 0,
+      "path": "Models/applications/ired_design/adapter_linear/seed_0.pt",
+      "sha256": "eccd795e7d3b982b8faeed2b7e7bbce2bea05be5121c6329d8d7b6ada17948dd"
+    },
+    {
+      "seed": 1,
+      "path": "Models/applications/ired_design/adapter_linear/seed_1.pt",
+      "sha256": "be81714df215d9091aa1c7491c0c35e730a699cefe7fa1aa5638e25cf128eaa9"
+    },
+    {
+      "seed": 2,
+      "path": "Models/applications/ired_design/adapter_linear/seed_2.pt",
+      "sha256": "325001609140fc34e28b7c40088eb4850106fd5f14b5117e1dfc509579aa5a3a"
+    },
+    {
+      "seed": 3,
+      "path": "Models/applications/ired_design/adapter_linear/seed_3.pt",
+      "sha256": "fcd5bd6a755c38ada164ef2ca603ee9c991453355815010dd03938ef0d753fbc"
+    },
+    {
+      "seed": 4,
+      "path": "Models/applications/ired_design/adapter_linear/seed_4.pt",
+      "sha256": "1c694917a0027f55090cb188c8b3dda1efab4d9c136e52af6b8de9008e2994f1"
+    }
+  ]
+}

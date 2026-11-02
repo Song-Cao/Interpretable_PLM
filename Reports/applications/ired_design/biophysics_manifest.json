@@ -1,0 +1,14 @@
+{
+  "oracle": "ThermoMPNN",
+  "validated": true,
+  "anchor_count": 6,
+  "anchor_signs_matched": 6,
+  "structure_sequence_exact_match": true,
+  "final_candidates_scored": 30,
+  "multi_mutant_method": "sum of validated single-substitution ddG estimates",
+  "multi_mutant_limitation": "additivity is an approximation and does not model epistasis",
+  "active_site_geometry_status": "not_scored_without_a_validated_mutant-structure oracle",
+  "solubility_status": "not_scored_without_an IRED anchor",
+  "foldx_status": "not_available; cut before trajectory deliverables under the registered priority order",
+  "docking_status": "not_run; first item cut under the registered priority order"
+}

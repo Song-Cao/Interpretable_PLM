@@ -1,0 +1,391 @@
+model,mutation_set_canonical,predicted_fitness,deep_ensemble_sd,rank_within_consensus_pool,conformal_lo,conformal_hi,conformal_status
+onehot_ridge_unaugmented,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,0.6184070139824935,0.0,6,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6555035603320586,0.0,1,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_unaugmented,G37S-S68P-A72T-K195G-V216I-T241A,0.5154979219869217,0.0,29,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_unaugmented,K38N-S68P-A72T-P203Q-V216I-T241A,0.5758021566643782,0.0,18,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_unaugmented,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,0.5760798034989604,0.0,16,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6131763498485253,0.0,8,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_unaugmented,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,0.5548311553379434,0.0,23,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,0.6150897051182187,0.0,7,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6521862514677838,0.0,2,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_unaugmented,G37S-S68P-A72T-P203Q-V216I-T241A,0.5679530314046974,0.0,20,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_unaugmented,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6128987030139431,0.0,10,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,0.5760798034989604,0.0,17,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6131763498485253,0.0,9,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_unaugmented,R2T-G37S-S68P-A72T-V216I-T241A,0.5177346089883783,0.0,27,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_unaugmented,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,0.5525944683364866,0.0,25,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,0.5548311553379434,0.0,24,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,G37S-K38N-S68P-P203Q-V216I-T241A,0.5656450695325693,0.0,21,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_unaugmented,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,0.5738431164975037,0.0,19,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,0.6109396628470688,0.0,11,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_unaugmented,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,0.6473765330950662,0.0,3,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_unaugmented,R2S-G37S-S68P-A72T-V216I-T241A,0.5177346089883783,0.0,28,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_unaugmented,G37C-S68P-A72T-P203Q-V216I-T241A,0.5646357225404226,0.0,22,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_unaugmented,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,0.5834492969369321,0.0,15,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6205458432864971,0.0,5,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_unaugmented,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6050495777542625,0.0,13,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,0.6102799867455011,0.0,12,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,0.6441871903278663,0.0,4,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_unaugmented,R2T-S68P-A72T-K195G-V216I-T241A,0.48101983676306925,0.0,30,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_unaugmented,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,0.5181163831126342,0.0,26,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_unaugmented,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,0.5994243070178595,0.0,14,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,1.4070671113388964,0.0,14,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.451297814189643,0.0,8,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_augmented,G37S-S68P-A72T-K195G-V216I-T241A,1.4060433973920383,0.0,15,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_augmented,K38N-S68P-A72T-P203Q-V216I-T241A,1.2221942560660732,0.0,27,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_augmented,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,1.4616320976928212,0.0,5,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.5002560167129935,0.0,1,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_augmented,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,1.437737143290894,0.0,10,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,1.3257300496993172,0.0,23,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.3656886569894953,0.0,20,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_augmented,G37S-S68P-A72T-P203Q-V216I-T241A,1.3018156264851797,0.0,24,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_augmented,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.2586319641574364,0.0,26,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,1.4586381837877473,0.0,6,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.4994909754024688,0.0,2,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_augmented,R2T-G37S-S68P-A72T-V216I-T241A,1.4014899583035096,0.0,16,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_augmented,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,1.428854446035897,0.0,11,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,1.4262601346071007,0.0,12,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,G37S-K38N-S68P-P203Q-V216I-T241A,1.2217711463305774,0.0,28,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_augmented,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,1.4543644628478454,0.0,7,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,1.4984127119438795,0.0,3,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_augmented,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,1.3704983659806582,0.0,19,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_augmented,R2S-G37S-S68P-A72T-V216I-T241A,1.3916018704875635,0.0,17,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_augmented,G37C-S68P-A72T-P203Q-V216I-T241A,1.1424327992302872,0.0,30,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_augmented,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,1.450759672211258,0.0,9,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,1.4926132941441326,0.0,4,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_augmented,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.3398413618624718,0.0,21,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,1.3304605545010135,0.0,22,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,1.2827426433205322,0.0,25,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_ridge_augmented,R2T-S68P-A72T-K195G-V216I-T241A,1.3847308989110676,0.0,18,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_ridge_augmented,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,1.418603005926251,0.0,13,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_ridge_augmented,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,1.1864810659555793,0.0,29,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,0.6267172862334912,0.0,6,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6642809721596254,0.0,1,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_unaugmented,G37S-S68P-A72T-K195G-V216I-T241A,0.5217144326994229,0.0,29,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_unaugmented,K38N-S68P-A72T-P203Q-V216I-T241A,0.5832770868989455,0.0,18,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_unaugmented,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,0.5837241220057513,0.0,17,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6212878079318855,0.0,9,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_unaugmented,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,0.5615657841885624,0.0,24,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,0.6233414075538322,0.0,7,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6609050934799664,0.0,2,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_unaugmented,G37S-S68P-A72T-P203Q-V216I-T241A,0.5754301238695633,0.0,20,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_unaugmented,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6208407728250798,0.0,10,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,0.5837317838187462,0.0,16,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6212954697448806,0.0,8,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_unaugmented,R2T-G37S-S68P-A72T-V216I-T241A,0.5240020982624282,0.0,28,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_unaugmented,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,0.559278118625557,0.0,25,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,0.5615734460015575,0.0,23,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,G37S-K38N-S68P-P203Q-V216I-T241A,0.5730367514197289,0.0,21,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_unaugmented,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,0.581436456442746,0.0,19,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,0.6190001423688801,0.0,11,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_unaugmented,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,0.6558241271533536,0.0,3,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_unaugmented,R2S-G37S-S68P-A72T-V216I-T241A,0.5240097600754231,0.0,27,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_unaugmented,G37C-S68P-A72T-P203Q-V216I-T241A,0.572054245189904,0.0,22,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_unaugmented,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,0.5911668472841809,0.0,15,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6287305332103151,0.0,5,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_unaugmented,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6129938097956974,0.0,13,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,0.6182604412272193,0.0,12,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,0.6525765815379085,0.0,4,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_unaugmented,R2T-S68P-A72T-K195G-V216I-T241A,0.48656823150106465,0.0,30,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_unaugmented,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,0.5241319174271989,0.0,26,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_unaugmented,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,0.6072245586662038,0.0,14,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,1.46160195296494,0.0,14,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.5094488624403197,0.0,7,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_augmented,G37S-S68P-A72T-K195G-V216I-T241A,1.4532613872089744,0.0,15,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_augmented,K38N-S68P-A72T-P203Q-V216I-T241A,1.2687228062631537,0.0,27,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_augmented,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,1.5150183700610513,0.0,5,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.557089923157671,0.0,1,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_augmented,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,1.4910406004353087,0.0,10,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,1.3826051071768235,0.0,22,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.4260514770394825,0.0,19,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_augmented,G37S-S68P-A72T-P203Q-V216I-T241A,1.343921809026847,0.0,24,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_augmented,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.30854241820874,0.0,26,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,1.5120114821246446,0.0,6,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.5563789206959602,0.0,2,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_augmented,R2T-G37S-S68P-A72T-V216I-T241A,1.451417239826873,0.0,16,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_augmented,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,1.4790446430296489,0.0,12,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,1.479295566527455,0.0,11,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,G37S-K38N-S68P-P203Q-V216I-T241A,1.2626125746651493,0.0,28,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_augmented,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,1.5046860332396104,0.0,8,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,1.552345003338701,0.0,3,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_augmented,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,1.4257872209063083,0.0,20,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_augmented,R2S-G37S-S68P-A72T-V216I-T241A,1.4413088989941876,0.0,17,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_augmented,G37C-S68P-A72T-P203Q-V216I-T241A,1.184532687755642,0.0,30,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_augmented,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,1.5015672626968863,0.0,9,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,1.5469656223696149,0.0,4,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_augmented,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.385377193599411,0.0,21,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,1.3822592655153525,0.0,23,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,1.332673974935332,0.0,25,,,"no_existing_mondrian_stratum_(8, False)"
+aaindex_flat_ridge_augmented,R2T-S68P-A72T-K195G-V216I-T241A,1.4353352501121786,0.0,18,-inf,inf,existing_stratum_unbounded_one_calibration_row
+aaindex_flat_ridge_augmented,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,1.472512124083836,0.0,13,,,"no_existing_mondrian_stratum_(7, False)"
+aaindex_flat_ridge_augmented,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,1.23333352466441,0.0,29,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,1.556015133857727,0.08501516942181638,7,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.4927604913711547,0.1865776839642291,15,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_ridge,G37S-S68P-A72T-K195G-V216I-T241A,1.374299955368042,0.23022977113574106,20,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_ridge,K38N-S68P-A72T-P203Q-V216I-T241A,1.526655411720276,0.08935534786176706,11,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_ridge,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,1.337389874458313,0.1421805444998902,22,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.3127357482910156,0.14569677157730737,24,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_ridge,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,1.247371506690979,0.09550488401760483,27,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,1.8468639373779296,0.10496818807930056,1,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.7071510791778564,0.1021579853053397,3,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_ridge,G37S-S68P-A72T-P203Q-V216I-T241A,1.3506742715835571,0.08491162882020732,21,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_ridge,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.5442670822143554,0.1518630883828012,9,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,1.4040009737014771,0.12762547529729693,18,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.3158729314804076,0.10255228039843059,23,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_ridge,R2T-G37S-S68P-A72T-V216I-T241A,1.1821074724197387,0.14186651222610785,30,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_ridge,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,1.4946496486663818,0.21216566049794616,14,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,1.3051977396011352,0.06711610517321628,25,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,G37S-K38N-S68P-P203Q-V216I-T241A,1.3954229831695557,0.11198238166088295,19,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_ridge,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,1.552508783340454,0.18941006392849988,8,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,1.6044291973114013,0.16644206498411765,5,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_ridge,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,1.5331591844558716,0.16406784455870477,10,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_ridge,R2S-G37S-S68P-A72T-V216I-T241A,1.2780935049057007,0.16534608086146824,26,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_ridge,G37C-S68P-A72T-P203Q-V216I-T241A,1.564210295677185,0.10571224435052372,6,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_ridge,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,1.5188320398330688,0.05192389912319717,12,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,1.794279360771179,0.11597618455264624,2,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_ridge,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.4458853006362915,0.14081362303949832,16,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,1.5132964611053468,0.13125036629659387,13,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,1.408391499519348,0.13615997664224483,17,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_ridge,R2T-S68P-A72T-K195G-V216I-T241A,1.229733669757843,0.29147443947974866,28,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_ridge,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,1.2035078763961793,0.15421171738714382,29,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_ridge,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,1.6541034936904908,0.12002666730764726,4,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,0.9528211951255798,0.046529241011616616,16,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.9985859274864197,0.049900581438553186,12,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_mlp,G37S-S68P-A72T-K195G-V216I-T241A,1.1054189205169678,0.010930883514230043,5,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_mlp,K38N-S68P-A72T-P203Q-V216I-T241A,0.9761465668678284,0.052719263633643126,14,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_mlp,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,0.9603443384170532,0.08706628058455905,15,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.026589000225067,0.08498837831733673,8,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_mlp,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,1.0413019180297851,0.06646548826677919,6,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,0.7662407636642456,0.04120770569561189,30,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.792354154586792,0.03737111371551385,28,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_mlp,G37S-S68P-A72T-P203Q-V216I-T241A,1.0187780261039734,0.0237520025959143,10,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_mlp,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.0271824479103089,0.043032427641291365,7,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,0.8751532793045044,0.09397463192601847,24,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.8773739099502563,0.09561060022034176,23,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_mlp,R2T-G37S-S68P-A72T-V216I-T241A,0.9516570448875428,0.06622350233388018,17,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_mlp,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,1.1885982513427735,0.016515319505796815,1,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,0.938561737537384,0.06025083097814944,18,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,G37S-K38N-S68P-P203Q-V216I-T241A,0.8979960322380066,0.048470709174107125,20,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_mlp,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,1.0116462469100953,0.028910466807463314,11,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,1.1080308437347413,0.02620046478316579,4,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_mlp,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,0.9967979311943054,0.046723537536085526,13,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_mlp,R2S-G37S-S68P-A72T-V216I-T241A,0.8829861521720886,0.0593164366042295,22,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_mlp,G37C-S68P-A72T-P203Q-V216I-T241A,0.8123685717582703,0.05608765078954967,27,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_mlp,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,1.0241543769836425,0.025993274540779775,9,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,1.147395658493042,0.0328207019520684,2,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_mlp,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.120394778251648,0.02733078264649439,3,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,0.8837906956672669,0.04496512851264671,21,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,0.818951141834259,0.05290629830232451,26,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_mlp,R2T-S68P-A72T-K195G-V216I-T241A,0.8491315484046936,0.06260138892375496,25,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_mlp,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,0.8996329784393311,0.06901298206620853,19,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_mlp,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,0.7814213156700134,0.04983097194349831,29,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,0.08197991170935362,0.03455210602604183,19,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.20749764346216742,0.033852658675147286,15,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_random_forest,G37S-S68P-A72T-K195G-V216I-T241A,0.19380077768447557,0.030847488795324517,16,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_random_forest,K38N-S68P-A72T-P203Q-V216I-T241A,0.25592045670849606,0.01527600654246445,12,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_random_forest,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,-0.10933974367533886,0.044812731300405716,21,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,-0.11974582973568657,0.01295811793706938,22,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_random_forest,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,-0.12755627451640117,0.03446953600490778,23,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,0.2647875676023343,0.02287282432862361,10,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.3388922054326611,0.02034858667962519,6,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_random_forest,G37S-S68P-A72T-P203Q-V216I-T241A,0.44240817883059885,0.028194444539545907,2,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_random_forest,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.2835383803699615,0.02470950234189493,9,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,-0.3019906629272953,0.037355899100414314,27,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,-0.2542913735950211,0.032094756083979346,25,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_random_forest,R2T-G37S-S68P-A72T-V216I-T241A,-0.20225279883807445,0.03156252768813645,24,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_random_forest,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,0.05429518346142823,0.04553025123599763,20,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,-0.27767009913586244,0.053480237989785975,26,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,G37S-K38N-S68P-P203Q-V216I-T241A,0.22249660892526174,0.04425469002928165,14,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_random_forest,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,0.13176568924209167,0.019911137386474372,18,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,0.28996919339076654,0.026249710794642857,7,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_random_forest,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,0.24434810700052437,0.020521934990554398,13,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_random_forest,R2S-G37S-S68P-A72T-V216I-T241A,-0.31156444218869794,0.031992967108440976,28,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_random_forest,G37C-S68P-A72T-P203Q-V216I-T241A,0.3711361040066338,0.014028657061959467,4,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_random_forest,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,0.2875458126278095,0.01053085957403476,8,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,0.4005149758544446,0.049157487939965584,3,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_random_forest,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.4856099532402647,0.04126941318479121,1,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,0.13298616476824626,0.03613348801170402,17,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,0.26009362598730074,0.026936406089204997,11,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mean_random_forest,R2T-S68P-A72T-K195G-V216I-T241A,-0.4871583793668576,0.025453227740539982,29,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mean_random_forest,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,-0.5654540370876788,0.028054603529595937,30,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mean_random_forest,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,0.37059582232874916,0.020379189651131124,5,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,0.5669450342655182,0.08703905582903723,13,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.5141575157642364,0.0741763404433596,17,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mutpool_ridge,G37S-S68P-A72T-K195G-V216I-T241A,0.5138340175151825,0.17606831276433202,18,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mutpool_ridge,K38N-S68P-A72T-P203Q-V216I-T241A,0.7803732872009277,0.037605742849132845,1,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mutpool_ridge,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,0.46627589464187624,0.16505141167521678,20,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.4170743227005005,0.11932021116148203,26,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mutpool_ridge,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,0.4513427257537842,0.14348066431916068,22,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,0.6771749377250671,0.05474256518284269,4,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6171093702316284,0.05360284306965628,8,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mutpool_ridge,G37S-S68P-A72T-P203Q-V216I-T241A,0.6672023892402649,0.08944958183183134,6,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mutpool_ridge,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6679676413536072,0.018023894651805365,5,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,0.40741204023361205,0.15557876900114642,27,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.3661734014749527,0.12587498777398,30,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mutpool_ridge,R2T-G37S-S68P-A72T-V216I-T241A,0.5190898299217224,0.1844771138323207,16,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mutpool_ridge,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,0.4612177491188049,0.12280960784757572,21,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,0.3854638129472733,0.14229555677994146,29,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,G37S-K38N-S68P-P203Q-V216I-T241A,0.545522290468216,0.06599088548170717,14,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mutpool_ridge,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,0.48496463894844055,0.14362698869055182,19,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,0.4406676650047302,0.10019543503675106,23,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mutpool_ridge,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,0.6136924743652343,0.049962352673681,9,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mutpool_ridge,R2S-G37S-S68P-A72T-V216I-T241A,0.4371960312128067,0.1726165632809112,24,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mutpool_ridge,G37C-S68P-A72T-P203Q-V216I-T241A,0.7594224691390992,0.04715736896954924,2,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mutpool_ridge,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,0.6008791208267212,0.0819956126688995,10,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,0.543183159828186,0.0444199145476663,15,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mutpool_ridge,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.5863308668136596,0.05497147759396752,12,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,0.6876634359359741,0.08051314485915757,3,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,0.6541607975959778,0.06653885385880733,7,,,"no_existing_mondrian_stratum_(8, False)"
+esm_mutpool_ridge,R2T-S68P-A72T-K195G-V216I-T241A,0.4304669737815857,0.2407763369275659,25,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_mutpool_ridge,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,0.3877667337656021,0.17457075417187798,28,,,"no_existing_mondrian_stratum_(7, False)"
+esm_mutpool_ridge,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,0.5956023216247559,0.07455849144449031,11,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,1.3009864568710328,0.06464322271506474,23,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.2969570398330688,0.09584500542086727,24,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_conv,G37S-S68P-A72T-K195G-V216I-T241A,1.4333571910858154,0.04901051643362267,8,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_conv,K38N-S68P-A72T-P203Q-V216I-T241A,1.3215726613998413,0.06400302335252073,20,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_conv,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,1.359764575958252,0.05086240202651088,18,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.3658334732055664,0.07123612137698974,15,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_conv,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,1.3093937397003175,0.06060191438938282,22,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,1.3721524715423583,0.04512757918072428,14,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.3850751638412475,0.09049168827118902,12,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_conv,G37S-S68P-A72T-P203Q-V216I-T241A,1.360604500770569,0.050914628801567746,17,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_conv,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.3611978054046632,0.09102838521442758,16,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,1.4180972576141357,0.06291864156423391,10,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.4336358785629273,0.08104828824405438,7,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_conv,R2T-G37S-S68P-A72T-V216I-T241A,1.24757080078125,0.05576174800470142,27,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_conv,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,1.4745734453201294,0.06274903805140535,4,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,1.4117133617401123,0.06638404079862872,11,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,G37S-K38N-S68P-P203Q-V216I-T241A,1.2266940593719482,0.06207092256346333,28,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_conv,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,1.4685656309127808,0.0681396184201989,5,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,1.5294799089431763,0.08418371819928543,2,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_conv,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,1.3537856101989747,0.08211057508279915,19,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_conv,R2S-G37S-S68P-A72T-V216I-T241A,1.3162889719009399,0.06387064315578606,21,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_conv,G37C-S68P-A72T-P203Q-V216I-T241A,1.4325156688690186,0.046331853239343516,9,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_conv,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,1.5016225099563598,0.05436829368016148,3,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,1.6706878185272216,0.0672017139594208,1,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_conv,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.4503385782241822,0.0695209737178212,6,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,1.2761428833007813,0.059025846071878656,25,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,1.2568908214569092,0.09679361667415275,26,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_conv,R2T-S68P-A72T-K195G-V216I-T241A,1.179005742073059,0.07556283979750432,29,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_conv,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,1.1577595233917237,0.0663355971814022,30,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_conv,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,1.381128454208374,0.09725685160764715,13,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,1.072904396057129,0.07801167593012207,10,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.095555353164673,0.07433764897691914,9,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_delta_conv,G37S-S68P-A72T-K195G-V216I-T241A,1.0451066017150878,0.09822180330045964,17,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_delta_conv,K38N-S68P-A72T-P203Q-V216I-T241A,1.1462597131729126,0.07120067599694896,2,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_delta_conv,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,0.8824794292449951,0.09199249769637746,29,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.9204114198684692,0.08716378870468922,26,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_delta_conv,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,0.9890123009681702,0.07598401240286679,22,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,1.1029797792434692,0.09948377638624485,8,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.1194342136383058,0.0975714033522216,4,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_delta_conv,G37S-S68P-A72T-P203Q-V216I-T241A,1.0109545946121217,0.09027323598130549,19,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_delta_conv,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.177800726890564,0.07223254390778422,1,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,0.8930445432662963,0.09406109461826748,28,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.9236955165863037,0.09386528906696179,25,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_delta_conv,R2T-G37S-S68P-A72T-V216I-T241A,0.9367077708244324,0.074439227353651,24,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_delta_conv,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,1.1045947432518006,0.10217476345781373,7,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,0.997039258480072,0.08257196265890418,20,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,G37S-K38N-S68P-P203Q-V216I-T241A,1.0575531125068665,0.08954439277543993,15,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_delta_conv,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,0.9906609177589416,0.09710869379010702,21,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,1.0641081571578979,0.10368260093497582,12,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_delta_conv,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,1.1116695761680604,0.09838768468894969,5,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_delta_conv,R2S-G37S-S68P-A72T-V216I-T241A,0.9393943428993226,0.08251237397062046,23,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_delta_conv,G37C-S68P-A72T-P203Q-V216I-T241A,1.065319836139679,0.11650339212949568,11,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_delta_conv,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,1.0185492634773254,0.09449856725337297,18,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,1.107375192642212,0.10234961985958554,6,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_delta_conv,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.0601709127426147,0.09017839383480385,14,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,1.064020562171936,0.08853158163119462,13,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,1.0530535578727722,0.0828252075174365,16,,,"no_existing_mondrian_stratum_(8, False)"
+esm_residue_delta_conv,R2T-S68P-A72T-K195G-V216I-T241A,0.8488211274147034,0.1046491550016311,30,-inf,inf,existing_stratum_unbounded_one_calibration_row
+esm_residue_delta_conv,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,0.8935611248016357,0.11468685957228182,27,,,"no_existing_mondrian_stratum_(7, False)"
+esm_residue_delta_conv,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,1.1455107927322388,0.10830903480439742,3,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,1.3509406328201294,0.12998986090708634,9,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.3774150133132934,0.1479117598921872,6,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_positional_conv,G37S-S68P-A72T-K195G-V216I-T241A,1.1071466326713562,0.10144377962838433,28,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_positional_conv,K38N-S68P-A72T-P203Q-V216I-T241A,1.3996615886688233,0.11543568264775858,5,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_positional_conv,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,1.1559675216674805,0.061714094296006466,21,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.1895668745040893,0.048058921523506326,18,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_positional_conv,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,1.1509936094284057,0.060516681083630716,22,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,1.348346507549286,0.2271839455829432,10,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.372824788093567,0.20521050038649435,7,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_positional_conv,G37S-S68P-A72T-P203Q-V216I-T241A,1.2067221641540526,0.06765094428468389,16,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_positional_conv,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,1.4289208889007567,0.12739876616970133,4,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,1.1663373231887817,0.04913845743598129,19,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.1997047901153564,0.029136179612173255,17,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_positional_conv,R2T-G37S-S68P-A72T-V216I-T241A,1.12172110080719,0.05609451948177027,26,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_positional_conv,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,1.1369843363761902,0.10931590975449929,24,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,1.1605832815170287,0.04618544375385904,20,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,G37S-K38N-S68P-P203Q-V216I-T241A,1.3310769557952882,0.1429765493325904,11,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_positional_conv,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,1.1143260240554809,0.06426268591290925,27,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,1.1479777574539185,0.06854895277226455,23,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_positional_conv,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,1.4643172740936279,0.13037607884963498,1,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_positional_conv,R2S-G37S-S68P-A72T-V216I-T241A,1.1315686464309693,0.03992364637638005,25,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_positional_conv,G37C-S68P-A72T-P203Q-V216I-T241A,1.2574129819869995,0.09501155062545723,12,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_positional_conv,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,1.2181032180786133,0.07191734701856657,15,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,1.253108811378479,0.05392899365074799,13,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_positional_conv,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,1.2405805587768555,0.04526648094658968,14,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,1.4369585275650025,0.120787317953108,3,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,1.4536239862442017,0.16956231063580587,2,,,"no_existing_mondrian_stratum_(8, False)"
+onehot_positional_conv,R2T-S68P-A72T-K195G-V216I-T241A,0.9935359477996826,0.10549350096054057,30,-inf,inf,existing_stratum_unbounded_one_calibration_row
+onehot_positional_conv,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,1.0276196599006653,0.12303661458687835,29,,,"no_existing_mondrian_stratum_(7, False)"
+onehot_positional_conv,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,1.3589055299758912,0.1628126557858957,8,,,"no_existing_mondrian_stratum_(7, False)"
+phi_w1_max_all_live,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,-0.026596502959728242,0.2169974433878722,6,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,-0.003337530791759491,0.20697508951958546,4,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-S68P-A72T-K195G-V216I-T241A,-0.12288569958182052,0.24234005076808843,29,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,K38N-S68P-A72T-P203Q-V216I-T241A,-0.05280267745256424,0.21814853388874522,11,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,-0.06932138800621032,0.21148218380725464,16,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,-0.053234735131263734,0.2029120679253415,12,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,-0.077957384288311,0.21758026901774766,21,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,-0.0014801979064941405,0.20839104276822162,3,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.014342042803764343,0.20121779661574593,2,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-S68P-A72T-P203Q-V216I-T241A,-0.09762190282344818,0.2203628023011905,25,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,-0.033547776937484744,0.20866833376137878,8,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,-0.05676684528589249,0.20552362402045268,13,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,-0.05962799265980721,0.20341832772558255,14,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2T-G37S-S68P-A72T-V216I-T241A,-0.11265291422605514,0.23800897727602102,28,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,-0.09655866026878357,0.22950685159041695,24,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,-0.07775351852178573,0.21648945737594294,20,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-K38N-S68P-P203Q-V216I-T241A,-0.017431575059890746,0.21639711553557495,5,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,-0.09359300285577773,0.22377274677911901,23,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,-0.07203570157289504,0.21186870498173258,18,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,-0.03192354887723923,0.2012350299159482,7,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2S-G37S-S68P-A72T-V216I-T241A,-0.10361476689577102,0.2294087949262801,26,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37C-S68P-A72T-P203Q-V216I-T241A,-0.06987971365451813,0.21185443533815082,17,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,-0.09296455979347229,0.22274679545231366,22,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,-0.06700210869312287,0.20816987256549094,15,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,-0.0734078511595726,0.21242466902275092,19,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,-0.038759073615074156,0.20762248785894138,9,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,-0.04672685712575912,0.21130430944926,10,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2T-S68P-A72T-K195G-V216I-T241A,-0.14252217710018159,0.2387670783210613,30,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,-0.11258209049701691,0.22049118668055137,27,,,no_existing_step2_conformal_calibrator
+phi_w1_max_all_live,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,0.02629125341773033,0.1975667539905648,1,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-K38N-S68P-A72T-P203Q-V216I-T241A,0.6106574773788452,0.06224554832033173,18,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6154181241989136,0.05772558623460043,7,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-S68P-A72T-K195G-V216I-T241A,0.6012842178344726,0.06146221775257842,27,,,no_existing_step2_conformal_calibrator
+adapter_linear,K38N-S68P-A72T-P203Q-V216I-T241A,0.6120126724243165,0.06148224901925504,13,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2T-G37S-S68P-A72T-P203Q-V216I-T241A,0.6065130114555359,0.06461183483706702,24,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2T-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6112557172775268,0.05756273819211333,16,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2T-G37S-S68P-A72T-V216I-T241A-H244Y,0.6043305039405823,0.060631638603797035,25,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37C-K38N-S68P-A72T-P203Q-V216I-T241A,0.6113280177116394,0.06250672496407941,15,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37C-K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6158361196517944,0.05799749798911351,5,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-S68P-A72T-P203Q-V216I-T241A,0.6108866691589355,0.06242432934617496,17,,,no_existing_step2_conformal_calibrator
+adapter_linear,K38N-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6160749197006226,0.05748768328900216,3,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2S-G37S-S68P-A72T-P203Q-V216I-T241A,0.6074759125709533,0.0638928150480892,22,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2S-G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6120185136795044,0.05869330926603875,12,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2T-G37S-S68P-A72T-V216I-T241A,0.5981207251548767,0.07181797555295875,29,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-S68P-A72T-K195G-V216I-T241A-H244Y,0.6065909624099731,0.052357147686780806,23,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2S-G37S-S68P-A72T-V216I-T241A-H244Y,0.6076746344566345,0.059890142052804164,21,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-K38N-S68P-P203Q-V216I-T241A,0.6099724888801574,0.06431038643801071,19,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-S68P-A72T-K195G-P203Q-V216I-T241A,0.6094848871231079,0.05797655924152657,20,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-S68P-A72T-K195G-P203Q-V216I-T241A-H244Y,0.6124903559684753,0.05275397652151272,10,,,no_existing_step2_conformal_calibrator
+adapter_linear,K38N-S68P-A72T-E197D-P203Q-V216I-T241A-H244Y,0.6165258407592773,0.05732620119394132,1,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2S-G37S-S68P-A72T-V216I-T241A,0.6011021614074707,0.06974716660680905,28,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37C-S68P-A72T-P203Q-V216I-T241A,0.6124122858047485,0.06151089006460341,11,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-D55E-S68P-A72T-P203Q-V216I-T241A,0.6113821029663086,0.06264516966823454,14,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-D55E-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6161819577217102,0.0573999417016874,2,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37S-S68P-A72T-P203Q-V216I-T241A-H244Y,0.6149614453315735,0.05819276296639127,8,,,no_existing_step2_conformal_calibrator
+adapter_linear,K38N-S68P-A72T-E197D-P203Q-V216I-T241A,0.6131885766983032,0.06021853535807857,9,,,no_existing_step2_conformal_calibrator
+adapter_linear,K38N-S68P-A72T-E197K-P203Q-V216I-T241A-H244Y,0.6157297611236572,0.05868642929438794,6,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2T-S68P-A72T-K195G-V216I-T241A,0.5973531126976013,0.06248667138874401,30,,,no_existing_step2_conformal_calibrator
+adapter_linear,R2T-S68P-A72T-K195G-V216I-T241A-H244Y,0.6023321986198426,0.04917241176087173,26,,,no_existing_step2_conformal_calibrator
+adapter_linear,G37C-K38N-S68P-P203Q-V216I-T241A-H244Y,0.6160701751708985,0.0583807733913468,4,,,no_existing_step2_conformal_calibrator
