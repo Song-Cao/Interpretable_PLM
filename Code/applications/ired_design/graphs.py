@@ -27,9 +27,9 @@ def _draw(frame: pd.DataFrame, path: Path, title: str, *, minimum_support: int =
             row.variant_id, round=int(row.round), measured=bool(row.in_curated_dataset)
         )
     for row in edges.itertuples():
-        graph.add_edge(row.parent_variant_id, row.variant_id, support=int(row.support))
         if row.parent_variant_id not in graph:
             graph.add_node(row.parent_variant_id, round=0, measured=True)
+        graph.add_edge(row.parent_variant_id, row.variant_id, support=int(row.support))
     if not graph:
         return
     layers = {}
