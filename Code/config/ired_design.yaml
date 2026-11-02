@@ -20,6 +20,7 @@ backbone:
   selected_layer: 26
 search:
   rounds: 4
+  force_budget_reduction: true
   winner_pool_size: 500
   survivors_per_round: 50
   budget_reduced_winner_pool_size: 300

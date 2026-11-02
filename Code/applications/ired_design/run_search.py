@@ -147,7 +147,10 @@ def main() -> int:
         config, benchmark, pool=int(config["search"]["winner_pool_size"]),
         survivors=int(config["search"]["survivors_per_round"]),
     )
-    if budget["projected_gpu_hours_upper_bound"] > float(config["search"]["estimated_gpu_hours"][1]):
+    if (
+        bool(config["search"].get("force_budget_reduction", False))
+        or budget["projected_gpu_hours_upper_bound"] > float(config["search"]["estimated_gpu_hours"][1])
+    ):
         budget["reduced_from"] = {
             "winner_pool_size": int(config["search"]["winner_pool_size"]),
             "survivors_per_round": int(config["search"]["survivors_per_round"]),
@@ -157,7 +160,11 @@ def main() -> int:
             pool=int(config["search"]["budget_reduced_winner_pool_size"]),
             survivors=int(config["search"]["budget_reduced_survivors_per_round"]),
         )
-        budget["reduction_reason"] = "representative timing projected above six GPU-hours"
+        budget["reduction_reason"] = (
+            "realized full-pool round timing projected above the six GPU-hour ceiling"
+            if bool(config["search"].get("force_budget_reduction", False))
+            else "representative timing projected above six GPU-hours"
+        )
     pool = int(budget["winner_pool_size"])
     survivors = int(budget["survivors_per_round"])
     budget["benchmark"] = benchmark
@@ -166,47 +173,74 @@ def main() -> int:
         budget["hard_ceiling_warning"] = "upper bound remains above ceiling; shared-union realized time is enforced during execution"
         (report / "embedding_budget.json").write_text(json.dumps(budget, indent=2) + "\n")
 
-    scan_candidates = {arm: singles for arm in ARMS}
-    scan_maps = _score_maps(scan_candidates, config, wild_type, engine)
+    cached_scans: dict[str, pd.DataFrame] = {}
+    missing_scan_arms = []
+    for arm in ARMS:
+        path = report / f"{arm}_round1_single_scan.csv"
+        if path.exists():
+            cached = pd.read_csv(path)
+            if (
+                len(cached) == len(singles)
+                and set(cached["mutation_set_canonical"].astype(str)) == set(singles)
+                and cached["predicted_fitness"].notna().all()
+            ):
+                cached_scans[arm] = cached
+                continue
+        missing_scan_arms.append(arm)
+    scan_maps = _score_maps(
+        {arm: singles for arm in missing_scan_arms}, config, wild_type, engine
+    ) if missing_scan_arms else {}
     pools = {}
     template = pd.DataFrame({
         "variant_id": singles, "mutation_set_canonical": singles,
         "parent_variant_id": "WT", "mutation_added": singles,
     })
     for arm in ARMS:
-        scan = score_round(
-            template, model=arm, founder="WT", round_number=0, wild_type=wild_type,
-            scorer=_Lookup(scan_maps[arm]), survivors=pool, known_fitness=known,
-        )
+        if arm in cached_scans:
+            scan = cached_scans[arm].copy()
+            scan["selected_for_next_round"] = scan["rank_within_round"].astype(int) <= pool
+        else:
+            scan = score_round(
+                template, model=arm, founder="WT", round_number=0, wild_type=wild_type,
+                scorer=_Lookup(scan_maps[arm]), survivors=pool, known_fitness=known,
+            )
         scan.to_csv(report / f"{arm}_round1_single_scan.csv", index=False)
         winner = scan.loc[scan["selected_for_next_round"]]
         winner.to_csv(report / f"{arm}_winner_pool.csv", index=False)
         pools[arm] = selected_variants(scan)
 
-    control_background = canonical(config["controls"]["background"])
-    control_candidates = expand([control_background], singles)
-    control_names = control_candidates["mutation_set_canonical"].astype(str).tolist()
-    control_maps = _score_maps({arm: control_names for arm in ARMS}, config, wild_type, engine)
-    control_targets = {
-        mutation: canonical((*control_background.split("-"), mutation))
-        for mutation in (*config["controls"]["dead_ends"], config["controls"]["positive"])
-    }
-    control_rows = []
-    for arm in ARMS:
-        values = np.asarray([control_maps[arm][name].mean() for name in control_names])
-        order = np.argsort(-values, kind="stable")
-        ranks = np.empty(len(values), dtype=int); ranks[order] = np.arange(1, len(values) + 1)
-        lookup = {name: index for index, name in enumerate(control_names)}
-        for mutation, variant in control_targets.items():
-            index = lookup[variant]
-            control_rows.append({
-                "model": arm, "background": control_background, "control_mutation": mutation,
-                "control_role": "positive" if mutation == config["controls"]["positive"] else "known_dead_end",
-                "variant": variant, "rank_among_all_background_singles": int(ranks[index]),
-                "predicted_fitness": float(values[index]), "candidate_count": len(values),
-                "in_model_winner_pool": mutation in pools[arm],
-            })
-    pd.DataFrame(control_rows).to_csv(report / "controls_ranks.csv", index=False)
+    controls_path = report / "controls_ranks.csv"
+    cached_controls = pd.read_csv(controls_path) if controls_path.exists() else pd.DataFrame()
+    controls_complete = (
+        len(cached_controls) == len(ARMS) * 3
+        and "model" in cached_controls
+        and set(cached_controls["model"].astype(str)) == set(ARMS)
+    )
+    if not controls_complete:
+        control_background = canonical(config["controls"]["background"])
+        control_candidates = expand([control_background], singles)
+        control_names = control_candidates["mutation_set_canonical"].astype(str).tolist()
+        control_maps = _score_maps({arm: control_names for arm in ARMS}, config, wild_type, engine)
+        control_targets = {
+            mutation: canonical((*control_background.split("-"), mutation))
+            for mutation in (*config["controls"]["dead_ends"], config["controls"]["positive"])
+        }
+        control_rows = []
+        for arm in ARMS:
+            values = np.asarray([control_maps[arm][name].mean() for name in control_names])
+            order = np.argsort(-values, kind="stable")
+            ranks = np.empty(len(values), dtype=int); ranks[order] = np.arange(1, len(values) + 1)
+            lookup = {name: index for index, name in enumerate(control_names)}
+            for mutation, variant in control_targets.items():
+                index = lookup[variant]
+                control_rows.append({
+                    "model": arm, "background": control_background, "control_mutation": mutation,
+                    "control_role": "positive" if mutation == config["controls"]["positive"] else "known_dead_end",
+                    "variant": variant, "rank_among_all_background_singles": int(ranks[index]),
+                    "predicted_fitness": float(values[index]), "candidate_count": len(values),
+                    "in_model_winner_pool": mutation in pools[arm],
+                })
+        pd.DataFrame(control_rows).to_csv(controls_path, index=False)
 
     founders = list(config["founders"]["paper"]) + [config["founders"]["campaign_peak"]]
     parent_map = {(arm, canonical(founder)): [canonical(founder)] for arm in ARMS for founder in founders}

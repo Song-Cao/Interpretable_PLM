@@ -89,7 +89,8 @@ the stronger external-transfer evidence when catalytic rate is the goal.
 - 13 frozen model arms, retrained without re-searching on all 1,182 curated non-WT
   campaign variants.
 - Four founders, four one-mutation rounds, 5,510 complete WT single-mutant scans,
-  500 reusable winner mutations per model, and 50 survivors per founder and round.
+  {search['winner_pool_size']} reusable winner mutations per model, and
+  {search['survivors_per_round']} survivors per founder and round.
 - Representative projection: {budget['projected_gpu_hours_upper_bound']:.3f} GPU-hours.
 - Search wall time: {search['gpu_wall_hours']:.3f} GPU-hours; accounted application
   total including generation fits and failed pre-result launches: {gpu_hours:.3f}
