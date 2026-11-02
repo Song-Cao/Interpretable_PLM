@@ -6,6 +6,7 @@ import pandas as pd
 
 from Code.applications.ired_design.lineage import expand, score_round
 from Code.applications.ired_design.mutations import add, all_singles, apply, canonical, parse_set
+from Code.applications.ired_design.oracles import oracle_lookup
 
 
 class _Scorer:
@@ -35,3 +36,10 @@ def test_expansion_and_lineage_schema():
     assert scored.iloc[0]["parent_variant_id"] == "A1D"
     assert bool(scored.iloc[0]["in_curated_dataset"])
 
+
+def test_oracle_lookup_converts_zero_based_positions():
+    frame = pd.DataFrame({
+        "position": [0, 240], "wildtype": ["M", "T"],
+        "mutation": ["A", "A"], "ddG_pred": [0.5, -0.25],
+    })
+    assert oracle_lookup(frame) == {"M1A": 0.5, "T241A": -0.25}
