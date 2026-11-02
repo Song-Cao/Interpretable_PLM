@@ -1,6 +1,7 @@
 """Streaming ESM-C and dPLL scoring for the isolated IRED design search."""
 from __future__ import annotations
 
+import json
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -169,7 +170,9 @@ class StreamingEngine:
             crosscoder = CrossCoder(960, 1, int(artifact["nominal_k"]), decoder_bias=bool(artifact["decoder_bias"]))
             crosscoder.load_state_dict(artifact["state_dict"])
             crosscoder.to(self.device).eval()
-            manifest = load_config(REPO_ROOT / self.config["paths"]["step4_manifest"])
+            manifest = json.loads(
+                (REPO_ROOT / self.config["paths"]["step4_manifest"]).read_text()
+            )
             self._phi_components = (
                 adapted, crosscoder,
                 float(manifest["models"]["evo"]["normalization_scalar"]),
