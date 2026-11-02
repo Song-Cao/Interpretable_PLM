@@ -1,0 +1,11 @@
+{
+  "generation_non_adapter_hours": 0.061,
+  "generation_adapter_hours": 0.1916061947755386,
+  "failed_pre_result_launches_and_phi_retrain_hours_estimated": 0.208,
+  "archived_full_pool_attempt_hours": 2.064,
+  "valid_reduced_search_hours": 3.151898998751357,
+  "final_uncertainty_hours_estimated": 0.021,
+  "total_hours": 5.697505193526895,
+  "ceiling_hours": 6.0,
+  "note": "Exact wall time is used where manifests recorded it; short failed/rework stages are reconstructed from observed session elapsed time."
+}

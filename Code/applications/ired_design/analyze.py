@@ -97,7 +97,12 @@ def main() -> int:
     membership.to_csv(report / "consensus_all_final_candidates.csv", index=False)
     manifest = {
         "status": "complete", "models": len(ARMS), "consensus_candidates": len(consensus),
-        "known_winner_passages": int(passage["passes_through"].sum()),
+        "known_winner_passages": int(
+            passage.loc[passage["control_mutation"].isna(), "passes_through"].sum()
+        ),
+        "known_dead_end_passages": int(
+            passage.loc[passage["control_mutation"].notna(), "passes_through"].sum()
+        ),
         "known_campaign_recoveries": int(overlap["observed_in_campaign"].sum()),
         "ranking_interpretation": "proposal and known-trajectory audit, not a confident ranking",
     }

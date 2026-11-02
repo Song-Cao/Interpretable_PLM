@@ -32,6 +32,7 @@ def main() -> int:
     uncertainty = json.loads((report / "uncertainty_manifest.json").read_text())
     biophysics = json.loads((report / "biophysics_manifest.json").read_text())
     adapter = json.loads((report / "adapter_generation_manifest.json").read_text())
+    costs = json.loads((report / "gpu_cost_accounting.json").read_text())
 
     controls = pd.read_csv(report / "controls_ranks.csv")
     control_table = controls.pivot(
@@ -65,12 +66,7 @@ def main() -> int:
         "thermompnn_additive_ddg_kcal_mol"
     ].map(lambda value: f"{value:.3f}")
 
-    gpu_hours = (
-        float(search["gpu_wall_hours"])
-        + float(adapter["gpu_hours"])
-        + 0.061
-        + 0.208
-    )
+    gpu_hours = float(costs["total_hours"])
     text = f"""# SrIRED in-silico directed-evolution application
 
 > Application workstream only. No result here is evidence for a CROSSFIT gate,
@@ -100,6 +96,11 @@ the stronger external-transfer evidence when catalytic rate is the goal.
 
 Consensus is the number of model-specific final top lists containing a variant; mean
 rank breaks ties. High rank spread is disagreement, not uncertainty to average away.
+The maximum consensus is only {int(consensus['consensus_count'].max())} of 13 models,
+and every displayed candidate is supported only by the paired one-hot/AAIndex ridge
+arms. Those encodings span nearly the same linear space, so this is not independent
+cross-family agreement. Eight candidates are additionally flagged for high rank
+dispersion across all models. None should be treated as a confident lab recommendation.
 
 {_table(top_consensus)}
 
@@ -175,7 +176,7 @@ Status: complete. This is an application workstream and is not CROSSFIT evidence
 
 ## Budget
 
-Projection: {budget['projected_gpu_hours_upper_bound']:.3f} GPU-hours. Search:
+Reduced-search projection: {budget['projected_gpu_hours_upper_bound']:.3f} GPU-hours. Search:
 {search['gpu_wall_hours']:.3f}. Accounted total: {gpu_hours:.3f} GPU-hours, below the
 six-hour ceiling.
 
