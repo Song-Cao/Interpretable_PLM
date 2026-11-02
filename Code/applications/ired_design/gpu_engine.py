@@ -6,6 +6,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import torch
 
 from crossfit.adaptation import (
@@ -198,7 +199,9 @@ class StreamingEngine:
             right = torch.as_tensor(fit_layer * fit_scalar, device=self.device)
             code = crosscoder.encode(left.flatten(0, 1), right.flatten(0, 1))
             pooled = pool_codes(code.reshape(len(names), len(self.wild_type), -1).cpu().numpy(), "max")
-            predictions = scorer.predict_prepared({"phi": pooled})
+            taxonomy = pd.read_csv(REPO_ROOT / "Cache/step9/IRED/phi/w1/taxonomy.csv")
+            live = taxonomy["provisional_class"].astype(str).to_numpy() != "dead"
+            predictions = scorer.predict_prepared({"phi": pooled[:, live]})
             for column, name in enumerate(names):
                 result[name] = predictions[:, column]
         return result

@@ -37,7 +37,7 @@ class _Lookup:
 def _known(frame: pd.DataFrame) -> dict[str, float]:
     return {
         canonical(str(mutation).replace(":", "-")): float(fitness)
-        for mutation, fitness in zip(frame["mutations"], frame["y"])
+        for mutation, fitness in zip(frame["mutations"], frame["y_raw"])
     }
 
 
@@ -47,15 +47,18 @@ def _direct_maps(
 ) -> dict[str, dict[str, np.ndarray]]:
     result: dict[str, dict[str, np.ndarray]] = {}
     aaindex = load_aaindex_table(REPO_ROOT / config["paths"]["aaindex_table"])
+    augmented_names = sorted(set().union(*(
+        set(candidates.get(arm, []))
+        for arm in CLASSICAL_ARMS
+        if arm.endswith("augmented") and not arm.endswith("unaugmented")
+    )))
+    shared_density = engine.dpll(augmented_names) if augmented_names else {}
     for arm in DIRECT_ARMS:
         names = sorted(set(candidates.get(arm, [])))
         if not names:
             continue
         scorer = GenerationScorer(arm, config, device="cuda")
-        density = None
         augmented = arm.endswith("augmented") and not arm.endswith("unaugmented")
-        if augmented:
-            density = engine.dpll(names)
         arm_values = {}
         for start in range(0, len(names), chunk_size):
             batch = names[start : start + chunk_size]
@@ -67,7 +70,7 @@ def _direct_maps(
             else:
                 features = {"onehot_positional": onehot_positional(sequences)}
             if augmented:
-                features["density"] = np.asarray([density[value] for value in batch])
+                features["density"] = np.asarray([shared_density[value] for value in batch])
             predictions = scorer.predict_prepared(features)
             arm_values.update({name: predictions[:, index] for index, name in enumerate(batch)})
         result[arm] = arm_values
