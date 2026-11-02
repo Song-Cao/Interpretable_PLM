@@ -12,7 +12,10 @@ import pandas as pd
 import torch
 
 from crossfit.models import DiagonalRidgeRegressor, build_model
-from crossfit.representations import aaindex_flat, esm_mean, esm_mutpool, esm_residue_delta, onehot_flat, onehot_positional
+from crossfit.representations import (
+    aaindex_flat, esm_mean, esm_mutpool, esm_residue_delta, load_aaindex_table,
+    onehot, onehot_positional,
+)
 from crossfit.training import fit_torch_fixed_epochs, seed_everything
 from crossfit.utils import REPO_ROOT, load_config
 
@@ -85,11 +88,15 @@ def _features(config: dict, frame: pd.DataFrame, wild_type: str) -> dict[str, np
     phi_lookup = {int(row): index for index, row in enumerate(phi_rows)}
     phi_indices = np.asarray([phi_lookup[int(row)] for row in frame["variant_row"]], dtype=int)
     return {
-        "onehot": onehot_flat(sequences),
-        "aaindex": aaindex_flat(sequences, REPO_ROOT / config["paths"]["aaindex_table"]),
+        "onehot": onehot(sequences),
+        "aaindex": aaindex_flat(
+            sequences, load_aaindex_table(REPO_ROOT / config["paths"]["aaindex_table"])
+        ),
         "onehot_positional": onehot_positional(sequences),
         "esm_mean": esm_mean(residues),
-        "esm_mutpool": esm_mutpool(residues, frame["mutations"].tolist()),
+        "esm_mutpool": esm_mutpool(
+            residues, frame["mutations"].astype(str).str.replace("-", ":", regex=False).tolist()
+        ),
         "esm_residue": residues,
         "esm_residue_delta": esm_residue_delta(residues, wild_residue),
         "phi": np.asarray(np.load(root / "campaign_max.npy", mmap_mode="r")[phi_indices], dtype=np.float32),
@@ -184,4 +191,3 @@ def train_generation_models(config_path: Path, *, device: str) -> dict:
     report.parent.mkdir(parents=True, exist_ok=True)
     report.write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
-
