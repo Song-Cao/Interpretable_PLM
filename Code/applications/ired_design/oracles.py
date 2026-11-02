@@ -95,6 +95,11 @@ def main() -> int:
                 "functional_shells_touched": ";".join(
                     sorted({str(shell_lookup.get(position, "unknown")) for position in positions})
                 ),
+                "stability_consistency": (
+                    "consistent_with_improved_stability" if values and np.sum(values) < 0
+                    else "predicted_net_destabilising"
+                ),
+                "oracle_disagreement": "not_assessable_one_validated_oracle",
                 "interpretation": "additive composition of single-substitution estimates; not a direct multi-mutant prediction",
             })
         pd.DataFrame(score_rows).to_csv(report / "final_candidate_stability.csv", index=False)

@@ -1,0 +1,10 @@
+{
+  "software": "ThermoMPNN",
+  "repository": "https://github.com/Kuhlman-Lab/ThermoMPNN",
+  "revision": "370f76ec62bd929f7425e311d8df04a0d094990f",
+  "input_structure": "PDB 5OCM deposited coordinates, chain B",
+  "sequence_check": "exact match to the 290-residue campaign wild type",
+  "position_convention": "ThermoMPNN output is zero-indexed; application mutation identifiers are one-indexed",
+  "invalid_attempt_retained": "INVALID_chain_A_numbering_shift.csv lacks the campaign N-terminal residue and was not used",
+  "validated_output": "ThermoMPNN_inference_5ocm_deposited.csv"
+}
