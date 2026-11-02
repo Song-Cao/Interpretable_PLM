@@ -16,3 +16,23 @@ This log is separate from `PROJECT_LOG.md`; nothing recorded here changes CROSSF
 - [FINDING] Across all model/founder/round top lists, 45 selected rows match measured campaign variants. Per-model recovery ranges from 11 for each unaugmented classical ridge to zero for adapter, phi, ESM-mean ridge, ESM-mutpool ridge, and ESM-residue conv.
 - [FINDING] Existing Mondrian calibration is uninformative for the final 6-8-mutation designs: supported six-mutation strata contain one calibration row and yield an unbounded 90% interval; seven- and eight-mutation strata are absent. Phi and adapter have no registered Step 2 conformal calibrator.
 - [COST] Accounted application GPU wall time is 5.719 hours against the six-hour ceiling, including generation fitting, failed pre-result launches, the archived full-pool attempt, the valid reduced search, and two final uncertainty passes (the second restored uncertainty columns after correcting the trajectory manifest).
+- [FINDING] Pre-stop storage audit verified that `/workspace` is RunPod network volume
+  `8pxh42cxur`, not container overlay storage. All 65 application generation checkpoints
+  (314 MB allocated), all 208 full-lineage parquets (1,147,143 rows; 76 MB allocated),
+  every main-track `Models/step*` checkpoint, and every `Cache/step*` activation/runtime
+  artifact are under that mount. A root-filesystem search found no relevant artifact on
+  container disk. Stopping or deleting the pod is safe provided the independent network
+  volume is retained; deleting the volume is not safe without another backup.
+- [DECISION] The meeting-ready retained-round extraction follows the budget-authorized
+  300-winner/30-survivor run, so it contains 6,240 rows (13 models x 4 founders x 4 rounds
+  x 30), not the 10,400 rows implied by the superseded 500/50 plan. Each row includes its
+  parent edge, ensemble spread, explicit reason for unavailable or unbounded conformal
+  bounds, additive ThermoMPNN ddG from the validated 5,510-value non-identity matrix,
+  campaign lookup, and known-dead-end flag. FoldX, mutant geometry, SoluProt, and docking
+  remain excluded from round-top scoring.
+- [FINDING] The local meeting bundle is complete: thirteen 5,510-row single-substitution
+  scans, thirteen 300-mutation winner pools, 208 committed top-30 round tables, the controls
+  and trajectory-passage tables, the 30-candidate consensus with its full available
+  biophysical/status panel, and fourteen trajectory graphs. The pod is needed only for the
+  1,147,143-row rejected-candidate lineage or checkpoint-backed rescoring, not for existing
+  plots, tables, or the supervisor meeting.
