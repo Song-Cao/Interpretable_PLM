@@ -55,7 +55,7 @@ def campaign(config: dict) -> tuple[pd.DataFrame, str]:
     curated = pd.read_parquet(REPO_ROOT / config["paths"]["curated_variants"])
     if len(source) != 1182 or len(curated) != 1182:
         raise AssertionError("generation retraining requires all 1,182 curated variants")
-    by_mutation = source.set_index(source["mut"].astype(str).str.replace(":", "-", regex=False))
+    by_mutation = source.set_index(source["mut"].astype(str))
     frame = curated.copy()
     frame["mutant_sequence"] = [str(by_mutation.loc[str(value), "aa_seq"]) for value in frame["mutations"]]
     return frame, wild_type
