@@ -56,7 +56,7 @@ training:
     esm_residue_delta_conv: {width: 256, depth: 5, kernel_size: 3, dropout: 0.1, learning_rate: 0.0001, weight_decay: 0.001, batch_size: 16, epochs: 2}
     onehot_positional_conv: {width: 256, depth: 5, kernel_size: 7, dropout: 0.1, learning_rate: 0.0003, weight_decay: 0.0001, batch_size: 32, epochs: 22}
     phi_w1_max_all_live: {hidden_dims: [512, 256], dropout: 0.25, learning_rate: 0.0003, weight_decay: 0.1, batch_size: 32, epochs: 8}
-    adapter_linear: {rank: 16, alpha: 32, dropout: 0.05, learning_rate: 0.0001, weight_decay: 0.01, batch_size: 16, gradient_accumulation_steps: 2}
+    adapter_linear: {rank: 16, alpha: 32, dropout: 0.05, learning_rate: 0.0001, weight_decay: 0.01, batch_size: 16, gradient_accumulation_steps: 2, gradient_clip_norm: 1.0, epochs: 13}
 conformal:
   alpha: 0.1
   calibration_seed: 20261214

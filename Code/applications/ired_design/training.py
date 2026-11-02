@@ -57,7 +57,10 @@ def campaign(config: dict) -> tuple[pd.DataFrame, str]:
         raise AssertionError("generation retraining requires all 1,182 curated variants")
     by_mutation = source.set_index(source["mut"].astype(str))
     frame = curated.copy()
-    frame["mutant_sequence"] = [str(by_mutation.loc[str(value), "aa_seq"]) for value in frame["mutations"]]
+    frame["mutant_sequence"] = [
+        str(by_mutation.loc[str(value).replace(":", "-"), "aa_seq"])
+        for value in frame["mutations"]
+    ]
     return frame, wild_type
 
 
