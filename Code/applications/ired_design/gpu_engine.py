@@ -209,13 +209,30 @@ class StreamingEngine:
             self._adapter = _new_adapter(self.config, checkpoint, seed=0, device=self.device)
         return self._adapter
 
-    def score_adapter(self, mutation_sets: list[str], *, batch_size: int = 8) -> dict[str, np.ndarray]:
-        """Score search candidates with the seed-0 all-campaign adapter."""
-        model = self._load_generation_adapter()
+    def score_adapter(
+        self, mutation_sets: list[str], *, batch_size: int = 8, all_members: bool = False
+    ) -> dict[str, np.ndarray]:
+        """Score candidates with seed 0 for search or all five members for uncertainty."""
         values = sorted(set(mutation_sets))
-        predictions = predict_adapter(
-            model, [apply(self.wild_type, name) for name in values],
-            backbone_tokenize=model.backbone._tokenize, batch_size=batch_size, device=self.device,
-        )
-        return {name: np.repeat(float(value), 5) for name, value in zip(values, predictions)}
-
+        sequences = [apply(self.wild_type, name) for name in values]
+        if not all_members:
+            model = self._load_generation_adapter()
+            predictions = predict_adapter(
+                model, sequences, backbone_tokenize=model.backbone._tokenize,
+                batch_size=batch_size, device=self.device,
+            )
+            return {name: np.repeat(float(value), 5) for name, value in zip(values, predictions)}
+        members = []
+        for seed in map(int, self.config["training"]["seeds"]):
+            checkpoint = (
+                REPO_ROOT / self.config["paths"]["models"] / "adapter_linear" / f"seed_{seed}.pt"
+            )
+            model = _new_adapter(self.config, checkpoint, seed=seed, device=self.device)
+            members.append(predict_adapter(
+                model, sequences, backbone_tokenize=model.backbone._tokenize,
+                batch_size=batch_size, device=self.device,
+            ))
+            del model
+            torch.cuda.empty_cache()
+        matrix = np.stack(members)
+        return {name: matrix[:, index] for index, name in enumerate(values)}

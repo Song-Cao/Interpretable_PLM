@@ -1,0 +1,369 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "training_rows": 1182,
+  "includes_wild_type": false,
+  "model_members": 60,
+  "artifacts": [
+    {
+      "arm": "onehot_ridge_unaugmented",
+      "seed": 0,
+      "path": "Models/applications/ired_design/onehot_ridge_unaugmented/seed_0.npz",
+      "sha256": "b053cfce2e8326d3609e35c8192c988739d26e552d0c08b65b917b68c180bb75"
+    },
+    {
+      "arm": "onehot_ridge_unaugmented",
+      "seed": 1,
+      "path": "Models/applications/ired_design/onehot_ridge_unaugmented/seed_1.npz",
+      "sha256": "b053cfce2e8326d3609e35c8192c988739d26e552d0c08b65b917b68c180bb75"
+    },
+    {
+      "arm": "onehot_ridge_unaugmented",
+      "seed": 2,
+      "path": "Models/applications/ired_design/onehot_ridge_unaugmented/seed_2.npz",
+      "sha256": "b053cfce2e8326d3609e35c8192c988739d26e552d0c08b65b917b68c180bb75"
+    },
+    {
+      "arm": "onehot_ridge_unaugmented",
+      "seed": 3,
+      "path": "Models/applications/ired_design/onehot_ridge_unaugmented/seed_3.npz",
+      "sha256": "b053cfce2e8326d3609e35c8192c988739d26e552d0c08b65b917b68c180bb75"
+    },
+    {
+      "arm": "onehot_ridge_unaugmented",
+      "seed": 4,
+      "path": "Models/applications/ired_design/onehot_ridge_unaugmented/seed_4.npz",
+      "sha256": "b053cfce2e8326d3609e35c8192c988739d26e552d0c08b65b917b68c180bb75"
+    },
+    {
+      "arm": "onehot_ridge_augmented",
+      "seed": 0,
+      "path": "Models/applications/ired_design/onehot_ridge_augmented/seed_0.npz",
+      "sha256": "7e4c1ff8ec4f48178c7f28a50343f14f664f2e0662d1a6c1380099f6d6887308"
+    },
+    {
+      "arm": "onehot_ridge_augmented",
+      "seed": 1,
+      "path": "Models/applications/ired_design/onehot_ridge_augmented/seed_1.npz",
+      "sha256": "7e4c1ff8ec4f48178c7f28a50343f14f664f2e0662d1a6c1380099f6d6887308"
+    },
+    {
+      "arm": "onehot_ridge_augmented",
+      "seed": 2,
+      "path": "Models/applications/ired_design/onehot_ridge_augmented/seed_2.npz",
+      "sha256": "7e4c1ff8ec4f48178c7f28a50343f14f664f2e0662d1a6c1380099f6d6887308"
+    },
+    {
+      "arm": "onehot_ridge_augmented",
+      "seed": 3,
+      "path": "Models/applications/ired_design/onehot_ridge_augmented/seed_3.npz",
+      "sha256": "7e4c1ff8ec4f48178c7f28a50343f14f664f2e0662d1a6c1380099f6d6887308"
+    },
+    {
+      "arm": "onehot_ridge_augmented",
+      "seed": 4,
+      "path": "Models/applications/ired_design/onehot_ridge_augmented/seed_4.npz",
+      "sha256": "7e4c1ff8ec4f48178c7f28a50343f14f664f2e0662d1a6c1380099f6d6887308"
+    },
+    {
+      "arm": "aaindex_flat_ridge_unaugmented",
+      "seed": 0,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_unaugmented/seed_0.npz",
+      "sha256": "f458c937715337afa408ce9be52602231b8458ec09b2e2ce483a866800024f79"
+    },
+    {
+      "arm": "aaindex_flat_ridge_unaugmented",
+      "seed": 1,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_unaugmented/seed_1.npz",
+      "sha256": "f458c937715337afa408ce9be52602231b8458ec09b2e2ce483a866800024f79"
+    },
+    {
+      "arm": "aaindex_flat_ridge_unaugmented",
+      "seed": 2,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_unaugmented/seed_2.npz",
+      "sha256": "f458c937715337afa408ce9be52602231b8458ec09b2e2ce483a866800024f79"
+    },
+    {
+      "arm": "aaindex_flat_ridge_unaugmented",
+      "seed": 3,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_unaugmented/seed_3.npz",
+      "sha256": "f458c937715337afa408ce9be52602231b8458ec09b2e2ce483a866800024f79"
+    },
+    {
+      "arm": "aaindex_flat_ridge_unaugmented",
+      "seed": 4,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_unaugmented/seed_4.npz",
+      "sha256": "f458c937715337afa408ce9be52602231b8458ec09b2e2ce483a866800024f79"
+    },
+    {
+      "arm": "aaindex_flat_ridge_augmented",
+      "seed": 0,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_augmented/seed_0.npz",
+      "sha256": "912ad7eb39d0a7036aed221350265dee2be7cedd9f46ca224ac4aa6507548e82"
+    },
+    {
+      "arm": "aaindex_flat_ridge_augmented",
+      "seed": 1,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_augmented/seed_1.npz",
+      "sha256": "912ad7eb39d0a7036aed221350265dee2be7cedd9f46ca224ac4aa6507548e82"
+    },
+    {
+      "arm": "aaindex_flat_ridge_augmented",
+      "seed": 2,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_augmented/seed_2.npz",
+      "sha256": "912ad7eb39d0a7036aed221350265dee2be7cedd9f46ca224ac4aa6507548e82"
+    },
+    {
+      "arm": "aaindex_flat_ridge_augmented",
+      "seed": 3,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_augmented/seed_3.npz",
+      "sha256": "912ad7eb39d0a7036aed221350265dee2be7cedd9f46ca224ac4aa6507548e82"
+    },
+    {
+      "arm": "aaindex_flat_ridge_augmented",
+      "seed": 4,
+      "path": "Models/applications/ired_design/aaindex_flat_ridge_augmented/seed_4.npz",
+      "sha256": "912ad7eb39d0a7036aed221350265dee2be7cedd9f46ca224ac4aa6507548e82"
+    },
+    {
+      "arm": "esm_mean_random_forest",
+      "seed": 0,
+      "path": "Models/applications/ired_design/esm_mean_random_forest/seed_0.joblib",
+      "sha256": "2cdd2461fbbafe808d914582f57ecde271b20decc76e3b14e325900522dde5c8"
+    },
+    {
+      "arm": "esm_mean_random_forest",
+      "seed": 1,
+      "path": "Models/applications/ired_design/esm_mean_random_forest/seed_1.joblib",
+      "sha256": "0edcb7564e221a8147c7915ab0495f96c9d23820821cb8521232706e3e042906"
+    },
+    {
+      "arm": "esm_mean_random_forest",
+      "seed": 2,
+      "path": "Models/applications/ired_design/esm_mean_random_forest/seed_2.joblib",
+      "sha256": "e22649f72c9a30b52b8256faa6771dba606bc747a0c5a783bd7a15cc3e585c9f"
+    },
+    {
+      "arm": "esm_mean_random_forest",
+      "seed": 3,
+      "path": "Models/applications/ired_design/esm_mean_random_forest/seed_3.joblib",
+      "sha256": "f425a754ee23d847c66a77320226903cb2cc1a6520704df1afc1946baf0d3056"
+    },
+    {
+      "arm": "esm_mean_random_forest",
+      "seed": 4,
+      "path": "Models/applications/ired_design/esm_mean_random_forest/seed_4.joblib",
+      "sha256": "ae0199dd29af0282da88578ca89dcb48fc1123b7f2f14f564f5117b441e6b215"
+    },
+    {
+      "arm": "esm_mean_ridge",
+      "seed": 0,
+      "path": "Models/applications/ired_design/esm_mean_ridge/seed_0.pt",
+      "sha256": "afe47828abb38209688a02a791cc871cf353fd27e1f91259221bc234e393aa1b"
+    },
+    {
+      "arm": "esm_mean_ridge",
+      "seed": 1,
+      "path": "Models/applications/ired_design/esm_mean_ridge/seed_1.pt",
+      "sha256": "0f1b366df0f46ae80fd2110212154097e056633527fbf05904ded1153fa56a91"
+    },
+    {
+      "arm": "esm_mean_ridge",
+      "seed": 2,
+      "path": "Models/applications/ired_design/esm_mean_ridge/seed_2.pt",
+      "sha256": "9a9a38f474c1ee24d5c366608f09ecbf1bca3234c56dac1cc3eb49f6374d4fb3"
+    },
+    {
+      "arm": "esm_mean_ridge",
+      "seed": 3,
+      "path": "Models/applications/ired_design/esm_mean_ridge/seed_3.pt",
+      "sha256": "f90550f357d65a53ed2f3d6feb11acbfb5b29d66b2cf2406dfbcb38604708834"
+    },
+    {
+      "arm": "esm_mean_ridge",
+      "seed": 4,
+      "path": "Models/applications/ired_design/esm_mean_ridge/seed_4.pt",
+      "sha256": "50f4c6a1a1888093c278c63bcfacd5b3724dbbb2f2ac6b67c222b5d87851cf2a"
+    },
+    {
+      "arm": "esm_mean_mlp",
+      "seed": 0,
+      "path": "Models/applications/ired_design/esm_mean_mlp/seed_0.pt",
+      "sha256": "0e3343afcc3610f220cb4533d95071c9200393fc0b6148a55b85ac9208457cdc"
+    },
+    {
+      "arm": "esm_mean_mlp",
+      "seed": 1,
+      "path": "Models/applications/ired_design/esm_mean_mlp/seed_1.pt",
+      "sha256": "e0f7e4b0a07ab3a38840e88bf7df980eae682a7042c300f8ba84b3c902b9e6cb"
+    },
+    {
+      "arm": "esm_mean_mlp",
+      "seed": 2,
+      "path": "Models/applications/ired_design/esm_mean_mlp/seed_2.pt",
+      "sha256": "929b0e89647f7957567fe64c6ddf19165a2a9a8bd78340e1a45e5fd33af10dc0"
+    },
+    {
+      "arm": "esm_mean_mlp",
+      "seed": 3,
+      "path": "Models/applications/ired_design/esm_mean_mlp/seed_3.pt",
+      "sha256": "17ada289a91f919e8bea07d620d059b243b1e243870d0774deb2510add9906de"
+    },
+    {
+      "arm": "esm_mean_mlp",
+      "seed": 4,
+      "path": "Models/applications/ired_design/esm_mean_mlp/seed_4.pt",
+      "sha256": "050395b7256a554154e800a6c383436fa680a7af07576b590223b1e84a45ee36"
+    },
+    {
+      "arm": "esm_mutpool_ridge",
+      "seed": 0,
+      "path": "Models/applications/ired_design/esm_mutpool_ridge/seed_0.pt",
+      "sha256": "c42554f79eaa0e77fe91fadf7248c7514a66e19f629ea28efcd15bde9bf38d40"
+    },
+    {
+      "arm": "esm_mutpool_ridge",
+      "seed": 1,
+      "path": "Models/applications/ired_design/esm_mutpool_ridge/seed_1.pt",
+      "sha256": "d9b326e562f5a69c1a3da50f868b1a6519915055bef81ca9a64bae2f607c432b"
+    },
+    {
+      "arm": "esm_mutpool_ridge",
+      "seed": 2,
+      "path": "Models/applications/ired_design/esm_mutpool_ridge/seed_2.pt",
+      "sha256": "edd4aa7419ca8d50a6abe3430a607ca3008e1473724dbf0308720ad748f57b81"
+    },
+    {
+      "arm": "esm_mutpool_ridge",
+      "seed": 3,
+      "path": "Models/applications/ired_design/esm_mutpool_ridge/seed_3.pt",
+      "sha256": "8f3516d7b73235301e17c43475f403da248739f95e93186f4d8952966a2446d0"
+    },
+    {
+      "arm": "esm_mutpool_ridge",
+      "seed": 4,
+      "path": "Models/applications/ired_design/esm_mutpool_ridge/seed_4.pt",
+      "sha256": "4aa737c201dbe212e70f1df71d26336a58e354670cc20b5aeec7e11e5b3ce1eb"
+    },
+    {
+      "arm": "esm_residue_conv",
+      "seed": 0,
+      "path": "Models/applications/ired_design/esm_residue_conv/seed_0.pt",
+      "sha256": "b910ac68fe516608bd4376d40561f7733cfd3abaab6831811155f46e5bc53e52"
+    },
+    {
+      "arm": "esm_residue_conv",
+      "seed": 1,
+      "path": "Models/applications/ired_design/esm_residue_conv/seed_1.pt",
+      "sha256": "ba02993e3decd3113ed74926f05f1ea856f09afce81f9d1a7292387aec3296a8"
+    },
+    {
+      "arm": "esm_residue_conv",
+      "seed": 2,
+      "path": "Models/applications/ired_design/esm_residue_conv/seed_2.pt",
+      "sha256": "b4b7df78ae73fd5eebcdb2d33838c09842325dbe3a8a4e4a1ec13c98916aec2e"
+    },
+    {
+      "arm": "esm_residue_conv",
+      "seed": 3,
+      "path": "Models/applications/ired_design/esm_residue_conv/seed_3.pt",
+      "sha256": "dff3d09e9261513b264feee0a75da225c4610bb08cc836a062431d6de57c2db7"
+    },
+    {
+      "arm": "esm_residue_conv",
+      "seed": 4,
+      "path": "Models/applications/ired_design/esm_residue_conv/seed_4.pt",
+      "sha256": "af4695af74401d6bbba56cb07c3ff750aa7b31126d6bc30c9da1c8a73d69b2c4"
+    },
+    {
+      "arm": "esm_residue_delta_conv",
+      "seed": 0,
+      "path": "Models/applications/ired_design/esm_residue_delta_conv/seed_0.pt",
+      "sha256": "caa3cd3599937ef028a5cc96752bde052372a1395e16006e8b156583a1eb75a1"
+    },
+    {
+      "arm": "esm_residue_delta_conv",
+      "seed": 1,
+      "path": "Models/applications/ired_design/esm_residue_delta_conv/seed_1.pt",
+      "sha256": "6786cbb519bc7f967332da56e78f3bad134f2e848e07bc3f610c6ff91c5cd6ba"
+    },
+    {
+      "arm": "esm_residue_delta_conv",
+      "seed": 2,
+      "path": "Models/applications/ired_design/esm_residue_delta_conv/seed_2.pt",
+      "sha256": "a4799827f7a34f57b02f81298752df3c1ad894b56cf60f135f12e43acaeb49ce"
+    },
+    {
+      "arm": "esm_residue_delta_conv",
+      "seed": 3,
+      "path": "Models/applications/ired_design/esm_residue_delta_conv/seed_3.pt",
+      "sha256": "84e23e1c8db2f73075e9928b82682fe6f7d0f172dad81f519803bea27100eec3"
+    },
+    {
+      "arm": "esm_residue_delta_conv",
+      "seed": 4,
+      "path": "Models/applications/ired_design/esm_residue_delta_conv/seed_4.pt",
+      "sha256": "f8fc630880ef8c24b3f983da227504b8b7ba07ef1a3fe305755d23b41680ca81"
+    },
+    {
+      "arm": "onehot_positional_conv",
+      "seed": 0,
+      "path": "Models/applications/ired_design/onehot_positional_conv/seed_0.pt",
+      "sha256": "2a9ed71909a96dc291c67fba6c04c33954c771cc965cec4c89deff63945eee56"
+    },
+    {
+      "arm": "onehot_positional_conv",
+      "seed": 1,
+      "path": "Models/applications/ired_design/onehot_positional_conv/seed_1.pt",
+      "sha256": "d39181d2e64aa251b00681b6f882722c5716120d90e58ed5aff3a51c5c186718"
+    },
+    {
+      "arm": "onehot_positional_conv",
+      "seed": 2,
+      "path": "Models/applications/ired_design/onehot_positional_conv/seed_2.pt",
+      "sha256": "48c8b2f8734ebcdfd5e36d09e18bd1c09c8fe345c96c8487265e2f4426efab7f"
+    },
+    {
+      "arm": "onehot_positional_conv",
+      "seed": 3,
+      "path": "Models/applications/ired_design/onehot_positional_conv/seed_3.pt",
+      "sha256": "241fdfad6d237f71ae0872e88e399ecbf611bcc418bc37df3d2c598693d65ea9"
+    },
+    {
+      "arm": "onehot_positional_conv",
+      "seed": 4,
+      "path": "Models/applications/ired_design/onehot_positional_conv/seed_4.pt",
+      "sha256": "c84048deefb5149745118f687abff4b409b561f02c6c99c397b3aba8656f2f83"
+    },
+    {
+      "arm": "phi_w1_max_all_live",
+      "seed": 0,
+      "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_0.pt",
+      "sha256": "e4fb9a4cdebd6ef65246b5df5a0b4bde2cae44d959c9718d752986a47e24bd97"
+    },
+    {
+      "arm": "phi_w1_max_all_live",
+      "seed": 1,
+      "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_1.pt",
+      "sha256": "70d3b3ffc0c052b613255f9ab20e98b641df25d4c82f8fe26de70d6f4b7c604c"
+    },
+    {
+      "arm": "phi_w1_max_all_live",
+      "seed": 2,
+      "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_2.pt",
+      "sha256": "77e77d6252c8e5a565b0dbfe61eea0c9c59da544c2d2ad1d780ad73d6ff614ad"
+    },
+    {
+      "arm": "phi_w1_max_all_live",
+      "seed": 3,
+      "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_3.pt",
+      "sha256": "b07bef9adfbfb81c310b34058f9f42e8be7eb05f7f815e7457250d0e92dbb86e"
+    },
+    {
+      "arm": "phi_w1_max_all_live",
+      "seed": 4,
+      "path": "Models/applications/ired_design/phi_w1_max_all_live/seed_4.pt",
+      "sha256": "c2e7e8fe91cbaceca26cf4c9d117b341cf7aba019453730f58887e5ba819e92b"
+    }
+  ]
+}
