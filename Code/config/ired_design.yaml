@@ -64,7 +64,6 @@ conformal:
   minimum_stratum_rows: 5
 output:
   full_lineage_format: parquet
-  commit_round_top: 50
   commit_individual_top: 20
   consensus_min: 20
   consensus_max: 40

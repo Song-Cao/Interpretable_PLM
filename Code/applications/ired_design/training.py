@@ -90,6 +90,10 @@ def _features(config: dict, frame: pd.DataFrame, wild_type: str) -> dict[str, np
     phi_rows = np.load(REPO_ROOT / "Cache/step9/IRED/phi/campaign_rows.npy")
     phi_lookup = {int(row): index for index, row in enumerate(phi_rows)}
     phi_indices = np.asarray([phi_lookup[int(row)] for row in frame["variant_row"]], dtype=int)
+    taxonomy = pd.read_csv(REPO_ROOT / "Cache/step9/IRED/phi/w1/taxonomy.csv")
+    live = taxonomy["provisional_class"].astype(str).to_numpy() != "dead"
+    if live.shape != (960,):
+        raise AssertionError("w=1 taxonomy must contain exactly 960 dictionary features")
     return {
         "onehot": onehot(sequences),
         "aaindex": aaindex_flat(
@@ -102,7 +106,10 @@ def _features(config: dict, frame: pd.DataFrame, wild_type: str) -> dict[str, np
         ),
         "esm_residue": residues,
         "esm_residue_delta": esm_residue_delta(residues, wild_residue),
-        "phi": np.asarray(np.load(root / "campaign_max.npy", mmap_mode="r")[phi_indices], dtype=np.float32),
+        "phi": np.asarray(
+            np.load(root / "campaign_max.npy", mmap_mode="r")[phi_indices][:, live],
+            dtype=np.float32,
+        ),
         "density": _density(config, sequences),
     }
 
@@ -131,7 +138,9 @@ def _save_torch(fit: Any, path: Path, *, architecture: str, parameters: dict, in
     }, path)
 
 
-def train_generation_models(config_path: Path, *, device: str) -> dict:
+def train_generation_models(
+    config_path: Path, *, device: str, only_arms: set[str] | None = None
+) -> dict:
     """Fit every non-adapter generation model and return a hashed manifest."""
     config = load_config(config_path)
     step2 = load_config(REPO_ROOT / config["training"]["objective_config"])
@@ -142,9 +151,15 @@ def train_generation_models(config_path: Path, *, device: str) -> dict:
     selected = config["training"]["selected"]
     destination = REPO_ROOT / config["paths"]["models"]
     destination.mkdir(parents=True, exist_ok=True)
+    report = REPO_ROOT / config["paths"]["reports"] / "generation_model_manifest.json"
     artifacts: list[dict] = []
+    if only_arms and report.exists():
+        previous = json.loads(report.read_text())
+        artifacts = [row for row in previous.get("artifacts", []) if row["arm"] not in only_arms]
 
     for arm in CLASSICAL_ARMS:
+        if only_arms is not None and arm not in only_arms:
+            continue
         representation = "onehot" if arm.startswith("onehot") else "aaindex"
         augmented = arm.endswith("augmented") and not arm.endswith("unaugmented")
         settings = selected[arm]
@@ -160,7 +175,7 @@ def train_generation_models(config_path: Path, *, device: str) -> dict:
 
     rf_arm = "esm_mean_random_forest"
     rf_settings = dict(selected[rf_arm])
-    for seed in map(int, config["training"]["seeds"]):
+    for seed in map(int, config["training"]["seeds"] if only_arms is None or rf_arm in only_arms else []):
         path = destination / rf_arm / f"seed_{seed}.joblib"
         model = build_model("random_forest", features["esm_mean"].shape[1:], rf_settings | {"random_state": seed, "n_jobs": -1})
         model.fit(features["esm_mean"], target)
@@ -169,6 +184,8 @@ def train_generation_models(config_path: Path, *, device: str) -> dict:
         artifacts.append({"arm": rf_arm, "seed": seed, "path": str(path.relative_to(REPO_ROOT)), "sha256": sha256(path)})
 
     for arm, (architecture, feature_name) in TORCH_ARMS.items():
+        if only_arms is not None and arm not in only_arms:
+            continue
         settings = dict(selected[arm])
         epochs = int(settings.pop("epochs"))
         parameters = settings
@@ -190,7 +207,6 @@ def train_generation_models(config_path: Path, *, device: str) -> dict:
         "status": "complete", "dataset": "IRED", "training_rows": len(frame),
         "includes_wild_type": False, "model_members": len(artifacts), "artifacts": artifacts,
     }
-    report = REPO_ROOT / config["paths"]["reports"] / "generation_model_manifest.json"
     report.parent.mkdir(parents=True, exist_ok=True)
     report.write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
