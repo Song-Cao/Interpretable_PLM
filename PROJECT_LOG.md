@@ -1227,3 +1227,24 @@ the prediction track needs 0 or 3 crosscoders.
 - `[COST]` Five-seed residue-profile extraction and the Step 8 semantic statistics used 0.01748
   A100 wall-hours. Approximate cumulative documented IRED occupancy is 14.32 A100 wall-hours,
   including retained superseded and diagnostic runs. No patching or oracle computation ran.
+
+### IRED emergent-resolution audit and approved causal scope (2026-11-08)
+
+- `[DECISION]` The zero-emergent result is not interpreted as an absence until the empirical-null
+  resolution is adequate. The registered dead/norm-floor filter leaves about 603 eligible
+  features per `w=1` null run, so 20 total runs would provide only about 12,000 observations and
+  could not reach the first 960-test BH cutoff (`5.2083e-5`). The replication set is therefore
+  extended to 32 total matched-drift null seeds, expected to exceed 19,000 eligible observations.
+  This changes replication only: q=0.05, the latent-scaling conjunction, and every taxonomy rule
+  remain fixed.
+- `[DECISION]` Latent error and reconstruction ratios retain pooled empirical calibration.
+  Reconstruction ratios can be negative or exceed one, so fitting a Beta to them would violate
+  its support. A generalized-Pareto fit below the pooled empirical fifth percentile is added only
+  as the requested tail-fit diagnostic and sensitivity check. Bounded Delta, cosine, and
+  frequency statistics retain pooled-Beta calibration.
+- `[ADJUST]` The approved causal panel supersedes the earlier planned-only 64-variant budget.
+  It fixes the target at the 116 rotated primary-dictionary features above both decoder medians
+  and uses 256 pg_kfold fold-0 training-pool variants stratified by clipped mutation count and
+  fitness quartile: 29,696 candidate and 768 no-op/dead/random control partial forward passes,
+  30,464 total. Patches must occur inside `E_fit` with the original fit reconstruction residual
+  spliced back, and candidate effects may be computed only after all three hygiene controls pass.

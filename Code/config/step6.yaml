@@ -25,6 +25,14 @@ calibration:
   conservative_across_null_runs: false
   leave_one_seed_out: true
   shuffled_crosscoder_seeds: [20261311, 20261312, 20261313]
+  resolution_audit:
+    requested_total_null_seeds: 20
+    total_null_seeds: 32
+    seeds: [20261311, 20261312, 20261313, 20261314, 20261315, 20261316, 20261317, 20261318, 20261319, 20261320, 20261321, 20261322, 20261323, 20261324, 20261325, 20261326, 20261327, 20261328, 20261329, 20261330, 20261331, 20261332, 20261333, 20261334, 20261335, 20261336, 20261337, 20261338, 20261339, 20261340, 20261341, 20261342]
+    width_multiplier: 1
+    empirical_first_bh_cutoff: 5.208333333333333e-5
+    tail_fraction: 0.05
+    reasoning: "The registered dead/norm-floor filter leaves about 603 eligible features per null, so 20 runs cannot reach the first 960-test BH cutoff. Thirty-two total runs are the minimum expected to exceed 19,000 eligible null observations."
   latent_scaling_rule: both_ratios_must_pass
   latent_scaling_tail: lower
   latent_scaling_reasoning: "A candidate must pass both residual-error and reconstruction tests against the single pooled drift-matched null. Null-run leave-one-out variation is uncertainty, not an additional rejection rule."
@@ -60,3 +68,4 @@ paths:
   drift_matched_crosscoder_checkpoints: Models/step6/IRED/drift_matched_rotation/crosscoders
   drift_matched_report_dir: Reports/step6/drift_matched_rotation
   v17_pooled_report_dir: Reports/step6/v17_pooled_null
+  resolution_audit_report_dir: Reports/step6/v17_resolution_audit

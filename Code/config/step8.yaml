@@ -51,8 +51,13 @@ semantic_test:
 causal_budget:
   decoder_norm_median_fraction: 1.0
   variant_subsample_seed: 20261703
-  proposed_variant_count: 64
+  proposed_variant_count: 256
   controls: [no_op, dead_feature, random_live_feature]
+  random_feature_seed: 20261704
+  no_op_absolute_tolerance: 1.0e-5
+  dead_feature_absolute_tolerance: 1.0e-5
+  random_feature_standardized_mean_absolute_tolerance: 0.05
+  standardization: baseline_prediction_sd_on_registered_variant_sample
 paths:
   reports: Reports/step8
   delta_z_cache: Cache/step8/IRED/delta_z

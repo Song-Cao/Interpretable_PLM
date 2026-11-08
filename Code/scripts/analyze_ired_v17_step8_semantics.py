@@ -302,6 +302,7 @@ def main() -> int:
     for index, name in enumerate(names):
         row = {
             "track": name, "target_class": target, "comparison_class": comparison,
+            "position_count": int(np.sum(claim_tracks[name])),
             "mean_standardized_effect": observed[index], "bootstrap_ci_lower": lower[index],
             "bootstrap_ci_upper": upper[index], "permutation_p_value": pvalues[index],
             "fdr_q_value": adjusted[index], "fdr_significant_q05": adjusted[index] <= 0.05,
@@ -320,6 +321,7 @@ def main() -> int:
     )
     pd.DataFrame([{
         "track": "evolutionary_peak_residue", "role": "positive_control_only",
+        "position_count": int(np.sum(control_tracks["evolutionary_peak_residue"])),
         "target_class": target, "comparison_class": comparison,
         "mean_standardized_effect": control_observed[0], "permutation_p_value": control_p[0],
         **{f"effect_seed_{seed}": control_seed[index, 0] for index, seed in enumerate(seeds)},

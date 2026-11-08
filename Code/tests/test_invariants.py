@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
+import pytest
 import yaml
 
 from crossfit.utils import REPO_ROOT
@@ -93,6 +94,10 @@ def test_v17_is_the_only_plan_and_dictionary_uses_width_terminology():
     assert step6["calibration"]["beta_fit_per_null_run"] is False
     assert step6["calibration"]["conservative_across_null_runs"] is False
     assert step6["calibration"]["pooled_null_rule"] == "concatenate_eligible_samples"
+    resolution = step6["calibration"]["resolution_audit"]
+    assert resolution["total_null_seeds"] == len(resolution["seeds"]) == 32
+    assert resolution["seeds"][:3] == step6["calibration"]["shuffled_crosscoder_seeds"]
+    assert resolution["empirical_first_bh_cutoff"] == pytest.approx(0.05 / 960)
     assert step7["training"]["seeds"] == [
         20261311, 20261312, 20261313, 20261314, 20261315,
     ]
@@ -100,6 +105,15 @@ def test_v17_is_the_only_plan_and_dictionary_uses_width_terminology():
     assert not any("alpha" in key.lower() for config in (step6, step7) for key in _keys(config))
     source = (REPO_ROOT / "Code/crossfit/crosscoder.py").read_text().lower()
     assert "l1" not in source
+
+
+def test_ired_causal_patch_budget_is_the_approved_scope():
+    step8 = yaml.safe_load((REPO_ROOT / "Code/config/step8.yaml").read_text())
+    budget = step8["causal_budget"]
+    assert budget["proposed_variant_count"] == 256
+    assert budget["decoder_norm_median_fraction"] == 1.0
+    assert budget["controls"] == ["no_op", "dead_feature", "random_live_feature"]
+    assert budget["standardization"] == "baseline_prediction_sd_on_registered_variant_sample"
 
 
 def test_scheduler_metric_is_validation_spearman_everywhere():
