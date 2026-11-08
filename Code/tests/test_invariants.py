@@ -74,9 +74,9 @@ def test_registered_excluded_architectures_stay_absent():
     assert "attention_pooling" not in text
 
 
-def test_v16_is_the_only_plan_and_dictionary_uses_width_terminology():
+def test_v17_is_the_only_plan_and_dictionary_uses_width_terminology():
     plans = sorted(path.name for path in REPO_ROOT.glob("CROSSFIT_Implementation_Plan_v*.docx"))
-    assert plans == ["CROSSFIT_Implementation_Plan_v16.docx"]
+    assert plans == ["CROSSFIT_Implementation_Plan_v17.docx"]
     step4 = yaml.safe_load((REPO_ROOT / "Code/config/step4.yaml").read_text())
     assert step4["width_multipliers"] == [1, 2, 4, 8]
     assert not any("alpha" in key.lower() for key in _keys(step4))
@@ -88,6 +88,13 @@ def test_v16_is_the_only_plan_and_dictionary_uses_width_terminology():
     assert step6["calibration"]["drift_matched"]["threshold_scope"] == [
         "delta", "latent_error", "latent_reconstruction", "decoder_cosine",
         "activation_frequency_change",
+    ]
+    assert step6["calibration"]["pool_null_runs"] is True
+    assert step6["calibration"]["beta_fit_per_null_run"] is False
+    assert step6["calibration"]["conservative_across_null_runs"] is False
+    assert step6["calibration"]["pooled_null_rule"] == "concatenate_eligible_samples"
+    assert step7["training"]["seeds"] == [
+        20261311, 20261312, 20261313, 20261314, 20261315,
     ]
     assert step7["width_multipliers"] == [1, 2, 4, 8]
     assert not any("alpha" in key.lower() for config in (step6, step7) for key in _keys(config))

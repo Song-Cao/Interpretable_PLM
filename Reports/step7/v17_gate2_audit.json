@@ -1,0 +1,10 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "verdict": "sparse_competitive",
+  "routing_interpretation": "The interval against the validation-selected dense reference routed IRED into Step 9.",
+  "substantive_claim": "Sparse features are competitive with dense probes and classical encodings; no improvement claim.",
+  "dense_discrepancy": "The nominally similar arms use different ESM-C layers, final-fit sample counts, regularization, and epoch counts. The 0.032 test gap is therefore not evidence of a duplicate-arm implementation error.",
+  "bootstrap_samples": 10000,
+  "bootstrap_seed": 20261504
+}

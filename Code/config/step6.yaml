@@ -1,4 +1,4 @@
-# CROSSFIT v16 Step 6 — IRED self-pair and matched-drift null calibration.
+# CROSSFIT v17 Step 6 — IRED self-pair and matched-drift null calibration.
 dataset: IRED
 dimension: 960
 width_multiplier: 1
@@ -18,15 +18,16 @@ calibration:
   fdr_q: 0.05
   exclude_dead_before_fit: true
   decoder_norm_floor_fraction: 0.1
-  beta_fit_per_null_run: true
-  pool_null_runs: false
+  beta_fit_per_null_run: false
+  pool_null_runs: true
+  pooled_null_rule: concatenate_eligible_samples
   tails: [lower, upper]
-  conservative_across_null_runs: true
+  conservative_across_null_runs: false
   leave_one_seed_out: true
   shuffled_crosscoder_seeds: [20261311, 20261312, 20261313]
   latent_scaling_rule: both_ratios_must_pass
   latent_scaling_tail: lower
-  latent_scaling_reasoning: "A candidate must show significantly less recoverable evo information than each shuffled null in both residual-error and reconstruction tests."
+  latent_scaling_reasoning: "A candidate must pass both residual-error and reconstruction tests against the single pooled drift-matched null. Null-run leave-one-out variation is uncertainty, not an additional rejection rule."
   rotation_tail: lower
   activation_frequency_tail: two_sided_absolute
   drift_matched:
@@ -42,7 +43,7 @@ calibration:
     threshold_scope: [delta, latent_error, latent_reconstruction, decoder_cosine, activation_frequency_change]
     headline_rule: fewer_shifted_features
     shifted_classes: [emergent_candidate, evolution_only, rotated, re_weighted]
-    reasoning: "v16 requires the shuffled-label adapter to match real activation drift unconditionally; every fitted threshold uses this null, and the more conservative taxonomy is headline when matched and step-matched nulls disagree."
+    reasoning: "v17 requires the shuffled-label adapter to match real activation drift unconditionally. Every threshold uses one pooled matched-drift null; adding null seeds improves estimation without silently tightening alpha."
 paths:
   cache: Cache/step4/IRED
   step4_cache: Cache/step4/IRED
@@ -58,3 +59,4 @@ paths:
   drift_matched_cache: Cache/step6/IRED/drift_matched_rotation
   drift_matched_crosscoder_checkpoints: Models/step6/IRED/drift_matched_rotation/crosscoders
   drift_matched_report_dir: Reports/step6/drift_matched_rotation
+  v17_pooled_report_dir: Reports/step6/v17_pooled_null

@@ -1,4 +1,4 @@
-# CROSSFIT v16 Step 8 — IRED annotation and causal-validation configuration.
+# CROSSFIT v17 Step 8 — IRED annotation and causal-validation configuration.
 dataset: IRED
 analysis_layer: 26
 dimension: 960
@@ -37,6 +37,22 @@ delta_z:
   batch_semantics: per_sequence
   output_dtype: float32
   reasoning: "Encode each 290-position sequence independently so BatchTopK competition is fixed within sequence before subtracting the independently encoded wild type."
+semantic_test:
+  fdr_q: 0.05
+  permutations: 10000
+  permutation_seed: 20261701
+  bootstrap_samples: 5000
+  bootstrap_seed: 20261702
+  top_activating_positions_per_feature: 1
+  comparison_class: conserved
+  target_selection_rule: "Most prevalent shifted class populated in all five real crosscoder seeds at w=1; break ties by the smaller across-seed coefficient of variation."
+  shifted_classes: [emergent_candidate, evolution_only, rotated, re_weighted]
+  positive_control_track: evolutionary_peak_residue
+causal_budget:
+  decoder_norm_median_fraction: 1.0
+  variant_subsample_seed: 20261703
+  proposed_variant_count: 64
+  controls: [no_op, dead_feature, random_live_feature]
 paths:
   reports: Reports/step8
   delta_z_cache: Cache/step8/IRED/delta_z

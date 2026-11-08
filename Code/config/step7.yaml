@@ -1,4 +1,4 @@
-# CROSSFIT v16 Step 7 — IRED taxonomy and effective-rank width diagnostics.
+# CROSSFIT v17 Step 7 — IRED taxonomy and effective-rank width diagnostics.
 dataset: IRED
 dimension: 960
 width_multipliers: [1, 2, 4, 8]
@@ -7,7 +7,7 @@ batch_topk:
   k: 32
   reasoning: "Published BatchTopK operating point; 3.3% of d, fixed before outcomes so width alone changes."
 training:
-  seeds: [20261311, 20261312, 20261313]
+  seeds: [20261311, 20261312, 20261313, 20261314, 20261315]
   epochs: 20
   batch_size: 1024
   evaluation_batch_size: 2048

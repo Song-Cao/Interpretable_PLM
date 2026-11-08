@@ -1,6 +1,6 @@
 # CROSSFIT repository rules
 
-`CROSSFIT_Implementation_Plan_v16.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
+`CROSSFIT_Implementation_Plan_v17.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
 
 - Run one independent pipeline per dataset and report every result per dataset. Never pool fitness values, training data, or metrics across datasets.
 - Use `pg_kfold` as the only model-selection split. Low-N, unseen-position, mutation-count, round-held-out, and external data are evaluation conditions only.
@@ -10,6 +10,11 @@
 - Normalize activations before crosscoding with one fixed scalar per dataset, model, and layer so that the training-pool mean norm is `sqrt(d)`. Freeze that scalar and report the raw adapted/base gain ratio.
 - Interpret crosscoder latents per residue. Pooling is allowed only in downstream predictors.
 - Fit every threshold from its own shuffled-label null for the same dataset and backbone.
+- Pool eligible drift-matched null samples across runs into one null per dataset, width,
+  and statistic. Treat leave-one-seed-out threshold variation as uncertainty; never make
+  significance stricter merely by adding null seeds.
+- Answer strange observations with more replicates and a reported spread, never with a
+  dataset-specific rule change.
 - Compare baselines with the same backbone, data, and splits. Report per-dataset results; never pool them.
 - Treat a failed gate as a result. Do not change an architecture, statistic, threshold, or grid to make a gate pass.
 - Keep all thresholds, seeds, paths, and hyperparameters in the step YAML. Put library logic in `Code/crossfit/`, entry points in `Code/scripts/`, tests in `Code/tests/`, and result artifacts in `Reports/stepN/`.

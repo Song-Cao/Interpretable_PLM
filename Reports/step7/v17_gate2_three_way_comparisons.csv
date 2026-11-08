@@ -1,0 +1,7 @@
+condition,sparse_arm,reference_arm,reference_role,sparse_spearman,reference_spearman,sparse_minus_reference,paired_ci_lower,paired_ci_upper,variants
+pg_kfold_test,phi_w1_max_all_live,dense_fit_mean,validation_selected_dense,0.5495072855376417,0.5006885760470586,0.04881870949058309,0.001528887223910019,0.09564037121616129,228
+pg_kfold_test,phi_w1_max_all_live,dense_evo_mean,strongest_dense_on_test,0.5495072855376417,0.554287054976893,-0.004779769439251291,-0.0762319952946126,0.06314087635463142,228
+plate,phi_w1_max_all_live,onehot_ridge_unaugmented,classical_encoding,0.50020964360587,0.5637125976748617,-0.06350295406899176,-0.23122130901414456,0.09603931552090386,54
+plate,phi_w1_max_all_live,onehot_ridge_augmented,classical_encoding,0.50020964360587,0.530017152658662,-0.02980750905279206,-0.2402966304998202,0.17579720429017262,54
+plate,phi_w1_max_all_live,aaindex_flat_ridge_unaugmented,classical_encoding,0.50020964360587,0.563407661520869,-0.06319801791499902,-0.22983878603824187,0.09630399668030847,54
+plate,phi_w1_max_all_live,aaindex_flat_ridge_augmented,classical_encoding,0.50020964360587,0.529559748427673,-0.029350104821803003,-0.23659535102487017,0.17264579130074134,54

@@ -39,7 +39,7 @@ from crossfit.esmc import extract_residue_layer, load_esmc
 from crossfit.search import training_pool_folds
 from crossfit.taxonomy import (
     FeatureStatistics,
-    calibrate_beta_tail,
+    calibrate_pooled_beta_tail,
     feature_statistics,
     null_eligible,
     provisional_classes,
@@ -459,7 +459,7 @@ def main() -> int:
             fit_clear = stats_real.fit_decoder_norm >= floor * np.median(stats_real.fit_decoder_norm)
             shared = live & evo_clear & fit_clear
             flags = np.zeros(len(frame_real), dtype=bool)
-            passed, cutoff_scaled, reports = calibrate_beta_tail(
+            passed, cutoff_scaled, reports = calibrate_pooled_beta_tail(
                 (stats_real.decoder_cosine[shared] + 1.0) / 2.0,
                 matched_cosines, tail="lower", q=q,
             )

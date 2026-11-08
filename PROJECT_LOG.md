@@ -1155,3 +1155,31 @@ the prediction track needs 0 or 3 crosscoders.
   and checkpoints used approximately 0.016 L40 wall-hours. No model or crosscoder was retrained.
 - `[FINDING]` v16 recalibration verification passes all 243 tests in 106.23 seconds. The two
   warnings are the registered constant-input rank-correlation checks.
+
+### v17 pooled-null recalibration (2026-11-08)
+
+- `[ADJUST]` `CROSSFIT_Implementation_Plan_v17.docx` replaces v16, which is deleted. The
+  per-null-run conjunction used in v16 is superseded before inspecting the v17 taxonomy. It
+  made the effective error rate depend on the arbitrary number of null seeds. Every statistic
+  now uses one distribution fitted to eligible samples pooled across drift-matched null runs,
+  followed by tail-specific BH at q=0.05. Leave-one-null-seed-out thresholds and QQ plots are
+  uncertainty diagnostics, not additional gates. The latent-scaling ratios remain conjunctive.
+- `[DECISION]` Five independently initialized real-pair crosscoders are the replication set at
+  each IRED working width. Unexpected results are answered by their mean and spread, not by a
+  dataset-specific calibration-rule change. The full v16 proportions remain above as an
+  explicitly superseded audit record rather than an alternative result to prefer.
+- `[FINDING]` The IRED expressivity gap is `R2(L4)-R2(L0)=0.152725`. The additive readout used
+  for attribution in Steps 8 and 11 is materially weaker than the nonlinear ceiling, so its
+  attributions describe that weaker model. Separately, the IRED ladder indicates that fitness
+  requires nonlinear sparse-feature logic.
+- `[FINDING]` The validation-selected sparse arm uses max residue pooling, while the plan's
+  displayed notation `phi_j = sum_i z_ij` describes sum pooling. Downstream computation is not
+  affected, but reports and notation must name the pooling operator explicitly.
+- `[DECISION]` Gate 2 is a routing gate. The interval against the validation-selected dense arm
+  justified running Step 9; substantive reporting must show that comparison beside the strongest
+  dense test arm and the classical plate-set arms. The permitted conclusion is competitive with
+  dense probes and classical encodings, never improved over them.
+- `[PREDICTION]` Before GB1 taxonomy is run: if rotation without emergence replicates on GB1,
+  treat it as a general property of fitness adaptation under LoRA. If GB1 has emergent features,
+  interpret IRED's null result in light of its data volume. This comparison is pre-committed and
+  costs no additional run once GB1 is analyzed.

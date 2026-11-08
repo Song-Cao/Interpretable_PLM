@@ -217,6 +217,116 @@ def calibrate_empirical_tail(
     return passed, cutoff, reports
 
 
+def _tail_cutoff(real: np.ndarray, rejected: np.ndarray, tail: str) -> float:
+    """Return the observed-statistic boundary implied by one BH decision."""
+    if not rejected.any():
+        return -np.inf if tail == "lower" else np.inf
+    if tail == "lower":
+        return float(np.max(real[rejected]))
+    if tail == "upper":
+        return float(np.min(real[rejected]))
+    raise ValueError(f"unknown tail: {tail}")
+
+
+def _pooled_finite(null_runs: list[np.ndarray]) -> tuple[np.ndarray, list[int]]:
+    """Concatenate finite eligible samples while retaining per-run counts."""
+    finite_runs = []
+    counts = []
+    for run in null_runs:
+        values = np.asarray(run, dtype=float)
+        values = values[np.isfinite(values)]
+        finite_runs.append(values)
+        counts.append(int(len(values)))
+    if not finite_runs or not sum(counts):
+        raise ValueError("pooled calibration requires finite null values")
+    return np.concatenate(finite_runs), counts
+
+
+def calibrate_pooled_beta_tail(
+    real: np.ndarray,
+    null_runs: list[np.ndarray],
+    *,
+    tail: str,
+    q: float,
+) -> tuple[np.ndarray, float, dict[str, object]]:
+    """Fit one Beta null to pooled runs and report leave-one-run-out uncertainty."""
+    observed = np.asarray(real, dtype=float)
+
+    def fit(runs: list[np.ndarray]) -> tuple[np.ndarray, float, tuple[float, float], int]:
+        pooled, _ = _pooled_finite(runs)
+        parameters = fit_beta_null(pooled)
+        rejected = benjamini_hochberg(beta_pvalues(observed, parameters, tail), q)
+        return rejected, _tail_cutoff(observed, rejected, tail), parameters, len(pooled)
+
+    rejected, cutoff, parameters, pooled_count = fit(null_runs)
+    leave_one_out = []
+    if len(null_runs) > 1:
+        for omitted in range(len(null_runs)):
+            subset = [run for index, run in enumerate(null_runs) if index != omitted]
+            subset_rejected, subset_cutoff, subset_parameters, subset_count = fit(subset)
+            leave_one_out.append({
+                "omitted_null_run": omitted,
+                "cutoff": float(subset_cutoff),
+                "rejections": int(subset_rejected.sum()),
+                "beta_a": float(subset_parameters[0]),
+                "beta_b": float(subset_parameters[1]),
+                "null_features": int(subset_count),
+            })
+    _, run_counts = _pooled_finite(null_runs)
+    report: dict[str, object] = {
+        "calibration_rule": "pooled_null_samples",
+        "tail": tail,
+        "beta_a": float(parameters[0]),
+        "beta_b": float(parameters[1]),
+        "cutoff": float(cutoff),
+        "rejections": int(rejected.sum()),
+        "null_features": int(pooled_count),
+        "null_features_by_run": run_counts,
+        "leave_one_null_run_out": leave_one_out,
+    }
+    return rejected, float(cutoff), report
+
+
+def calibrate_pooled_empirical_tail(
+    real: np.ndarray,
+    null_runs: list[np.ndarray],
+    *,
+    tail: str,
+    q: float,
+) -> tuple[np.ndarray, float, dict[str, object]]:
+    """Use one pooled empirical null and report leave-one-run-out uncertainty."""
+    observed = np.asarray(real, dtype=float)
+
+    def fit(runs: list[np.ndarray]) -> tuple[np.ndarray, float, int]:
+        pooled, _ = _pooled_finite(runs)
+        rejected = benjamini_hochberg(empirical_pvalues(observed, pooled, tail), q)
+        return rejected, _tail_cutoff(observed, rejected, tail), len(pooled)
+
+    rejected, cutoff, pooled_count = fit(null_runs)
+    leave_one_out = []
+    if len(null_runs) > 1:
+        for omitted in range(len(null_runs)):
+            subset = [run for index, run in enumerate(null_runs) if index != omitted]
+            subset_rejected, subset_cutoff, subset_count = fit(subset)
+            leave_one_out.append({
+                "omitted_null_run": omitted,
+                "cutoff": float(subset_cutoff),
+                "rejections": int(subset_rejected.sum()),
+                "null_features": int(subset_count),
+            })
+    _, run_counts = _pooled_finite(null_runs)
+    report: dict[str, object] = {
+        "calibration_rule": "pooled_null_samples",
+        "tail": tail,
+        "cutoff": float(cutoff),
+        "rejections": int(rejected.sum()),
+        "null_features": int(pooled_count),
+        "null_features_by_run": run_counts,
+        "leave_one_null_run_out": leave_one_out,
+    }
+    return rejected, float(cutoff), report
+
+
 def provisional_classes(
     statistics: FeatureStatistics,
     *,

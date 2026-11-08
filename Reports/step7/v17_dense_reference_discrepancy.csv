@@ -1,0 +1,9 @@
+property,step2_esm_mean_ridge,step5_dense_evo_mean,explains_nonidentity
+ESM-C layer,final layer,analysis layer 26,True
+final model fit rows,761,895,True
+held-out conformal calibration rows,134,0,True
+selected learning rate,0.0003,0.0003,False
+selected weight decay,0.0001,0.01,True
+selected epochs,16,21,True
+validation Spearman,0.607648,0.607708,False
+pg_kfold test Spearman,0.522426,0.554287,False
