@@ -1,0 +1,45 @@
+{
+  "status": "complete",
+  "plan": "v17",
+  "dataset": "IRED",
+  "null": "pooled_drift_matched_shuffled_label",
+  "calibration_rule": "one pooled eligible null per width and statistic",
+  "widths": [
+    1,
+    2
+  ],
+  "real_seeds": [
+    20261311,
+    20261312,
+    20261313,
+    20261314,
+    20261315
+  ],
+  "null_seeds": [
+    20261311,
+    20261312,
+    20261313
+  ],
+  "real_checkpoint_sha256": {
+    "Models/step7/IRED/w1_seed20261311_nobias.pt": "95071782c1fda0a4dc40bb489f4fdaba144a21ce4eb2fa4e3a9efa8b01935f17",
+    "Models/step7/IRED/w1_seed20261312_nobias.pt": "45dad35db7d719729edb314902539ad1efdb1bd87fe8a9fac74fd0b56d728732",
+    "Models/step7/IRED/w1_seed20261313_nobias.pt": "74340fbe6c5de2d5def9af656dcf740ec224610665fa6e34a3c46d69aa4721e8",
+    "Models/step7/IRED/w1_seed20261314_nobias.pt": "4b030e71d1431288010bbe51d29c7d2bce7c8f6b793c575e54078e3a886de0ac",
+    "Models/step7/IRED/w1_seed20261315_nobias.pt": "00016ac188a42616416b45d54438c16c88545339b917a512a6c3eaf3fe40d0b1",
+    "Models/step7/IRED/w2_seed20261311_nobias.pt": "72da09e411f68976d7ee8c932256f5adf34b63d46e54a28e170abc83d1f39edd",
+    "Models/step7/IRED/w2_seed20261312_nobias.pt": "a10a90fd26bef4aeb58dcf122b1f45515368974ee880008628ce299ac8e55087",
+    "Models/step7/IRED/w2_seed20261313_nobias.pt": "076a3ffb1bacdb80026f753df63ff0ee72cc9f1d44220fdf96326bb522f26d10",
+    "Models/step7/IRED/w2_seed20261314_nobias.pt": "36f099fdeae700ff510c608775a174f9b2ad736a7c7f1b7d1b24b20f753bbd1d",
+    "Models/step7/IRED/w2_seed20261315_nobias.pt": "73e388e70ee4c44872b8ec8c8a88f51a4ca6c7a42a01f16ca1f875f514544990"
+  },
+  "null_checkpoint_sha256": {
+    "Models/step6/IRED/drift_matched_rotation/crosscoders/w1_seed20261311_nobias.pt": "4adb1b25ba27c96697d8695580f61c0043b2bba4c40d4f96cdb1a07fdc90a609",
+    "Models/step6/IRED/drift_matched_rotation/crosscoders/w1_seed20261312_nobias.pt": "be31366de1bab6552a982afaa697257f3fd6bdeeab8a28ad47ffb654e0727690",
+    "Models/step6/IRED/drift_matched_rotation/crosscoders/w1_seed20261313_nobias.pt": "325b0a6afada3694ee54238a8461219567a4998391e5f9d3f1b913c86aa5966d",
+    "Models/step6/IRED/drift_matched_rotation/crosscoders/w2_seed20261311_nobias.pt": "6488031522d406fe03d10a678b0e31e3fba0138d59b2a316aa88e1e65535f97a",
+    "Models/step6/IRED/drift_matched_rotation/crosscoders/w2_seed20261312_nobias.pt": "ae2488c3d1d19a4612c6daa16a37b9ab594a056562f1785da018d1016dae9f62",
+    "Models/step6/IRED/drift_matched_rotation/crosscoders/w2_seed20261313_nobias.pt": "0e9ebe2d8ac5c8744ea16f98a6115118a5dde459ef49505c415308cf5da7c6cf"
+  },
+  "gpu_wall_hours": 0.10148061558804733,
+  "partial_results_reported": false
+}

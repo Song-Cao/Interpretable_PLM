@@ -1,0 +1,18 @@
+{
+  "status": "complete",
+  "plan": "v17",
+  "dataset": "IRED",
+  "widths": [
+    1,
+    2
+  ],
+  "seeds": [
+    20261311,
+    20261312,
+    20261313,
+    20261314,
+    20261315
+  ],
+  "gpu_wall_hours": 0.02939847399668199,
+  "partial_results_reported": false
+}

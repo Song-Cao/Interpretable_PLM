@@ -1183,3 +1183,17 @@ the prediction track needs 0 or 3 crosscoders.
   treat it as a general property of fitness adaptation under LoRA. If GB1 has emergent features,
   interpret IRED's null result in light of its data volume. This comparison is pre-committed and
   costs no additional run once GB1 is analyzed.
+- `[ADJUST]` The complete v17 five-seed taxonomy supersedes the v16 three-seed, runwise-conjunction
+  proportions. At `w=1`, mean (SD) proportions are dead 32.94% (1.41%), emergent candidate 0%,
+  evolution-only 0.02% (0.05%), rotated 25.23% (1.55%), re-weighted 0.04% (0.06%), and conserved
+  41.77% (1.18%). At `w=2`, they are 50.83% (1.33%), 0%, 0.13% (0.06%), 11.36% (0.75%), 0.05%
+  (0%), and 37.63% (0.96%), respectively. These are the IRED results under the corrected rule;
+  the absence of emergent candidates is retained rather than interpreted away.
+- `[FINDING]` Rotation is the only shifted class populated in all five `w=1` dictionaries and is
+  therefore the pre-registered Step 8 target. It remains well replicated under pooled-null
+  calibration, whereas evolution-only and re-weighted calls are too sparse for a class-level
+  semantic comparison. Conserved is the registered comparison class.
+- `[COST]` Completing four missing real crosscoders (seeds 20261314-20261315 at `w=1,2`) and
+  diagnosing all ten real checkpoints used 0.02940 A100 wall-hours. Streaming all statistics for
+  the five-seed, two-width pooled-null taxonomy used 0.10148 A100 wall-hours. Complete checkpoints
+  were loaded; no completed run was retrained and no partial result was reported.
