@@ -34,7 +34,9 @@ def load_esmc(
             repository,
             device=target_device,
             dtype=torch.bfloat16 if target_device.type != "cpu" else None,
-            attn_implementation="sdpa",
+            # Match ESMC.from_pretrained's execution path; only the repository
+            # revision is being made explicit here.
+            attn_implementation="flash_attention_2",
             revision=expected_revision,
         )
         model = ESMC(model=native)
