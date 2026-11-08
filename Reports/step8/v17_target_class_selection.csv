@@ -1,0 +1,5 @@
+class,populated_all_five_seeds,fraction_mean,fraction_sd,coefficient_of_variation,selected_target
+emergent_candidate,False,0.0,0.0,inf,False
+evolution_only,False,0.00020833333333333332,0.0004658474953124561,2.2360679774997894,False
+rotated,True,0.2522916666666667,0.015474974196711573,0.06133763513147444,True
+re_weighted,False,0.00041666666666666664,0.000570544330734548,1.3693063937629153,False

@@ -1,5 +1,58 @@
 # Step 7 handoff — IRED width diagnostics, provisional taxonomy, and Gate 2
 
+## v17 current result (2026-11-08)
+
+This section supersedes the v16 taxonomy section retained later in this document for audit.
+IRED remains exploratory and Gate 1 remains failed. v17 fits one null distribution to eligible
+features pooled across the three drift-matched null runs for each `(width, statistic)`, applies
+tail-specific BH at `q=0.05`, and treats leave-one-null-seed-out thresholds as uncertainty rather
+than extra gates. Both latent-scaling ratios remain conjunctive. Five independently initialized
+real crosscoders are now complete at each width; every checkpoint is hashed in
+`v17_taxonomy_crosscoder_runs.csv`.
+
+| w | class | mean fraction | across-seed SD |
+|---:|---|---:|---:|
+| 1 | dead | 32.94% | 1.41% |
+| 1 | emergent candidate | 0.00% | 0.00% |
+| 1 | evolution-only | 0.02% | 0.05% |
+| 1 | rotated | 25.23% | 1.55% |
+| 1 | re-weighted | 0.04% | 0.06% |
+| 1 | conserved | 41.77% | 1.18% |
+| 2 | dead | 50.83% | 1.33% |
+| 2 | emergent candidate | 0.00% | 0.00% |
+| 2 | evolution-only | 0.13% | 0.06% |
+| 2 | rotated | 11.36% | 0.75% |
+| 2 | re-weighted | 0.05% | 0.00% |
+| 2 | conserved | 37.63% | 0.96% |
+
+These are IRED's results under the corrected rule; neither the v16 nor v17 number is selected
+for desirability. No feature clears the complete Delta-plus-conjunctive-latent-scaling definition
+of an emergent candidate. Rotation is the only shifted class populated in every `w=1` seed and
+is therefore the Step 8 target, with conserved as the comparison. Above both decoder medians,
+rotation flags remain 28.6-33.5% at `w=1` and correlate with activation frequency in every seed
+(Spearman 0.41-0.55). Exact feature tables, QQ plots, pooled thresholds, and leave-one-null-seed-
+out values are in `Reports/step6/v17_pooled_null/`.
+
+The Step 2/Step 5 dense-reference discrepancy is resolved as a protocol mismatch, not a duplicate
+implementation error. Step 2's `esm_mean_ridge` uses final-layer ESM-C features, fits 761 rows
+after reserving 134 for conformal calibration, and selected weight decay `1e-4` for 16 epochs.
+Step 5's `dense_evo_mean` uses analysis-layer-26 features, all 895 training-pool rows, weight
+decay `0.01`, and 21 epochs. Their validation Spearman values are nearly identical (0.607648 and
+0.607708), while test values are 0.522426 and 0.554287.
+
+Gate 2 remains `sparse_competitive` and is reported as a routing result. Sparse is +0.04882 over
+the validation-selected dense reference on pg_kfold test, paired 95% interval
+`[0.00153, 0.09564]`; it is -0.00478 relative to the strongest dense test arm, interval
+`[-0.07623, 0.06314]`. On the 54-variant plate set its paired intervals against all four
+classical ridge arms include zero. The substantive summary is competitive with dense probes and
+classical encodings: second on pg_kfold test, first on round-held-out, and indistinguishable on
+the small plate set. No improvement claim is made. Exact comparisons are in
+`v17_gate2_three_way_comparisons.csv`.
+
+The four newly required real crosscoders plus all ten checkpoint diagnostics used 0.02940 A100
+wall-hours; the complete v17 taxonomy statistic pass used 0.10148 hours. No completed checkpoint
+was retrained and no partial output was admitted.
+
 ## Status and scope
 
 Parts A and B are complete. IRED remains exploratory because Gate 1 failed on task gain; none of

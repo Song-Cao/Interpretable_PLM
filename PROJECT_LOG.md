@@ -1197,3 +1197,33 @@ the prediction track needs 0 or 3 crosscoders.
   diagnosing all ten real checkpoints used 0.02940 A100 wall-hours. Streaming all statistics for
   the five-seed, two-width pooled-null taxonomy used 0.10148 A100 wall-hours. Complete checkpoints
   were loaded; no completed run was retrained and no partial result was reported.
+- `[FINDING]` The nominal Step 2/Step 5 dense-reference discrepancy is resolved. Step 2
+  `esm_mean_ridge` uses ESM-C's final layer, fits 761 rows after reserving 134 for conformal
+  calibration, and selected weight decay 1e-4 for 16 epochs. Step 5 `dense_evo_mean` uses
+  analysis layer 26, all 895 training-pool rows, weight decay 0.01, and 21 epochs. Their
+  validation Spearman values are nearly equal (0.607648 and 0.607708), but they are not duplicate
+  arms; the 0.522426 versus 0.554287 test values do not expose an implementation error.
+- `[FINDING]` Gate 2's routing comparison remains sparse-competitive. Sparse minus the
+  validation-selected dense reference is +0.04882 with paired 95% interval [0.00153, 0.09564];
+  sparse minus the strongest dense test arm is -0.00478 with interval [-0.07623, 0.06314]. On
+  the 54-variant plate set, paired intervals against all four classical ridge arms include zero.
+  Report only competitiveness: second on pg_kfold test, first round-held-out, and statistically
+  indistinguishable from the classical arms on plate.
+- `[FINDING]` The v17 five-seed residue-level semantic test selects rotation as the target and
+  conserved as comparison. After FDR across nine claim-bearing families, rotated features are
+  enriched at catalytic (q=0.0364), first-shell, second-shell, and substrate-contact positions
+  (each q<=0.000225) and depleted at generic-distal positions (q=0.000225). Cofactor and 5OCM
+  ketone-proxy tracks are not significant. The campaign-derived evolutionary-peak positive
+  control is positive in every seed (p=0.00010) and remains ineligible for a claim.
+- `[FINDING]` Rotated and conserved top-activating positions have distinct shell distributions:
+  mean across-seed total-variation distance 0.0808, blocked-permutation p=0.000500. The primary-
+  seed mutation-responsive panel uses 289 distal-mutant variants in 257 exact mutated-position
+  background groups and reproduces stronger rotated responses at catalytic/first/second shells.
+  This mutation panel is single-seed and exploratory.
+- `[DECISION]` Causal patching remains unstarted pending approval. The planned scope is the 116
+  rotated primary-seed features above both decoder medians across 64 stratified pg_kfold training-
+  pool variants: 7,424 candidate partial forward passes plus 192 no-op/dead/random controls,
+  7,616 total. Error-preserving splicing inside E_fit and control verification remain mandatory.
+- `[COST]` Five-seed residue-profile extraction and the Step 8 semantic statistics used 0.01748
+  A100 wall-hours. Approximate cumulative documented IRED occupancy is 14.32 A100 wall-hours,
+  including retained superseded and diagnostic runs. No patching or oracle computation ran.
