@@ -1249,3 +1249,31 @@ the prediction track needs 0 or 3 crosscoders.
   fitness quartile: 29,696 candidate and 768 no-op/dead/random control partial forward passes,
   30,464 total. Patches must occur inside `E_fit` with the original fit reconstruction residual
   spliced back, and candidate effects may be computed only after all three hygiene controls pass.
+- `[FINDING]` The robust IRED semantic profile is a spatial gradient: the rotated-minus-conserved
+  effect peaks in the second shell (+0.399 SD), remains positive in the first shell (+0.152), and
+  reverses to depletion at generic-distal positions (-0.267). Catalytic residues are only three
+  positions and their interval barely excludes zero; the single substrate-contact position cannot
+  carry a standalone claim. A hypothesis for later testing, not a conclusion, is that directed-
+  evolution campaigns rarely retain catalytic-site substitutions because they abolish activity,
+  leaving too little variation there for an adapted feature to encode.
+- `[FINDING]` All NADPH-related semantic tracks are null, including direct contact, supplied
+  proximal/functionally coupled positions, and the crystallographic cofactor context. This is an
+  informative negative because the dETM analysis attributes the A72T and G37C dead ends to
+  competing NADPH interactions; rotated-feature enrichment does not recapitulate that mechanism.
+- `[FINDING]` The `w=1` emergent-candidate count remains zero after correcting empirical
+  resolution. Thirty-four matched-drift null seeds supply 19,609 eligible observations, making
+  the minimum empirical p-value `5.0994e-5`, finer than the first 960-test BH cutoff
+  `5.2083e-5`. Zero is reproduced across all five real dictionary seeds under both the registered
+  empirical latent-scaling ratios and a lower-tail generalized-Pareto sensitivity analysis.
+  The result is no longer attributable to the three-null p-value floor.
+- `[FINDING]` The reconstruction tail fit is not the binding constraint. Reconstruction ratios
+  are unbounded, so Beta is invalid; the diagnostic lower-5% generalized-Pareto fit gives top-ten
+  fitted p-values within 0.259 log10 units of their pooled empirical p-values. The primary seed's
+  most extreme ratio has empirical p=0.001785 and fitted p=0.001132, far above the first BH
+  threshold. The expanded null changes mean rotation only from 25.23% to 25.06%.
+- `[COST]` Training the 31 additional matched-drift null crosscoders and re-reading completed
+  checkpoints used 0.1412 A100 wall-hours. The successful 34-null/five-real statistic pass used
+  0.2427 hours. A preceding fully streamed pass consumed approximately 0.22 hours before its
+  exact-resolution guard correctly rejected the 18,458-observation 32-null pool. Total new GPU
+  occupancy is approximately 0.604 hours; cumulative documented IRED occupancy is approximately
+  14.92 A100 wall-hours. Causal patching was not started before the user terminated the pod.

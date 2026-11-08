@@ -1,5 +1,5 @@
 {
-  "status": "planned_not_run",
+  "status": "approved_not_run_pod_terminated",
   "target_class": "rotated",
   "crosscoder_width": 1,
   "crosscoder_seed": 20261311,
@@ -123,7 +123,7 @@
     950,
     952
   ],
-  "variant_count": 64,
+  "variant_count": 256,
   "variant_source": "pg_kfold fold-0 training pool only",
   "variant_sampling": "fixed-seed stratification by clipped mutation count and fitness quartile",
   "control_passes": [
@@ -131,10 +131,12 @@
     "dead_feature",
     "random_live_feature"
   ],
-  "candidate_partial_forward_passes": 7424,
-  "control_partial_forward_passes": 192,
-  "planned_partial_forward_passes_total": 7616,
-  "baseline_forward_passes_not_counted_as_partial": 64,
+  "candidate_partial_forward_passes": 29696,
+  "control_partial_forward_passes": 768,
+  "planned_partial_forward_passes_total": 30464,
+  "baseline_forward_passes_not_counted_as_partial": 256,
   "patching_started": false,
-  "approval_required_before_execution": true
+  "approval_required_before_execution": false,
+  "execution_deferred_reason": "The user terminated the GPU pod before the approved run began.",
+  "variant_sample_materialization": "The deterministic 256-row sample is written atomically at run start; the committed 64-row CSV is a superseded planning artifact and must not be loaded by the patching entry point."
 }

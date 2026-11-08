@@ -21,21 +21,24 @@ intervals resample both dictionary seeds and features. FDR is controlled across 
 claim-bearing annotation families. The campaign-derived evolutionary-peak track is tested
 separately as a positive control and is excluded from mechanistic FDR and claims.
 
-| annotation family | rotated minus conserved (SD units) | 95% bootstrap interval | FDR q |
-|---|---:|---:|---:|
-| catalytic shell | 0.084 | [0.004, 0.165] | 0.0364 |
-| first shell | 0.152 | [0.067, 0.236] | 0.000225 |
-| second shell | 0.399 | [0.319, 0.482] | 0.000225 |
-| distal functional network | 0.010 | [-0.082, 0.105] | 0.786 |
-| generic distal | -0.267 | [-0.357, -0.172] | 0.000225 |
-| substrate direct contact | 0.198 | [0.089, 0.309] | 0.000225 |
-| NADPH direct contact | 0.055 | [-0.023, 0.137] | 0.186 |
-| NADPH proximal/coupled | -0.028 | [-0.144, 0.083] | 0.502 |
-| crystallographic ketone-analogue proxy | -0.030 | [-0.140, 0.079] | 0.502 |
+| annotation family | positions | rotated minus conserved (SD units) | 95% bootstrap interval | FDR q |
+|---|---:|---:|---:|---:|
+| catalytic shell | 3 | 0.084 | [0.004, 0.165] | 0.0364 |
+| first shell | 37 | 0.152 | [0.067, 0.236] | 0.000225 |
+| second shell | 36 | 0.399 | [0.319, 0.482] | 0.000225 |
+| distal functional network | 3 | 0.010 | [-0.082, 0.105] | 0.786 |
+| generic distal | 211 | -0.267 | [-0.357, -0.172] | 0.000225 |
+| substrate direct contact | 1 | 0.198 | [0.089, 0.309] | 0.000225 |
+| NADPH direct contact | 1 | 0.055 | [-0.023, 0.137] | 0.186 |
+| NADPH proximal/coupled | 4 | -0.028 | [-0.144, 0.083] | 0.502 |
+| crystallographic ketone-analogue proxy | 36 | -0.030 | [-0.140, 0.079] | 0.502 |
 
-The replicated profile is enrichment of rotated features at first- and second-shell positions and
-the supplied substrate-contact position, with depletion in the generic-distal shell. The weaker
-catalytic-shell effect clears FDR narrowly. Cofactor and crystallographic proxy tracks do not.
+The three supported headline signals are enrichment at the second shell, depletion at generic-
+distal positions, and enrichment at the first shell. Together they form a spatial gradient that
+peaks at the second shell and declines outward to distal depletion. The catalytic interval barely
+excludes zero and covers only three positions; the substrate-contact track contains T241 alone.
+Neither sparse track supports a claim by itself. All NADPH and crystallographic proxy tracks are
+null.
 These are class-level associations, not per-feature semantic labels or causal effects.
 
 The evolutionary-peak positive control behaves as required: effect 0.272 SD units, permutation
@@ -64,25 +67,27 @@ conservation/DCA, energetic, docking, or oracle track was inferred to fill missi
 blocks. The 5OCM ketone-analogue contact remains labelled a proxy rather than a campaign-substrate
 contact.
 
-## Causal patching budget — approval required
+## Causal patching budget — approved, execution deferred
 
 The primary `w=1`, seed 20261311 taxonomy contains 248 rotated features. Restricting to features
-at or above both their own decoder median norms leaves 116 causal candidates. The proposed
-variant panel contains 64 pg_kfold fold-0 training-pool variants, selected with fixed seed by
+at or above both their own decoder median norms leaves 116 causal candidates. The approved
+variant panel contains 256 pg_kfold fold-0 training-pool variants, selected with fixed seed by
 clipped mutation count and fitness quartile. No test, reserve, round-held-out, or plate variant is
 used.
 
 | component | partial forward passes |
 |---|---:|
-| 116 candidate features x 64 variants | 7,424 |
-| no-op, dead-feature, random-live controls x 64 | 192 |
-| total partial forward passes | 7,616 |
+| 116 candidate features x 256 variants | 29,696 |
+| no-op, dead-feature, random-live controls x 256 | 768 |
+| total partial forward passes | 30,464 |
 
-There are 64 separate baseline forward passes, not counted as partial passes above. The future
-implementation must patch inside `E_fit`, splice back the crosscoder residual, verify numerical
-no-op behavior first, and reject the analysis if dead/random controls are not near zero. The exact
-candidate feature IDs and fixed variant sample are in `v17_causal_patching_budget.json` and
-`v17_causal_variant_subsample.csv`. No patch was executed and no effect was inspected.
+There are 256 separate baseline forward passes, not counted as partial passes above. The
+implementation patches inside `E_fit`, splices back the crosscoder residual, verifies numerical
+no-op behavior first, and rejects the analysis if dead/random controls are not near zero. The run
+was approved, but the user terminated the GPU pod before execution. The deterministic 256-row
+sample is materialized by the patching entry point at run start; the currently committed 64-row
+CSV is retained only as a superseded planning artifact and is never loaded by that entry point.
+No partial patching run was started and no causal effect was inspected.
 
 ## Artifacts
 
@@ -104,4 +109,5 @@ All feature labels remain provisional until causal validation. The static associ
 over campaign variants and cannot establish that a feature causes fitness. Mutation-responsive
 results use one crosscoder seed because the precomputed Delta-z cache predates the five-seed
 extension. The catalytic and contact assignments retain their supplied/preprint provenance, and
-9RH is a proxy ligand. Causal patching and every oracle remain pending explicit approval.
+9RH is a proxy ligand. Causal patching is approved but unexecuted because the pod was stopped;
+every oracle also remains unrun.
