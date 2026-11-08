@@ -1,5 +1,5 @@
 {
-  "status": "approved_not_run_pod_terminated",
+  "status": "hygiene_failed_no_op",
   "target_class": "rotated",
   "crosscoder_width": 1,
   "crosscoder_seed": 20261311,
@@ -135,8 +135,11 @@
   "control_partial_forward_passes": 768,
   "planned_partial_forward_passes_total": 30464,
   "baseline_forward_passes_not_counted_as_partial": 256,
-  "patching_started": false,
+  "patching_started": true,
+  "control_phase_complete": true,
+  "candidate_patching_started": false,
+  "hygiene_artifact": "Reports/step8/v17_causal_patching_hygiene.json",
   "approval_required_before_execution": false,
-  "execution_deferred_reason": "The user terminated the GPU pod before the approved run began.",
+  "execution_deferred_reason": "The control-only phase stopped before candidate ablations because the numerical no-op maximum raw effect (7.954239845275879e-05) exceeded the registered 1e-05 tolerance.",
   "variant_sample_materialization": "The deterministic 256-row sample is written atomically at run start; the committed 64-row CSV is a superseded planning artifact and must not be loaded by the patching entry point."
 }

@@ -3,8 +3,8 @@
 ## Status
 
 The v17 class-level semantic, spatial-structure, and mutation-responsive analyses are complete.
-Causal patching has not begun: this handoff is the required approval boundary. Oracle validation
-also has not begun. IRED remains an exploratory pipeline shakedown because Gate 1 failed on task
+Causal patching stopped at its mandatory hygiene boundary before candidate ablation. Oracle
+validation also has not begun. IRED remains an exploratory pipeline shakedown because Gate 1 failed on task
 gain; none of these results supplies confirmatory evidence for CROSSFIT's central claim.
 
 The five-seed pooled-null taxonomy selects `rotated` as the target because it is the only shifted
@@ -67,7 +67,7 @@ conservation/DCA, energetic, docking, or oracle track was inferred to fill missi
 blocks. The 5OCM ketone-analogue contact remains labelled a proxy rather than a campaign-substrate
 contact.
 
-## Causal patching budget — approved, execution deferred
+## Causal patching — hygiene failed before candidate ablation
 
 The primary `w=1`, seed 20261311 taxonomy contains 248 rotated features. Restricting to features
 at or above both their own decoder median norms leaves 116 causal candidates. The approved
@@ -82,12 +82,20 @@ used.
 | total partial forward passes | 30,464 |
 
 There are 256 separate baseline forward passes, not counted as partial passes above. The
-implementation patches inside `E_fit`, splices back the crosscoder residual, verifies numerical
-no-op behavior first, and rejects the analysis if dead/random controls are not near zero. The run
-was approved, but the user terminated the GPU pod before execution. The deterministic 256-row
-sample is materialized by the patching entry point at run start; the currently committed 64-row
-CSV is retained only as a superseded planning artifact and is never loaded by that entry point.
-No partial patching run was started and no causal effect was inspected.
+implementation patches inside `E_fit`, splices back the crosscoder residual, and evaluates all
+three hygiene controls over the full registered sample before candidate ablation. The control
+phase ran after pod reconnection and stopped as required: the no-op maximum raw prediction change
+was `7.95424e-05`, above the registered `1e-05` tolerance. The dead-feature maximum was identical
+because feature 0 was inactive, and its mean standardized effect was `-8.78e-06`. The random-live
+control had mean standardized effect `-0.000357` and mean absolute standardized effect `0.000410`,
+well inside its `0.05` tolerance. Hygiene is conjunctive, so status is `failed_no_op`.
+
+No candidate-feature ablation ran, and no causal effect table or causal claim exists. The
+deterministic 256-row sample now supersedes the earlier 64-row planning sample. The replacement
+runtime re-extracted layer-26 activations that differed from the cache by a maximum of `2284` raw
+activation units even though the exact model revision and adapter checkpoint hashes were enforced.
+The remaining numerical-runtime mismatch and no-op tolerance require review before a rerun. The
+tolerance was not relaxed after seeing the result.
 
 ## Artifacts
 
@@ -96,12 +104,15 @@ No partial patching run was started and no causal effect was inspected.
 - `v17_spatial_structure_test.json` and `v17_top_position_shell_counts.csv`: shell concentration.
 - `v17_mutation_responsive_tests.csv`: grouped distal-mutation response panel.
 - `v17_semantic_manifest.json`: checkpoint hashes, sample count, resampling unit, and cost.
-- `v17_causal_patching_budget.json`: planned-only causal scope and pass count.
+- `v17_causal_patching_budget.json`: approved scope, pass count, and stopped status.
+- `v17_causal_patching_hygiene.json`: complete 256-variant control results and tolerances.
+- `v17_causal_variant_subsample.csv`: realized deterministic 256-variant causal panel.
 
-Five-seed profile extraction and all semantic statistics consumed 0.01748 A100 wall-hours.
-Approximate cumulative documented IRED GPU occupancy through this stopping point is 14.32 A100
-wall-hours, including retained superseded and diagnostic runs. No application-workstream file was
-read or modified.
+Five-seed profile extraction and all semantic statistics consumed 0.01748 A100 wall-hours. The
+reconnected control run and pre-inference pinning diagnostics used approximately 0.03 RTX 6000 Ada
+wall-hours. Historical cumulative IRED occupancy remains approximately 14.92 A100 wall-hours plus
+0.03 RTX 6000 Ada wall-hours; heterogeneous device-hours are not summed. No application-workstream
+file was read or modified.
 
 ## Incomplete and uncertain
 
@@ -109,5 +120,6 @@ All feature labels remain provisional until causal validation. The static associ
 over campaign variants and cannot establish that a feature causes fitness. Mutation-responsive
 results use one crosscoder seed because the precomputed Delta-z cache predates the five-seed
 extension. The catalytic and contact assignments retain their supplied/preprint provenance, and
-9RH is a proxy ligand. Causal patching is approved but unexecuted because the pod was stopped;
-every oracle also remains unrun.
+9RH is a proxy ligand. Causal candidate ablations remain unexecuted because numerical no-op
+hygiene failed. A rerun requires an approved resolution of the runtime/cache mismatch or of the
+registered tolerance; every oracle also remains unrun.

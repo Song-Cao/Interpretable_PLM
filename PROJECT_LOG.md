@@ -1277,3 +1277,24 @@ the prediction track needs 0 or 3 crosscoders.
   exact-resolution guard correctly rejected the 18,458-observation 32-null pool. Total new GPU
   occupancy is approximately 0.604 hours; cumulative documented IRED occupancy is approximately
   14.92 A100 wall-hours. Causal patching was not started before the user terminated the pod.
+
+### IRED causal-patching hygiene after pod reconnection (2026-11-08)
+
+- `[ADJUST]` The ESM-C loader now requests the registered Hugging Face revision directly when
+  constructing the model. The previous implementation downloaded the moving `main` revision and
+  checked its cache ref afterward, which correctly stopped a mismatched run but could not load the
+  historical pin. The causal run used `biohub/ESMC-300M` revision
+  `e4bac860f0c502cd80f3aeac3d0ce6524c6627cb` and the hash-verified Gate 1 adapter.
+- `[FINDING]` Causal patching stopped in the complete 256-variant hygiene phase before any of the
+  116 rotated candidate features was ablated. The no-op maximum raw prediction effect was
+  `7.95424e-05`, above the registered `1e-05` tolerance, so status is `failed_no_op`. The inactive
+  dead-feature control had the same numerical maximum and mean standardized effect `-8.78e-06`;
+  the random-live control was near zero (mean standardized effect `-0.000357`, mean absolute
+  `0.000410`). The freshly evaluated layer-26 state differed from the cached state by as much as
+  `2284` raw activation units despite exact weights, indicating that the replacement runtime is
+  not numerically interchangeable with the cache-producing runtime. No tolerance, statistic, or
+  patching result was changed to make the control pass.
+- `[COST]` Failed pre-inference pin checks plus the complete control-only pass used approximately
+  0.03 RTX 6000 Ada wall-hours. Historical occupancy is reported separately as approximately
+  14.92 A100 wall-hours; heterogeneous device-hours are not added. No causal effect was computed
+  or reported.

@@ -1,0 +1,18 @@
+{
+  "status": "failed_no_op",
+  "variant_count": 256,
+  "baseline_prediction_sd": 0.0739031636317052,
+  "no_op_max_absolute_raw_effect": 7.954239845275879e-05,
+  "dead_feature": 0,
+  "dead_feature_max_absolute_raw_effect": 7.954239845275879e-05,
+  "dead_feature_mean_standardized_effect": -8.780395479374991e-06,
+  "random_live_feature": 95,
+  "random_feature_mean_standardized_effect": -0.00035704972564393856,
+  "random_feature_mean_absolute_standardized_effect": 0.00041032163260848345,
+  "maximum_cached_vs_reextracted_layer_absolute_difference": 2284.0,
+  "tolerances": {
+    "no_op_absolute": 1e-05,
+    "dead_absolute": 1e-05,
+    "random_standardized_mean_absolute": 0.05
+  }
+}
