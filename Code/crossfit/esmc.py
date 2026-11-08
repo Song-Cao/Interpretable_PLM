@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import os
-from pathlib import Path
 from typing import Iterable, Sequence
 
 import numpy as np
@@ -28,15 +26,20 @@ def load_esmc(
     """Load the pinned local open ESM-C model in inference mode."""
     from esm.models.esmc import ESMC
 
-    model = ESMC.from_pretrained(model_name, device=torch.device(device))
     if repository is not None and expected_revision is not None:
-        cache_root = Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface"))
-        reference = cache_root / "hub" / f"models--{repository.replace('/', '--')}" / "refs" / "main"
-        if not reference.exists() or reference.read_text().strip() != expected_revision:
-            observed = reference.read_text().strip() if reference.exists() else "missing"
-            raise RuntimeError(
-                f"ESM-C revision mismatch for {repository}: expected {expected_revision}, found {observed}"
-            )
+        from esm.models.esmc.model import EsmcForMaskedLM
+
+        target_device = torch.device(device)
+        native = EsmcForMaskedLM.from_pretrained(
+            repository,
+            device=target_device,
+            dtype=torch.bfloat16 if target_device.type != "cpu" else None,
+            attn_implementation="sdpa",
+            revision=expected_revision,
+        )
+        model = ESMC(model=native)
+    else:
+        model = ESMC.from_pretrained(model_name, device=torch.device(device))
     return model.eval()
 
 
