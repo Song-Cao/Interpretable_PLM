@@ -1233,8 +1233,9 @@ the prediction track needs 0 or 3 crosscoders.
 - `[DECISION]` The zero-emergent result is not interpreted as an absence until the empirical-null
   resolution is adequate. The registered dead/norm-floor filter leaves about 603 eligible
   features per `w=1` null run, so 20 total runs would provide only about 12,000 observations and
-  could not reach the first 960-test BH cutoff (`5.2083e-5`). The replication set is therefore
-  extended to 32 total matched-drift null seeds, expected to exceed 19,000 eligible observations.
+  could not reach the first 960-test BH cutoff (`5.2083e-5`). Thirty-two realized runs produced
+  18,458 eligible observations, below the exact requirement of 19,199, so the replication set is
+  extended to 34 total matched-drift null seeds to cross the actual empirical-resolution floor.
   This changes replication only: q=0.05, the latent-scaling conjunction, and every taxonomy rule
   remain fixed.
 - `[DECISION]` Latent error and reconstruction ratios retain pooled empirical calibration.

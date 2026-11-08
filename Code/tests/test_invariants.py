@@ -95,7 +95,7 @@ def test_v17_is_the_only_plan_and_dictionary_uses_width_terminology():
     assert step6["calibration"]["conservative_across_null_runs"] is False
     assert step6["calibration"]["pooled_null_rule"] == "concatenate_eligible_samples"
     resolution = step6["calibration"]["resolution_audit"]
-    assert resolution["total_null_seeds"] == len(resolution["seeds"]) == 32
+    assert resolution["total_null_seeds"] == len(resolution["seeds"]) == 34
     assert resolution["seeds"][:3] == step6["calibration"]["shuffled_crosscoder_seeds"]
     assert resolution["empirical_first_bh_cutoff"] == pytest.approx(0.05 / 960)
     assert step7["training"]["seeds"] == [

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -20,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from crossfit.activation_cache import load_cached_model
 from crossfit.crosscoder import CrossCoder
 from crossfit.taxonomy import (
+    FeatureStatistics,
     benjamini_hochberg,
     beta_pvalues,
     calibrate_pooled_beta_tail,
@@ -41,6 +43,33 @@ def _model(path: Path, dimension: int) -> CrossCoder:
     )
     model.load_state_dict(artifact["state_dict"])
     return model.cuda().eval()
+
+
+def _statistics(
+    path: Path,
+    model_path: Path,
+    dimension: int,
+    evo: np.ndarray,
+    fit: np.ndarray,
+    batch_size: int,
+) -> FeatureStatistics:
+    """Load complete streamed statistics or compute and save them atomically."""
+    fields = tuple(FeatureStatistics.__dataclass_fields__)
+    if path.exists():
+        with np.load(path) as artifact:
+            if set(artifact.files) != set(fields):
+                raise ValueError(f"incomplete feature-statistics cache: {path}")
+            return FeatureStatistics(**{name: artifact[name] for name in fields})
+    model = _model(model_path, dimension)
+    values = feature_statistics(model, evo, fit, batch_size=batch_size, device="cuda")
+    del model
+    torch.cuda.empty_cache()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    with temporary.open("wb") as stream:
+        np.savez_compressed(stream, **{name: getattr(values, name) for name in fields})
+    os.replace(temporary, path)
+    return values
 
 
 def _subset(
@@ -139,6 +168,7 @@ def main() -> int:
     dimension = int(step6["dimension"])
     batch_size = int(step7["training"]["evaluation_batch_size"])
     report = REPO_ROOT / step6["paths"]["resolution_audit_report_dir"]
+    statistics_cache = REPO_ROOT / step6["paths"]["resolution_statistics_cache"]
     report.mkdir(parents=True, exist_ok=True)
 
     evo = load_cached_model(REPO_ROOT / step6["paths"]["step4_cache"], "evo")
@@ -155,10 +185,10 @@ def main() -> int:
             / f"w{width}_seed{seed}_nobias.pt"
         )
         checkpoint_hashes[str(path.relative_to(REPO_ROOT))] = hashlib.sha256(path.read_bytes()).hexdigest()
-        model = _model(path, dimension)
-        null_statistics.append(feature_statistics(model, evo, matched, batch_size=batch_size, device="cuda"))
-        del model
-        torch.cuda.empty_cache()
+        null_statistics.append(_statistics(
+            statistics_cache / f"null_w{width}_seed{seed}.npz",
+            path, dimension, evo, matched, batch_size,
+        ))
     eligible = [null_eligible(values, floor_fraction) for values in null_statistics]
     nulls = {
         "delta": [values.delta[mask] for values, mask in zip(null_statistics, eligible)],
@@ -169,7 +199,8 @@ def main() -> int:
     }
     pooled = {name: np.concatenate(runs) for name, runs in nulls.items()}
     pooled = {name: values[np.isfinite(values)] for name, values in pooled.items()}
-    if len(pooled["reconstruction"]) < 19000:
+    required_null_observations = int(np.ceil(960.0 / q) - 1)
+    if len(pooled["reconstruction"]) < required_null_observations:
         raise RuntimeError("eligible pooled null still cannot resolve the first 960-test BH cutoff")
 
     _tail_qq_beta(
@@ -190,10 +221,10 @@ def main() -> int:
     taxonomy_paths = []
     for seed in real_seeds:
         checkpoint = REPO_ROOT / step7["paths"]["checkpoints"] / f"w{width}_seed{seed}_nobias.pt"
-        model = _model(checkpoint, dimension)
-        stats = feature_statistics(model, evo, fit, batch_size=batch_size, device="cuda")
-        del model
-        torch.cuda.empty_cache()
+        stats = _statistics(
+            statistics_cache / f"real_w{width}_seed{seed}.npz",
+            checkpoint, dimension, evo, fit, batch_size,
+        )
         live = stats.activation_count >= activation_floor
         evo_clear = stats.evo_decoder_norm >= floor_fraction * np.median(stats.evo_decoder_norm)
         fit_clear = stats.fit_decoder_norm >= floor_fraction * np.median(stats.fit_decoder_norm)
@@ -315,6 +346,7 @@ def main() -> int:
         "null_seeds": null_seeds, "real_seeds": real_seeds,
         "eligible_null_features_by_seed": [int(mask.sum()) for mask in eligible],
         "eligible_null_features_total": int(len(pooled["reconstruction"])),
+        "required_null_features_for_first_bh_cutoff": required_null_observations,
         "minimum_empirical_p_value": float(1.0 / (len(pooled["reconstruction"]) + 1.0)),
         "first_bh_cutoff_for_960_tests": float(q / 960.0),
         "reconstruction_gpd": {
