@@ -27,9 +27,10 @@ def main() -> int:
     audit = step6["calibration"]["resolution_audit"]
     width = int(audit["width_multiplier"])
     seeds = list(map(int, audit["seeds"]))
-    cache = REPO_ROOT / step6["paths"]["drift_matched_cache"]
-    evo_array = load_cached_model(cache, "evo")
-    matched_array = load_cached_model(cache, "drift_matched")
+    evo_array = load_cached_model(REPO_ROOT / step6["paths"]["step4_cache"], "evo")
+    matched_array = load_cached_model(
+        REPO_ROOT / step6["paths"]["drift_matched_cache"], "drift_matched"
+    )
     if evo_array.shape != matched_array.shape:
         raise AssertionError("drift-matched null activation arrays are not aligned")
     evo = torch.as_tensor(evo_array, dtype=torch.float32, device="cuda")
