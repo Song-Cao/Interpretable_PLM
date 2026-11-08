@@ -68,10 +68,15 @@ def _sample_variants(config: dict, count: int) -> pd.DataFrame:
     if len(chosen) < count:
         chosen.extend(rng.choice(remaining, count - len(chosen), replace=False).tolist())
     columns = [
-        "variant_row", "sequence", "mutations", "n_mutations", "y",
+        "variant_row", "mutant_sequence", "mutations", "n_mutations", "y",
         "fitness_quartile", "stratum",
     ]
-    return candidates.loc[chosen, columns].sort_values(["stratum", "variant_row"]).reset_index(drop=True)
+    return (
+        candidates.loc[chosen, columns]
+        .rename(columns={"mutant_sequence": "sequence"})
+        .sort_values(["stratum", "variant_row"])
+        .reset_index(drop=True)
+    )
 
 
 def _native_encoder(wrapped: SequenceFitnessAdapter):

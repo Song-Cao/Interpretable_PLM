@@ -114,6 +114,9 @@ def test_ired_causal_patch_budget_is_the_approved_scope():
     assert budget["decoder_norm_median_fraction"] == 1.0
     assert budget["controls"] == ["no_op", "dead_feature", "random_live_feature"]
     assert budget["standardization"] == "baseline_prediction_sd_on_registered_variant_sample"
+    source = (REPO_ROOT / "Code/scripts/run_ired_causal_patching.py").read_text()
+    assert '"mutant_sequence"' in source
+    assert '.rename(columns={"mutant_sequence": "sequence"})' in source
 
 
 def test_scheduler_metric_is_validation_spearman_everywhere():
