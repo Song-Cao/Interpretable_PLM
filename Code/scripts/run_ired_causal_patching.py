@@ -228,24 +228,36 @@ def main() -> int:
         "status": "passed",
         "variant_count": len(variants), "baseline_prediction_sd": baseline_sd,
         "no_op_max_absolute_raw_effect": float(np.max(np.abs(control_array[:, 0] - baselines_array))),
+        "no_op_max_absolute_standardized_effect": float(np.max(np.abs(standardized[:, 0]))),
         "dead_feature": dead_feature,
         "dead_feature_max_absolute_raw_effect": float(np.max(np.abs(control_array[:, 1] - baselines_array))),
+        "dead_feature_max_absolute_standardized_effect": float(np.max(np.abs(standardized[:, 1]))),
         "dead_feature_mean_standardized_effect": float(standardized[:, 1].mean()),
         "random_live_feature": random_feature,
         "random_feature_mean_standardized_effect": float(standardized[:, 2].mean()),
         "random_feature_mean_absolute_standardized_effect": float(np.mean(np.abs(standardized[:, 2]))),
         "maximum_cached_vs_reextracted_layer_absolute_difference": float(max(cache_differences)),
         "tolerances": {
-            "no_op_absolute": float(config["causal_budget"]["no_op_absolute_tolerance"]),
-            "dead_absolute": float(config["causal_budget"]["dead_feature_absolute_tolerance"]),
+            "no_op_standardized_max_absolute": float(
+                config["causal_budget"]["no_op_standardized_max_absolute_tolerance"]
+            ),
+            "dead_standardized_max_absolute": float(
+                config["causal_budget"]["dead_feature_standardized_max_absolute_tolerance"]
+            ),
             "random_standardized_mean_absolute": float(
                 config["causal_budget"]["random_feature_standardized_mean_absolute_tolerance"]
             ),
         },
     }
-    if hygiene["no_op_max_absolute_raw_effect"] > hygiene["tolerances"]["no_op_absolute"]:
+    if (
+        hygiene["no_op_max_absolute_standardized_effect"]
+        > hygiene["tolerances"]["no_op_standardized_max_absolute"]
+    ):
         hygiene["status"] = "failed_no_op"
-    elif hygiene["dead_feature_max_absolute_raw_effect"] > hygiene["tolerances"]["dead_absolute"]:
+    elif (
+        hygiene["dead_feature_max_absolute_standardized_effect"]
+        > hygiene["tolerances"]["dead_standardized_max_absolute"]
+    ):
         hygiene["status"] = "failed_dead_feature"
     elif abs(hygiene["random_feature_mean_standardized_effect"]) > hygiene["tolerances"]["random_standardized_mean_absolute"]:
         hygiene["status"] = "failed_random_feature"

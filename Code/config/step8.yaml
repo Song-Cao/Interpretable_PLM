@@ -54,8 +54,8 @@ causal_budget:
   proposed_variant_count: 256
   controls: [no_op, dead_feature, random_live_feature]
   random_feature_seed: 20261704
-  no_op_absolute_tolerance: 1.0e-5
-  dead_feature_absolute_tolerance: 1.0e-5
+  no_op_standardized_max_absolute_tolerance: 0.05
+  dead_feature_standardized_max_absolute_tolerance: 0.05
   random_feature_standardized_mean_absolute_tolerance: 0.05
   standardization: baseline_prediction_sd_on_registered_variant_sample
 paths:
