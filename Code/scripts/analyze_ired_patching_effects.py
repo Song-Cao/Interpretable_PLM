@@ -11,7 +11,12 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from crossfit.patching_analysis import quantile_rows, spatial_effect_correlations
+from crossfit.patching_analysis import (
+    clustered_mann_whitney,
+    quantile_rows,
+    shell_activation_fractions,
+    spatial_effect_correlations,
+)
 from crossfit.utils import REPO_ROOT, load_config
 
 
@@ -47,11 +52,32 @@ def main() -> int:
             selected.abs(), quantiles, population=f"{control}_absolute_effect",
             sampling_unit="variant",
         ))
-    pd.DataFrame(rows).to_csv(report / "v18_causal_patching_effect_quantiles.csv", index=False)
+    pd.DataFrame(rows).to_csv(report / "v19_causal_patching_effect_quantiles.csv", index=False)
 
     features.nlargest(
         int(analysis["top_feature_count"]), "mean_absolute_standardized_effect"
-    ).to_csv(report / "v18_causal_patching_top_features.csv", index=False)
+    ).to_csv(report / "v19_causal_patching_top_features.csv", index=False)
+
+    rotated_matrix = effects.pivot(
+        index="feature", columns="variant_row", values="standardized_effect"
+    ).sort_index().sort_index(axis=1)
+    comparisons = []
+    for offset, control in enumerate(("random_live_feature", "dead_feature")):
+        control_values = controls.loc[controls["control"] == control].set_index("variant_row")
+        control_values = control_values.reindex(rotated_matrix.columns)
+        if control_values["standardized_effect"].isna().any():
+            raise AssertionError(f"{control} effects are not aligned to rotated variants")
+        result = clustered_mann_whitney(
+            rotated_matrix.to_numpy(float),
+            control_values["standardized_effect"].to_numpy(float),
+            bootstrap_samples=int(analysis["mann_whitney_bootstrap_samples"]),
+            seed=int(analysis["mann_whitney_bootstrap_seed"]) + offset,
+            confidence_level=float(analysis["mann_whitney_confidence_level"]),
+        )
+        comparisons.append({"comparison": f"rotated_vs_{control}", **result})
+    pd.DataFrame(comparisons).to_csv(
+        report / "v19_causal_effect_distribution_tests.csv", index=False
+    )
 
     seed = int(config["primary_crosscoder_seed"])
     profile_path = (
@@ -70,15 +96,17 @@ def main() -> int:
         ),
     }
     feature_ids = features["feature"].astype(int).to_numpy()
-    shell_profiles = {
+    shell_means = {
         name: profile[mask][:, feature_ids].mean(axis=0) for name, mask in masks.items()
     }
+    position_counts = {name: int(mask.sum()) for name, mask in masks.items()}
+    shell_profiles = shell_activation_fractions(shell_means, position_counts)
     linked = features[[
         "feature", "mean_standardized_effect", "mean_absolute_standardized_effect",
     ]].copy()
     for name, values in shell_profiles.items():
-        linked[f"mean_activation_{name}"] = values
-    linked.to_csv(report / "v18_causal_feature_shell_profiles.csv", index=False)
+        linked[f"activation_fraction_{name}"] = values
+    linked.to_csv(report / "v19_causal_feature_shell_fractions.csv", index=False)
 
     correlations = spatial_effect_correlations(
         features["mean_absolute_standardized_effect"].to_numpy(float),
@@ -88,11 +116,13 @@ def main() -> int:
         fdr_q=float(analysis["fdr_q"]),
     )
     for row in correlations:
-        row["position_count"] = int(masks[str(row["shell"])].sum())
+        row["position_count"] = position_counts[str(row["shell"])]
         row["effect_definition"] = "mean absolute standardized prediction effect"
-        row["profile_definition"] = "mean static latent activation over shell positions"
+        row["profile_definition"] = (
+            "fraction of total static latent activation mass assigned to shell positions"
+        )
     pd.DataFrame(correlations).to_csv(
-        report / "v18_causal_spatial_effect_correlations.csv", index=False
+        report / "v19_causal_spatial_fraction_correlations.csv", index=False
     )
     manifest = {
         "status": "complete",
@@ -104,11 +134,14 @@ def main() -> int:
         "control_variant_effects": int(len(controls)),
         "residue_profile_path": str(profile_path.relative_to(REPO_ROOT)),
         "profile_tensor_committed": False,
+        "linkage_statistic": (
+            "shell activation mass divided by total activation mass over all 290 positions"
+        ),
         "permutations": int(analysis["permutations"]),
         "permutation_seed": int(analysis["permutation_seed"]),
         "fdr_q": float(analysis["fdr_q"]),
     }
-    (report / "v18_causal_effect_analysis_manifest.json").write_text(
+    (report / "v19_causal_effect_analysis_manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n"
     )
     print(pd.DataFrame(correlations).to_string(index=False), flush=True)

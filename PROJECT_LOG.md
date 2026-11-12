@@ -1465,3 +1465,44 @@ the prediction track needs 0 or 3 crosscoders.
   documented RTX PRO 4500 Blackwell usage is approximately 0.393 GPU-hours; A100 and RTX 6000
   Ada totals remain 14.92 and 0.03 hours respectively. Provider-billed time outside the
   measured 36-second phase is not observable through SSH and is not silently reported as zero.
+
+### v19 Step 8 closure (2026-11-12)
+
+- `[ADJUST]` `CROSSFIT_Implementation_Plan_v19.docx` replaces v18, which is deleted. The Step 8
+  spatial-causal linkage is now specified as the fraction of each feature's total activation
+  mass falling in each shell. The prior absolute-shell-activation statistic conflated location
+  with feature magnitude and is discarded. Its values (catalytic rho 0.0209, q=0.8203; first
+  shell rho 0.1873, q=0.0588; second shell rho 0.2782, q=0.0112; distal rho 0.1979, q=0.0588)
+  and the associated `[FINDING]` above are superseded. Audit copies are quarantined under
+  `Reports/archive/ired_step8_absolute_linkage_v18/`; no active report presents them as the
+  linkage result.
+- `[ADJUST]` The statement that 103/116 rotated feature means exceed the random-live mean is
+  superseded because it compared a distribution with a point. The registered replacement is a
+  Mann-Whitney comparison of absolute feature-variant effects, accompanied by rank-biserial
+  effect size and a hierarchical bootstrap interval that resamples rotated features and shared
+  variant backgrounds.
+- `[FINDING]` The final fraction-based spatial-causal linkage has no FDR-significant shell.
+  Second shell is the strongest positive association (rho 0.1713, permutation p=0.0668,
+  q=0.2672), followed by first shell (rho 0.1198, q=0.4000); catalytic is null (rho 0.0216,
+  q=0.8139), and distal is weakly negative (rho -0.0717, q=0.5950). Class-level generic-distal
+  depletion and the within-rotated distal fraction association are different estimands and do
+  not conflict.
+- `[FINDING]` Rotated absolute effects exceed the random-live control distribution
+  (Mann-Whitney U=5,347,415, p=3.06e-29; rank-biserial 0.4068, hierarchical-bootstrap 95%
+  interval [0.3211, 0.4894]) and the dead-control distribution (U=6,797,533, p=6.55e-105;
+  rank-biserial 0.7883, interval [0.7461, 0.8275]). The rotated sample comprises 116 features
+  by 256 shared variants; each control comprises the corresponding 256 variant effects.
+- `[DECISION]` v19 fixes the previously underspecified Steps 9-13 statistics before GB1. In
+  brief: objective-shifted membership is frozen by the taxonomy; signal density is mean
+  absolute readout weight per feature with feature bootstrap; the expressivity gap is
+  R2(L4)-R2(L0) with a paired variant bootstrap and is descriptive; the interaction gate uses
+  Friedman H against 1,000 within-test feature permutations at q=0.05; pooling is selected by
+  validation Spearman; benchmarks use a 10,000-draw paired test-set bootstrap plus Wilcoxon
+  across seeds; both ablations use their registered paired-interval decision rules; coupling
+  uses a paired replicate-quartet bootstrap with q=0.05; and case-study ranking multiplies mean
+  absolute standardized patch effect, negative log minimum enrichment q, and crosscoder-seed
+  class replication. These definitions apply identically to every dataset.
+- `[COST]` The v19 Step 8 closure reused committed scalar tables and patching outputs. Pod
+  wall-clock time was 0.000 hours and GPU use was 0.000 hours. Cumulative documented IRED GPU
+  use is unchanged: approximately 0.393 RTX PRO 4500 Blackwell hours, 14.92 A100 hours, and
+  0.03 RTX 6000 Ada hours.

@@ -1,0 +1,3 @@
+comparison,rotated_features,variants,rotated_feature_variant_observations,control_variant_observations,mann_whitney_u,mann_whitney_p_value,rank_biserial,bootstrap_ci_lower,bootstrap_ci_upper,bootstrap_samples,bootstrap_seed
+rotated_vs_random_live_feature,116,256,29696,256,5347415.0,3.059204812201922e-29,0.4068116812870419,0.32111382977715847,0.4894470576582284,5000,20261802
+rotated_vs_dead_feature,116,256,29696,256,6797533.0,6.551902378212255e-105,0.788312451592807,0.7461418579364646,0.8274691614611395,5000,20261803

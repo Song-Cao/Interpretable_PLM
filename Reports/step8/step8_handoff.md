@@ -1,15 +1,18 @@
 # Step 8 handoff: IRED depth-26 semantics and causal patching
 
 Date: 2026-11-12
-Status: registered enrichment and approved patching complete; oracle validation not run
+Status: final; no further IRED Step 8 analyses are proposed
 
-## Semantic tests
+## Scope and interpretation
 
-All tests use depth-26 codes derived from the provenance-verified cache. Rotated features are
-the target and conserved features the comparison; static codes are aggregated to residues
-before class-level inference. Five dictionary seeds are the replicate blocks. Claim-bearing
-families share FDR correction; the campaign-derived evolutionary-peak track is a separate
-positive control.
+IRED remains exploratory because Gate 1 failed on task gain. All active Step 8 results use
+depth-26 codes from the provenance-verified cache. Rotated features are the target class and
+conserved features are the comparison. Static codes are aggregated to residues before
+class-level inference, and five dictionary seeds are replicate blocks. Claim-bearing families
+share FDR correction; the campaign-derived evolutionary-peak track is a separate positive
+control.
+
+## Class-level semantic tests
 
 | track | positions | rotated - conserved (SD) | 95% interval | q |
 |---|---:|---:|---:|---:|
@@ -23,12 +26,11 @@ positive control.
 | NADPH proximal/coupled | 4 | -0.222 | [-0.295, -0.152] | 0.000129 |
 | crystallographic ketone proxy | 36 | +0.038 | [-0.032, +0.107] | 0.286 |
 
-The robust headline is the shell gradient, especially first- and second-shell enrichment and
-generic-distal depletion. Single-position substrate and NADPH-direct tracks cannot carry a
-standalone claim. Unlike the withdrawn wrong-depth result, NADPH tracks are depleted rather
-than null; this corrected outcome is retained without post-hoc adjustment. Top-position shell
-distributions differ (total-variation distance 0.09645, permutation p=0.00010). The positive
-control effect is +0.444 SD (p=0.00010).
+The robust headline is first- and second-shell enrichment with generic-distal depletion.
+Single-position substrate and NADPH-direct tracks cannot carry standalone claims. The
+positive-control effect is +0.444 SD (permutation p=0.00010). Top-position shell distributions
+differ between rotated and conserved features (total-variation distance 0.09645, permutation
+p=0.00010).
 
 ## Causal patching
 
@@ -37,36 +39,66 @@ stratified by clipped mutation count and fitness quartile. It performs 29,696 ca
 control partial forward passes (30,464 total), inside E_fit at depth 26, using
 `D_fit(z_ablated) + original_fit_residual`.
 
-All hygiene checks passed before candidate effects were read: the no-op maximum was
-0.00034395 raw prediction units or 0.002299 SD; the dead-feature maximum was identical; the
-random-live control mean absolute effect was 0.001575 SD. Each is below the common 0.05-SD
-tolerance. Fresh-versus-float16-cache maximum raw activation difference was 21, replacing the
-wrong-depth discrepancy of 2,284.
+All hygiene checks passed before candidate effects were read. The no-op maximum was
+0.00034395 raw prediction units or 0.002299 SD; the dead-feature maximum was identical. The
+random-live control mean absolute effect was 0.001575 SD. All are below the common 0.05-SD
+tolerance. The fresh-versus-float16-cache maximum raw activation difference was 21, replacing
+the wrong-depth discrepancy of 2,284.
 
 Across 116 features, mean absolute standardized effect was 0.005796 (median 0.003832); the
-largest feature-level mean absolute effect was 0.03515. Bootstrap intervals excluded zero for
-111 features (53 positive, 58 negative). These are effects on the registered additive
+largest feature-level mean absolute effect was 0.035150. Bootstrap intervals on mean signed
+effect excluded zero for 111 features (53 positive, 58 negative). The feature-level
+mean-absolute 5th/25th/50th/75th/95th percentiles were
+0.001123/0.002467/0.003832/0.006583/0.015320 SD. These are effects on the registered additive
 attribution readout, not the nonlinear prediction ceiling.
 
-The feature-level mean-absolute distribution has 5th/25th/50th/75th/95th percentiles
-0.001123/0.002467/0.003832/0.006583/0.015320 SD. It is broad rather than driven only by a few
-features: 103/116 feature means exceed the random-live control mean absolute effect of
-0.001575 SD. The complete distribution, ten largest features, and matched control quantiles are
-reported in `v18_causal_effect_distribution.md`.
+The distribution comparison replaces the superseded count relative to a control mean.
+Using all 29,696 rotated feature-variant absolute effects and the 256 effects for each control,
+the rotated distribution exceeds random-live (Mann-Whitney U=5,347,415, p=3.06e-29;
+rank-biserial=0.4068, hierarchical-bootstrap 95% interval [0.3211, 0.4894]) and dead control
+(U=6,797,533, p=6.55e-105; rank-biserial=0.7883, interval [0.7461, 0.8275]). The bootstrap
+resamples rotated features and the shared variant backgrounds. Complete quantiles and the ten
+largest features are in `v19_causal_effect_distribution.md` and its companion CSV files.
 
-Spatial and causal results meet at the second shell. Across the 116 features, absolute patching
-effect correlates with mean second-shell activation at Spearman rho 0.2782 (10,000-permutation
-p=0.0028, four-shell FDR q=0.0112). Catalytic activation is unrelated (rho 0.0209, q=0.8203).
-First-shell and distal correlations are nominal but do not survive FDR (both q=0.0588). The
-result therefore supports a second-shell link, not a general claim that every active-site-
-proximal or distal activation is causal.
+## Spatial-causal linkage
 
-Files: `v18_class_semantic_tests.csv`, `v18_mutation_responsive_tests.csv`,
-`v18_spatial_structure_test.json`, `v18_causal_patching_hygiene.json`, and
-`v18_causal_patching_{feature,variant}_effects.csv` in `Reports/step8/`. The full linked table is
-`v18_causal_feature_shell_profiles.csv`.
+The final linkage statistic uses, for each feature, the fraction of its total static activation
+mass assigned to each mutually exclusive shell. This measures location rather than activation
+magnitude. Correlations use the feature's mean absolute standardized patching effect and a
+10,000-draw feature-label permutation test, with BH correction over four shells.
+
+| shell | positions | Spearman rho | permutation p | q |
+|---|---:|---:|---:|---:|
+| catalytic | 3 | +0.0216 | 0.8139 | 0.8139 |
+| first shell | 37 | +0.1198 | 0.2000 | 0.4000 |
+| second shell | 36 | +0.1713 | 0.0668 | 0.2672 |
+| distal | 214 | -0.0717 | 0.4463 | 0.5950 |
+
+Second shell is the strongest positive association, first shell is weaker, catalytic is null,
+and distal is weakly negative. No fraction-based linkage clears FDR. The class-level result
+that rotated features are depleted at generic-distal positions and the within-rotated result
+that distal activation fraction does not predict causal effect answer different questions and
+do not conflict. The earlier absolute-activation linkage is discarded because it conflated
+location with feature magnitude; its artifacts are quarantined under
+`Reports/archive/ired_step8_absolute_linkage_v18/`.
+
+## Active artifacts and interface
+
+- `v18_class_semantic_tests.csv`: depth-26 class-level semantic effects and position counts.
+- `v18_mutation_responsive_tests.csv`: depth-26 mutation-responsive tests.
+- `v18_spatial_structure_test.json`: class-level spatial-structure permutation result.
+- `v18_causal_patching_hygiene.json`: registered hygiene checks and tolerances.
+- `v18_causal_patching_feature_effects.csv`: one row per rotated feature.
+- `v18_causal_patching_variant_effects.csv`: one row per feature-variant ablation.
+- `v18_causal_patching_control_effects.csv`: no-op, dead, and random-live controls.
+- `v19_causal_patching_effect_quantiles.csv`: rotated and control effect quantiles.
+- `v19_causal_patching_top_features.csv`: ten largest feature-level absolute effects.
+- `v19_causal_effect_distribution_tests.csv`: Mann-Whitney and rank-biserial results.
+- `v19_causal_feature_shell_fractions.csv`: feature-level shell fractions and causal effects.
+- `v19_causal_spatial_fraction_correlations.csv`: final spatial-causal linkage tests.
 
 ## Incomplete or uncertain
 
-No oracle validation was requested in this v18 run. IRED remains exploratory because Gate 1
-failed; these results do not enter a confirmatory central-claim table.
+No oracle validation was requested in this run. The 116-feature inference has limited power
+for shell-effect correlations, especially for the three-position catalytic shell. Step 8 is
+closed without further IRED analyses.

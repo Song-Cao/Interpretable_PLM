@@ -1,0 +1,25 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "plan": "v19",
+  "representation_layer": 26,
+  "crosscoder_seed": 20261311,
+  "features": 116,
+  "candidate_feature_variant_effects": 29696,
+  "control_variant_effects": 768,
+  "linkage_statistic": "shell activation mass divided by total activation mass over all 290 positions",
+  "position_counts": {
+    "catalytic": 3,
+    "first_shell": 37,
+    "second_shell": 36,
+    "distal": 214
+  },
+  "permutations": 10000,
+  "permutation_seed": 20261801,
+  "fdr_q": 0.05,
+  "mann_whitney_bootstrap_samples": 5000,
+  "mann_whitney_bootstrap_seed": 20261802,
+  "source_mean_profile": "Reports/archive/ired_step8_absolute_linkage_v18/v18_causal_feature_shell_profiles.csv",
+  "profile_tensor_committed": false,
+  "gpu_hours": 0.0
+}
