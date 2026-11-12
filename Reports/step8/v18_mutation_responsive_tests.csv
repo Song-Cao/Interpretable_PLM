@@ -1,0 +1,10 @@
+track,target_class,comparison_class,grouped_effect_z,ci_lower,ci_upper,p_value,fdr_q_value
+shell_catalytic,rotated,conserved,0.12162843,0.1211599426344037,0.12212719563394785,0.0002,0.0002
+shell_first_shell,rotated,conserved,0.21580584,0.21519047096371652,0.21642765402793884,0.0002,0.0002
+shell_second_shell,rotated,conserved,0.62295616,0.6223514884710312,0.6235625430941582,0.0002,0.0002
+shell_distal_functional_network,rotated,conserved,-0.23134843,-0.23344355933368205,-0.229029980301857,0.0002,0.0002
+shell_generic_distal,rotated,conserved,-0.2744697,-0.2751584634184837,-0.27378932759165764,0.0002,0.0002
+substrate_direct_contact,rotated,conserved,0.2397014,0.2386737808585167,0.24080309197306632,0.0002,0.0002
+NADPH_direct_contact,rotated,conserved,-0.21175188,-0.21333948597311975,-0.2103163678199053,0.0002,0.0002
+NADPH_proximal_or_functionally_coupled,rotated,conserved,-0.30265087,-0.3047601103782654,-0.30020567402243614,0.0002,0.0002
+crystallographic_ketone_analogue_proxy,rotated,conserved,-0.026230495,-0.026820677518844604,-0.025646663457155227,0.0002,0.0002

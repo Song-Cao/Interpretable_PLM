@@ -1,0 +1,42 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "plan": "v18",
+  "representation_layer": 26,
+  "cache_reference_verification": {
+    "base": {
+      "pearson": 1.0000000000000002,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    },
+    "fit": {
+      "pearson": 0.9999999999999998,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    }
+  },
+  "target_class": "rotated",
+  "comparison_class": "conserved",
+  "real_crosscoder_seeds": [
+    20261311,
+    20261312,
+    20261313,
+    20261314,
+    20261315
+  ],
+  "checkpoint_sha256": {
+    "Models/step7/IRED/w1_seed20261311_nobias.pt": "95071782c1fda0a4dc40bb489f4fdaba144a21ce4eb2fa4e3a9efa8b01935f17",
+    "Models/step7/IRED/w1_seed20261312_nobias.pt": "45dad35db7d719729edb314902539ad1efdb1bd87fe8a9fac74fd0b56d728732",
+    "Models/step7/IRED/w1_seed20261313_nobias.pt": "74340fbe6c5de2d5def9af656dcf740ec224610665fa6e34a3c46d69aa4721e8",
+    "Models/step7/IRED/w1_seed20261314_nobias.pt": "4b030e71d1431288010bbe51d29c7d2bce7c8f6b793c575e54078e3a886de0ac",
+    "Models/step7/IRED/w1_seed20261315_nobias.pt": "00016ac188a42616416b45d54438c16c88545339b917a512a6c3eaf3fe40d0b1"
+  },
+  "variants_in_static_residue_average": 1182,
+  "permutation_unit": "feature labels within each independently initialized dictionary seed",
+  "fdr_scope": "claim-eligible annotation families; positive control separate",
+  "gpu_wall_hours": 0.007909676141959305,
+  "causal_patching_run": false,
+  "oracle_validation_run": false
+}

@@ -1,0 +1,8 @@
+{
+  "definition": "mean absolute mutant-minus-WT latent response",
+  "distal_variant_definition": "all mutated positions in distal functional network or generic distal shell",
+  "distal_variants": 289,
+  "mutated_position_background_groups": 257,
+  "resampling_unit": "exact mutated-position set; all variants sharing a set remain together",
+  "crosscoder_seed": 20261311
+}

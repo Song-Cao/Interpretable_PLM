@@ -1360,3 +1360,61 @@ the prediction track needs 0 or 3 crosscoders.
   expected consequence of fixing the input and is not described as confirmation; failure to
   reproduce is reported without changing the analysis. Gate 2's rule and all Step 8/9 selection
   procedures remain unchanged.
+
+### v18 depth-26 recomputation and causal patching (2026-11-12)
+
+- `[DECISION]` The activation-cache provenance contract is now enforced before every active
+  IRED cache reader. Each manifest records dataset, split, layer, device class, storage and
+  compute dtype, TF32 flags, attention settings, backbone revision, and raw versus normalized
+  units, plus hash-addressed wild-type reference blocks. A fresh forward pass must meet the
+  registered correlation, relative-RMSE, and scale checks before downstream work begins.
+  Historical manifests preserve unknown A100 runtime fields rather than inventing them.
+- `[ADJUST]` The active full-campaign cache was re-extracted at hidden depth 26 for all 1,182
+  campaign and 54 external-plate sequences. Its float16 payload is 1,376,410,112 bytes and its
+  fresh base/adapted references verify exactly in the producing runtime. Superseded depth-29
+  tensors, dependent Step 8/9 caches, and Step 9 models remain quarantined under non-resolvable
+  `Cache/archive/`, `Models/archive/`, and `Reports/archive/ired_depth29_v17/` names. The
+  crosscoder, nulls, thresholds, and five-seed taxonomy were not rerun because their Step 4
+  training-only inputs were already the authoritative depth-26 cache.
+- `[FINDING]` Recomputed depth-26 dense-probe Spearman values (validation / pg_kfold test /
+  round-held-out / plate) are: adapted mean 0.628324 / 0.551305 / 0.533867 / 0.612045; base
+  mean 0.574769 / 0.561556 / 0.527706 / 0.604422; delta PCs 0.373585 / 0.459725 / 0.379748 /
+  0.552049. The validation-selected adapted mean remains Gate 2's dense reference.
+- `[FINDING]` Gate 2 remains `sparse_competitive` under its unchanged pre-committed rule. The
+  validation-selected depth-26 sparse arm is `phi_w2_max_all_live` (validation 0.636133,
+  pg_kfold test 0.550402). Dense-minus-sparse on the 228 test variants is +0.000903 with paired
+  95% interval [-0.038226, 0.040975]. This supports competitiveness only, not improvement.
+- `[ADJUST]` The wrong-depth Step 9 expressivity gap 0.152725 is superseded. At verified depth
+  26 the headline all-live max-pooled w=2 arm has test R2 0.058432 at L0 and 0.120331 at L4,
+  so R2(L4)-R2(L0) = 0.061899. The additive attribution readout is still weaker than the
+  nonlinear ceiling, but substantially less so than the withdrawn result implied. The
+  selected sparse arm uses max pooling, while the plan's compact notation uses a sum; the
+  existing notation discrepancy remains recorded.
+- `[ADJUST]` The v18 outcome-neutral depth correction changes the IRED semantic table. Across
+  five dictionary seeds, rotated versus conserved features show first-shell enrichment +0.287
+  SD, second-shell enrichment +0.688, and generic-distal depletion -0.311 (all q=0.000129).
+  Catalytic residues are null (+0.041, interval [-0.064, 0.145]) and the ketone-proxy shell is
+  null. The NADPH-direct and proximal/coupled tracks are depleted (-0.238 and -0.222), rather
+  than null as in the withdrawn depth-29 analysis. The single-position substrate and direct-
+  contact tracks remain too small to carry standalone claims. The recomputed values stand;
+  no analysis was changed to reproduce the withdrawn result.
+- `[FINDING]` Rotated and conserved features retain spatial structure at depth 26: their
+  top-activating shell distributions have total-variation distance 0.09645 with permutation
+  p=0.00010. The campaign-derived evolutionary-peak positive control is +0.444 SD with
+  p=0.00010 and remains excluded from biological claims.
+- `[FINDING]` Approved causal patching completed only after all hygiene controls passed in
+  standardized prediction units. The no-op and dead-feature maxima are each 0.00034395 raw or
+  0.002299 SD; the random-live control mean absolute effect is 0.001575 SD, all below 0.05.
+  Error-preserving patches were made inside E_fit at depth 26 for 116 rotated features across
+  256 registered variants: 29,696 candidate plus 768 control partial forwards. Mean absolute
+  feature effect is 0.005796 SD (median 0.003832; maximum 0.03515). Bootstrap intervals exclude
+  zero for 111 features, split 53 positive and 58 negative. These effects belong to the weaker
+  additive attribution readout and remain exploratory because IRED Gate 1 failed.
+- `[COST]` Recorded v18 model work used 0.3511 RTX PRO 4500 Blackwell wall-hours: extraction
+  0.0060, derived-phi caching approximately 0.0114 from cache timestamps, Step 9 feature arms
+  0.1743, ladder 0.1227, Delta-z 0.0203, semantics 0.0079, and patching 0.0086. Provenance
+  upgrades and fresh-reference checks add approximately 0.015 hours, for about 0.366 hours this
+  session versus the one-hour estimate. Cumulative documented IRED occupancy is reported by
+  device rather than summed as equivalent compute: approximately 14.92 A100 hours, 0.03 RTX
+  6000 Ada hours, and 0.386 RTX PRO 4500 Blackwell hours including the earlier 0.02-hour depth
+  diagnosis.

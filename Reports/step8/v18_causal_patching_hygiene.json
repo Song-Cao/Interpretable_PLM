@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "variant_count": 256,
+  "baseline_prediction_sd": 0.1495819116703036,
+  "no_op_max_absolute_raw_effect": 0.0003439486026763916,
+  "no_op_max_absolute_standardized_effect": 0.002299399699039115,
+  "dead_feature": 0,
+  "dead_feature_max_absolute_raw_effect": 0.0003439486026763916,
+  "dead_feature_max_absolute_standardized_effect": 0.002299399699039115,
+  "dead_feature_mean_standardized_effect": -7.956005720054605e-05,
+  "random_live_feature": 95,
+  "random_feature_mean_standardized_effect": -0.0015619220880221283,
+  "random_feature_mean_absolute_standardized_effect": 0.0015754111849810373,
+  "maximum_cached_vs_reextracted_layer_absolute_difference": 21.0,
+  "tolerances": {
+    "no_op_standardized_max_absolute": 0.05,
+    "dead_standardized_max_absolute": 0.05,
+    "random_standardized_mean_absolute": 0.05
+  }
+}

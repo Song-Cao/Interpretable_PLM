@@ -16,6 +16,13 @@ Random-search seeds and spaces are in `Code/config/step2.yaml`. Continuous class
 
 The pinned backbone is `biohub/ESMC-300M` revision `e4bac860f0c502cd80f3aeac3d0ce6524c6627cb` under `esm==3.4.1.post1`. It returned 960 channels and 30 hidden-state depths.
 
+All Step 2 ESM embedding baselines in this handoff use the model's final output after all
+30 transformer blocks. This is the registered cross-dataset convention for embedding
+baselines. It is distinct from analysis-layer objects, which use the dataset's frozen selected
+hidden depth (depth 26 for IRED). Step 5 dense probes, Step 9 phi predictors, and Step 8
+semantics are therefore compared within depth 26; they do not silently reuse these final-output
+Step 2 tensors.
+
 `Cache/step2/IRED/representations/` remains on the pod and contains:
 
 - `variant_residue.npy`: float16 `[1182, 290, 960]`, aligned to `variant_rows.npy`.

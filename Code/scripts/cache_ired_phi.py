@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -54,6 +55,7 @@ def main() -> int:
     if not torch.cuda.is_available():
         raise RuntimeError("phi caching requires the GPU pod")
     config = load_config(REPO_ROOT / "Code/config/step9.yaml")
+    started_at = time.perf_counter()
     step3 = load_config(REPO_ROOT / "Code/config/step3.yaml")
     provenance = load_config(REPO_ROOT / config["paths"]["provenance_config"])
     source_manifest = REPO_ROOT / config["paths"]["campaign_manifest"]
@@ -133,6 +135,7 @@ def main() -> int:
             "campaign_variants": len(campaign_evo), "plate_variants": len(plate_evo),
             "operators": list(config["pooling_operators"]),
         }
+    manifest["gpu_wall_hours"] = (time.perf_counter() - started_at) / 3600.0
     (temporary / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     os.replace(temporary, destination)
     print(json.dumps(manifest, indent=2), flush=True)

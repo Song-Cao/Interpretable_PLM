@@ -74,6 +74,7 @@ and leaves all tensors and checkpoints under the gitignored `Cache/` and `Models
 .venv/bin/python Code/scripts/run_ired_drift_matched_rotation_null.py
 .venv/bin/python Code/scripts/run_ired_v17_crosscoders.py
 .venv/bin/python Code/scripts/recalibrate_ired_v17_taxonomy.py
+.venv/bin/python Code/scripts/extract_ired_analysis_activations.py
 .venv/bin/python Code/scripts/cache_ired_phi.py
 .venv/bin/python Code/scripts/run_ired_part_b_prediction.py
 .venv/bin/python Code/scripts/run_ired_step9_ladder.py
@@ -81,6 +82,7 @@ and leaves all tensors and checkpoints under the gitignored `Cache/` and `Models
 .venv/bin/python Code/scripts/prepare_ired_annotations.py
 .venv/bin/python Code/scripts/cache_ired_delta_z.py
 .venv/bin/python Code/scripts/analyze_ired_step8_semantics.py
+.venv/bin/python Code/scripts/run_ired_causal_patching.py
 ```
 
 Committed results are summarized in `Reports/step2/step2_handoff.md` and
@@ -97,5 +99,6 @@ impossibility. Raw-rank, death-timing, and dead-feature-resampling diagnostics s
 and `w=2` as the two exploratory working widths. The v17 pooled, drift-matched five-seed
 taxonomy leaves no emergent candidates and identifies rotation as the only robust shifted class.
 Gate 2 finds sparse features competitive with dense probes. Step 8 class-level semantic and
-spatial tests are complete for the exploratory IRED run. Causal patching and oracle validation
-have not run; the registered patch budget awaits approval.
+spatial tests and the approved 30,464-pass causal patching panel are complete for the
+exploratory IRED run. The active Step 5, Step 8, and Step 9 reports use the verified depth-26
+cache; their wrong-depth predecessors are quarantined. Oracle validation has not run.

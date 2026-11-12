@@ -1,0 +1,123 @@
+{
+  "status": "complete",
+  "provenance_contract_version": 1,
+  "dataset": "IRED",
+  "split": "campaign_all_including_reserve_plus_external_plate_evaluation",
+  "layer_index": 26,
+  "device_class": "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+  "storage_dtype": "float16",
+  "compute_dtype": "bfloat16",
+  "tf32": {
+    "matmul_allow_tf32": false,
+    "cudnn_allow_tf32": true,
+    "float32_matmul_precision": "highest"
+  },
+  "attention_kernel_settings": {
+    "requested": "flash_attention_2",
+    "flash_sdp_enabled": true,
+    "memory_efficient_sdp_enabled": true,
+    "math_sdp_enabled": true,
+    "cudnn_sdp_enabled": true
+  },
+  "torch_version": "2.11.0+cu130",
+  "cuda_version": "13.0",
+  "backbone_revision": "e4bac860f0c502cd80f3aeac3d0ce6524c6627cb",
+  "activation_units": "raw",
+  "reference_blocks": {
+    "base": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_base.npy",
+      "sha256": "142a13a463bd50c6bac08c04db4cbf874d9df744914b7709788f23cc7a5f2b3c",
+      "shape": [
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "raw",
+      "normalization_scalar": 1.0
+    },
+    "fit": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_fit.npy",
+      "sha256": "6433fdb2c0423823589ec816aab9073c1f5a89030b80ba87c8a5e9f044bb984b",
+      "shape": [
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "raw",
+      "normalization_scalar": 1.0
+    }
+  },
+  "dimension": 960,
+  "campaign_variants": 1182,
+  "plate_variants": 54,
+  "sequence_length": 290,
+  "adapter_checkpoint_sha256": "38da4c4aec3cbec958e866679be078c24948cd434be0d65b50ba2a337a02e4b4",
+  "payload": {
+    "campaign_base": {
+      "file": "campaign_base.npy",
+      "shape": [
+        1182,
+        290,
+        960
+      ],
+      "dtype": "float16",
+      "bytes": 658137728,
+      "sha256": "83af365863f347480e2774f728dc8d8db4f1d169d3f880d9959cbecc3335734d"
+    },
+    "plate_base": {
+      "file": "plate_base.npy",
+      "shape": [
+        54,
+        290,
+        960
+      ],
+      "dtype": "float16",
+      "bytes": 30067328,
+      "sha256": "69a643b14ccd7355bcf97a35cc8ef29e77e7a8850fe47f0a94522889b41b6a0c"
+    },
+    "campaign_fit": {
+      "file": "campaign_fit.npy",
+      "shape": [
+        1182,
+        290,
+        960
+      ],
+      "dtype": "float16",
+      "bytes": 658137728,
+      "sha256": "943ab113e568201963f05b373c895b1d54e5eb3ab4a96c3b8f94876ff838da05"
+    },
+    "plate_fit": {
+      "file": "plate_fit.npy",
+      "shape": [
+        54,
+        290,
+        960
+      ],
+      "dtype": "float16",
+      "bytes": 30067328,
+      "sha256": "fb7c32623d95bbd76cf0652413d4b484f6f9c734b04a25752935fa1296bdd485"
+    },
+    "campaign_rows": {
+      "file": "campaign_rows.npy",
+      "shape": [
+        1182
+      ],
+      "sha256": "7cd53cf00437a1f85c3051f30a5effde0e08ea6d7f2b7db9bac529f79382bc0c"
+    },
+    "plate_rows": {
+      "file": "plate_rows.npy",
+      "shape": [
+        54
+      ],
+      "sha256": "e08564ea58caf0735b26920ba5de6a39b3e2bd070d922c2aa8d7f0702ea80907"
+    }
+  },
+  "selection_use": {
+    "reserve": false,
+    "pg_kfold_test": false,
+    "external_plate": false
+  },
+  "gpu_wall_hours": 0.00596614752333456
+}

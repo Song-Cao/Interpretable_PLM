@@ -1,0 +1,36 @@
+{
+  "representation_layer": 26,
+  "cache_reference_verification": {
+    "base": {
+      "pearson": 1.0000000000000002,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    },
+    "fit": {
+      "pearson": 0.9999999999999998,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    }
+  },
+  "status": "complete",
+  "headline_arm": "phi_w2_max_all_live",
+  "expressivity_gap_r2_L4_minus_L0": 0.06189936565663656,
+  "L4_test_r2": 0.12033099466018726,
+  "L0_test_r2": 0.0584316290035507,
+  "interaction_gate": {
+    "method": "Friedman-H-style additive residual with feature-permutation null",
+    "top_feature_indices": [
+      345,
+      834
+    ],
+    "observed_h_squared": 0.9936748468310383,
+    "permutation_pvalue": 1.0,
+    "permutations": 200,
+    "passes": false
+  },
+  "gpu_wall_hours": 0.12266179821861442,
+  "plate_labels_used_for_selection": false,
+  "test_labels_used_for_selection": false
+}

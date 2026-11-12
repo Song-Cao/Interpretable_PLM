@@ -1,0 +1,9 @@
+{
+  "representative_fits": 10,
+  "representative_seconds": 6.242983947042376,
+  "projected_total_fits": 925,
+  "projected_gpu_wall_hours": 0.16041000419483883,
+  "cap_hours": 3.0,
+  "random_search_count": 20,
+  "reduced": false
+}

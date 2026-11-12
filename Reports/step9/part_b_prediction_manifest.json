@@ -1,0 +1,28 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "selected_phi_family": "mlp",
+  "representation_layer": 26,
+  "cache_reference_verification": {
+    "base": {
+      "pearson": 1.0000000000000002,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    },
+    "fit": {
+      "pearson": 0.9999999999999998,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    }
+  },
+  "best_phi_arm_by_validation": "phi_w2_max_all_live",
+  "gate2_verdict": "sparse_competitive",
+  "gpu_wall_hours": 0.17430186410143506,
+  "plate_labels_used_for_selection": false,
+  "test_labels_used_for_selection": false,
+  "expressivity_ladder_pending": false,
+  "expressivity_ladder_manifest": "Reports/step9/step9_ladder_manifest.json",
+  "sample_efficiency_pending": true
+}

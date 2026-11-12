@@ -1,0 +1,35 @@
+{
+  "representation_layer": 26,
+  "cache_reference_verification": {
+    "base": {
+      "pearson": 1.0000000000000002,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    },
+    "fit": {
+      "pearson": 0.9999999999999998,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    }
+  },
+  "status": "complete",
+  "dataset": "IRED",
+  "target_class": "rotated",
+  "candidate_features": 116,
+  "variants": 256,
+  "candidate_partial_forward_passes": 29696,
+  "control_partial_forward_passes": 768,
+  "partial_forward_passes_total": 30464,
+  "patch_location": "inside E_fit at layer 26",
+  "residual_rule": "fit_decoder(ablated_code) + original_fit_residual",
+  "effect_standardization": "baseline_prediction_sd_on_registered_variant_sample",
+  "adapter_checkpoint": "Models/step3/IRED/real_adapter.pt",
+  "adapter_sha256": "38da4c4aec3cbec958e866679be078c24948cd434be0d65b50ba2a337a02e4b4",
+  "crosscoder_checkpoint": "Models/step7/IRED/w1_seed20261311_nobias.pt",
+  "crosscoder_sha256": "95071782c1fda0a4dc40bb489f4fdaba144a21ce4eb2fa4e3a9efa8b01935f17",
+  "taxonomy": "Reports/step6/v17_pooled_null/taxonomy_v17_w1_seed20261311.csv",
+  "gpu_wall_hours": 0.008561133670801711,
+  "partial_results_reported": false
+}
