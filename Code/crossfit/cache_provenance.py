@@ -243,16 +243,18 @@ def verify_ired_esmc_cache(
         return extract_residue_layer(model, [sequence], layer=int(layer), batch_size=1)[0]
 
     backbone = step3["backbone"]
-    base = load_esmc(
-        str(backbone["name"]), device,
-        repository=str(backbone["repository"]),
-        expected_revision=str(backbone["revision"]),
-    )
-    fresh = {"base": extract(base)}
-    del base
-    gc.collect()
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+    fresh: dict[str, np.ndarray] = {}
+    if "base" in manifest["reference_blocks"]:
+        base = load_esmc(
+            str(backbone["name"]), device,
+            repository=str(backbone["repository"]),
+            expected_revision=str(backbone["revision"]),
+        )
+        fresh["base"] = extract(base)
+        del base
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     checkpoints = dict(adapter_checkpoints or {})
     if adapter_checkpoint is not None:
