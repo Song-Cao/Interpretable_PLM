@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from crossfit.adaptation import SequenceFitnessAdapter, build_lora_adapter, load_trainable_state
 from crossfit.datasets import load_assay, wt_sequence
-from crossfit.esmc import extract_residue_embeddings, extract_residue_layer, load_esmc
+from crossfit.esmc import extract_residue_embeddings, load_esmc
 from crossfit.utils import REPO_ROOT, load_config
 
 
@@ -133,6 +133,24 @@ def _layer_alignment(cached: np.ndarray, current: np.ndarray, selected_layer: in
     }
 
 
+def _stored_layer_against_current_depths(cached: np.ndarray, current: np.ndarray) -> dict:
+    old = cached.astype(np.float64, copy=False).reshape(-1)
+    rows = []
+    for depth in range(current.shape[0]):
+        candidate = current[depth].astype(np.float64, copy=False).reshape(-1)
+        rows.append({
+            "current_depth": depth,
+            "pearson": float(pearsonr(old, candidate).statistic),
+            "spearman": float(spearmanr(old, candidate).statistic),
+            "through_origin_scale": float(np.dot(old, candidate) / np.dot(old, old)),
+            "maximum_absolute_difference": float(np.max(np.abs(candidate - old))),
+        })
+    return {
+        "by_current_depth": rows,
+        "best_current_depth_by_pearson": max(rows, key=lambda row: row["pearson"]),
+    }
+
+
 def _runtime() -> dict:
     import esm
     import peft
@@ -195,14 +213,14 @@ def main() -> int:
     adapted.eval()
 
     analysis_layer = int(step8["analysis_layer"])
-    current_variant_base = extract_residue_layer(
-        base, [str(variant["mutant_sequence"])],
-        layer=analysis_layer, batch_size=1,
-    )[0]
-    current_variant = extract_residue_layer(
-        adapted.backbone, [str(variant["mutant_sequence"])],
-        layer=analysis_layer, batch_size=1,
-    )[0]
+    current_variant_base_layers = extract_residue_embeddings(
+        base, [str(variant["mutant_sequence"])], batch_size=1, all_layers=True,
+    ).layers[0]
+    current_variant_layers = extract_residue_embeddings(
+        adapted.backbone, [str(variant["mutant_sequence"])], batch_size=1, all_layers=True,
+    ).layers[0]
+    current_variant_base = current_variant_base_layers[analysis_layer]
+    current_variant = current_variant_layers[analysis_layer]
     cached_base_file = cache / "full_selected_layer_base.npy"
     cached_variant_base = np.load(cached_base_file, mmap_mode="r")[variant_index]
     cached_variant_file = cache / "full_selected_layer_adapted.npy"
@@ -281,6 +299,9 @@ def main() -> int:
             "cached_dtype": str(cached_variant_base.dtype),
             "current_return_dtype": str(current_variant_base.dtype),
             "statistics": _comparison(cached_variant_base, current_variant_base),
+            "stored_file_against_every_current_depth": _stored_layer_against_current_depths(
+                cached_variant_base, current_variant_base_layers,
+            ),
         },
         "direct_layer26_adapted_comparison": {
             "substitute_reason": (
@@ -293,6 +314,9 @@ def main() -> int:
             "cached_dtype": str(cached_variant.dtype),
             "current_return_dtype": str(current_variant.dtype),
             "statistics": _comparison(cached_variant, current_variant),
+            "stored_file_against_every_current_depth": _stored_layer_against_current_depths(
+                cached_variant, current_variant_layers,
+            ),
         },
         "within_runtime_adaptation_comparisons": {
             "cached_fit_vs_cached_base": _comparison(cached_variant_base, cached_variant),
