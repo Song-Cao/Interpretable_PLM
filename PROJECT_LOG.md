@@ -1418,3 +1418,19 @@ the prediction track needs 0 or 3 crosscoders.
   device rather than summed as equivalent compute: approximately 14.92 A100 hours, 0.03 RTX
   6000 Ada hours, and 0.386 RTX PRO 4500 Blackwell hours including the earlier 0.02-hour depth
   diagnosis.
+
+### Pod utilization and Step 8 effect-linkage policy (2026-11-12)
+
+- `[DECISION]` GPU sessions are split into local development and one contiguous pod phase.
+  Code, tests, report assembly, and commits run locally. The pod is reserved for activation
+  extraction, adapter or crosscoder training, cache-bound analysis, and causal patching, then
+  released immediately after that phase. Every session reports billed pod wall-clock time and
+  measured GPU-hours separately; utilization is never inferred from GPU-hours alone. The
+  preceding v18 recomputation used about 0.366 GPU-hours over roughly two billed pod hours,
+  approximately 18% utilization.
+- `[DECISION]` The Step 8 spatial-causal linkage uses the registered primary w=1 dictionary,
+  because causal feature IDs are dictionary-specific. For each of the 116 approved rotated
+  features, its mean absolute standardized patching effect is rank-correlated separately with
+  its mean static activation at catalytic, first-shell, second-shell, and combined distal
+  positions. Two-sided feature-label permutation tests use 10,000 draws and BH correction at
+  q=0.05 across the four shells. The analysis seed and quantiles are fixed in `step8.yaml`.
