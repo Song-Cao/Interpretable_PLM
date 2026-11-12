@@ -174,5 +174,65 @@
     "layer_freeze_reserve",
     "round_held_out_test",
     "plate"
-  ]
+  ],
+  "provenance_contract_version": 1,
+  "layer_index": 26,
+  "device_class": "NVIDIA A100 (historical cache-producing run)",
+  "storage_dtype": "float16",
+  "compute_dtype": "not_recorded_in_historical_run",
+  "tf32": {
+    "matmul_allow_tf32": "not_recorded_in_historical_run",
+    "cudnn_allow_tf32": "not_recorded_in_historical_run",
+    "float32_matmul_precision": "not_recorded_in_historical_run"
+  },
+  "attention_kernel_settings": {
+    "realized": "not_recorded_in_historical_run"
+  },
+  "backbone_revision": "e4bac860f0c502cd80f3aeac3d0ce6524c6627cb",
+  "activation_units": "normalized",
+  "reference_blocks": {
+    "base": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_base.npy",
+      "sha256": "7fb8309982949d6703f1d1aa18812f9b4823d46cedfac419dc2c88673494aedf",
+      "shape": [
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "normalized",
+      "normalization_scalar": 0.027229148200895496
+    },
+    "fit": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_fit.npy",
+      "sha256": "77ab74204969e316669b0f91ac0a178fedb84c7b1e715348cd2efb5c2a1940d2",
+      "shape": [
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "normalized",
+      "normalization_scalar": 0.029674916328793835
+    }
+  },
+  "historical_provenance_completeness": "partial_fields_recovered_retroactively",
+  "pre_v18_manifest_sha256": "e6e9e91166a4394d43e8ab04cf06bc9bd46d5c36e90a3592ca39e5d5a08b5bdc",
+  "reference_extraction_runtime": {
+    "device_class": "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+    "torch_version": "2.11.0+cu130",
+    "cuda_version": "13.0",
+    "tf32": {
+      "matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "float32_matmul_precision": "highest"
+    },
+    "attention_kernel_settings": {
+      "requested": "flash_attention_2",
+      "flash_sdp_enabled": true,
+      "memory_efficient_sdp_enabled": true,
+      "math_sdp_enabled": true,
+      "cudnn_sdp_enabled": true
+    }
+  }
 }

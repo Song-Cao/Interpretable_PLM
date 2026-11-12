@@ -1,0 +1,15 @@
+{
+  "dataset": "IRED",
+  "decision_metric": "pg_kfold_test_spearman",
+  "selection_data": "five_fold_cv_within_pg_kfold_training_pool",
+  "best_dense_arm_by_validation": "dense_fit_mean",
+  "best_phi_arm_by_validation": "phi_w2_max_all_live",
+  "paired_bootstrap_dense_minus_sparse": {
+    "dense_minus_sparse": 0.00090295231005455,
+    "lower": -0.038226240339794694,
+    "upper": 0.040974546504592084
+  },
+  "verdict": "sparse_competitive",
+  "step9_run_despite_verdict": true,
+  "override_scope": "IRED only; Gate 2 is a resource-allocation gate"
+}

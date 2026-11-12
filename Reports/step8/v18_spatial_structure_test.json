@@ -1,0 +1,7 @@
+{
+  "target_class": "rotated",
+  "comparison_class": "conserved",
+  "statistic_mean_total_variation": 0.09644812858664806,
+  "blocked_permutation_p_value": 9.999000099990002e-05,
+  "top_positions_per_feature": 1
+}

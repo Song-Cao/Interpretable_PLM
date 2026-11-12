@@ -1,0 +1,2 @@
+track,role,position_count,target_class,comparison_class,mean_standardized_effect,permutation_p_value,effect_seed_20261311,effect_seed_20261312,effect_seed_20261313,effect_seed_20261314,effect_seed_20261315
+evolutionary_peak_residue,positive_control_only,4,rotated,conserved,0.4440382595951998,9.999000099990002e-05,0.453635298852453,0.45546360663761537,0.47772837831059256,0.40718924792544364,0.4261747662498947
