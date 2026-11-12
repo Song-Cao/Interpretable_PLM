@@ -1,5 +1,15 @@
 # Step 9 handoff — exploratory IRED sparse-feature prediction
 
+## Superseded by cache-depth audit (2026-11-12)
+
+The results below are not current CROSSFIT results. Campaign phi features were encoded from the
+explicitly superseded Step 3 full-campaign files, which a direct all-depth comparison identifies
+as depth 29 rather than the accepted depth 26. This invalidates the feature-set comparison,
+expressivity gap, sample-efficiency curve, and their contribution to Gate 2 until recomputed from
+correct depth-26 activations. The files remain for audit and are not deleted. The underlying
+Step 7 taxonomy is unaffected because its crosscoders used the authoritative Step 4 depth-26
+cache. See `Reports/step8/v17_activation_cache_diagnosis.md`.
+
 ## Status
 
 The IRED feature-set comparison, expressivity ladder, and reporting-only sample-efficiency curve

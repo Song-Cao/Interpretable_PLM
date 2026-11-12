@@ -274,6 +274,9 @@ def main() -> int:
     fit_scalar = float(step4["models"]["fit"]["normalization_scalar"])
     result = {
         "status": "complete_diagnosis_only",
+        "diagnosis": "superseded_step3_files_are_depth29_not_depth26",
+        "downstream_action": "stop_without_reextraction_or_recomputation",
+        "authoritative_step4_depth26_cache_valid": True,
         "dataset": "IRED",
         "analysis_layer": analysis_layer,
         "model_repository": repository,

@@ -1,5 +1,5 @@
 {
-  "status": "hygiene_failed_no_op",
+  "status": "hygiene_passed_patching_blocked_wrong_depth_cache",
   "target_class": "rotated",
   "crosscoder_width": 1,
   "crosscoder_seed": 20261311,
@@ -140,6 +140,6 @@
   "candidate_patching_started": false,
   "hygiene_artifact": "Reports/step8/v17_causal_patching_hygiene.json",
   "approval_required_before_execution": false,
-  "execution_deferred_reason": "The control-only phase stopped before candidate ablations because the numerical no-op maximum raw effect (7.954239845275879e-05) exceeded the registered 1e-05 tolerance.",
+  "execution_deferred_reason": "The units-corrected hygiene check passes, but the configured full-campaign activation files are superseded depth-29 tensors rather than the accepted depth-26 tensors. Candidate ablations remain prohibited pending review.",
   "variant_sample_materialization": "The deterministic 256-row sample is written atomically at run start; the committed 64-row CSV is a superseded planning artifact and must not be loaded by the patching entry point."
 }

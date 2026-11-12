@@ -1,9 +1,24 @@
 # Step 8 handoff — IRED semantic tests and causal budget
 
+## Cache-depth and hygiene correction (2026-11-12)
+
+The semantic and mutation-responsive results below are superseded. They encoded the explicitly
+superseded Step 3 full-campaign tensors, which store depth 29, with crosscoders trained on the
+authoritative Step 4 depth-26 cache. The earlier shell enrichment is therefore not a current
+biological result and cannot support a claim until recomputed from correctly extracted depth-26
+activations. The Step 7 taxonomy itself remains valid.
+
+The causal hygiene failure is also withdrawn as a units error. The raw no-op maximum
+`7.95424e-05` is `0.0010763` baseline-prediction SD, well within the common standardized `0.05`
+tolerance. Both raw and standardized values remain reported. Candidate ablations were never run
+and remain blocked by the independent cache-depth finding. Full evidence is in
+`v17_activation_cache_diagnosis.md` and `v17_activation_cache_diagnosis.json`.
+
 ## Status
 
 The v17 class-level semantic, spatial-structure, and mutation-responsive analyses are complete.
-Causal patching stopped at its mandatory hygiene boundary before candidate ablation. Oracle
+Causal patching remains stopped before candidate ablation because the configured campaign cache
+has the wrong depth. Oracle
 validation also has not begun. IRED remains an exploratory pipeline shakedown because Gate 1 failed on task
 gain; none of these results supplies confirmatory evidence for CROSSFIT's central claim.
 
@@ -67,7 +82,7 @@ conservation/DCA, energetic, docking, or oracle track was inferred to fill missi
 blocks. The 5OCM ketone-analogue contact remains labelled a proxy rather than a campaign-substrate
 contact.
 
-## Causal patching — hygiene failed before candidate ablation
+## Causal patching — hygiene passed after units correction; cache depth blocks execution
 
 The primary `w=1`, seed 20261311 taxonomy contains 248 rotated features. Restricting to features
 at or above both their own decoder median norms leaves 116 causal candidates. The approved
@@ -83,19 +98,18 @@ used.
 
 There are 256 separate baseline forward passes, not counted as partial passes above. The
 implementation patches inside `E_fit`, splices back the crosscoder residual, and evaluates all
-three hygiene controls over the full registered sample before candidate ablation. The control
-phase ran after pod reconnection and stopped as required: the no-op maximum raw prediction change
-was `7.95424e-05`, above the registered `1e-05` tolerance. The dead-feature maximum was identical
-because feature 0 was inactive, and its mean standardized effect was `-8.78e-06`. The random-live
-control had mean standardized effect `-0.000357` and mean absolute standardized effect `0.000410`,
-well inside its `0.05` tolerance. Hygiene is conjunctive, so status is `failed_no_op`.
+three hygiene controls over the full registered sample before candidate ablation. The no-op
+maximum was `7.95424e-05` raw units, or `0.0010763` baseline-prediction SD. The dead-feature
+maximum was identical because feature 0 was inactive; its mean standardized effect was
+`-8.78e-06`. The random-live control had mean standardized effect `-0.000357` and mean absolute
+standardized effect `0.000410`. All are inside the common standardized `0.05` tolerance.
 
 No candidate-feature ablation ran, and no causal effect table or causal claim exists. The
 deterministic 256-row sample now supersedes the earlier 64-row planning sample. The replacement
-runtime re-extracted layer-26 activations that differed from the cache by a maximum of `2284` raw
-activation units even though the exact model revision and adapter checkpoint hashes were enforced.
-The remaining numerical-runtime mismatch and no-op tolerance require review before a rerun. The
-tolerance was not relaxed after seeing the result.
+runtime re-extracted layer-26 activations that differed from the configured cache by a maximum of
+`2284` raw activation units even though the exact model revision and adapter checkpoint hashes
+were enforced. The later all-depth audit proves that configured file is depth 29. Candidate
+patching remains blocked on correcting its cache source, not on hygiene.
 
 ## Artifacts
 
@@ -120,6 +134,6 @@ All feature labels remain provisional until causal validation. The static associ
 over campaign variants and cannot establish that a feature causes fitness. Mutation-responsive
 results use one crosscoder seed because the precomputed Delta-z cache predates the five-seed
 extension. The catalytic and contact assignments retain their supplied/preprint provenance, and
-9RH is a proxy ligand. Causal candidate ablations remain unexecuted because numerical no-op
-hygiene failed. A rerun requires an approved resolution of the runtime/cache mismatch or of the
-registered tolerance; every oracle also remains unrun.
+9RH is a proxy ligand. Causal candidate ablations remain unexecuted because the configured
+campaign inputs are superseded depth-29 files. The invalid semantic results and patching inputs
+require correct depth-26 activations before review; every oracle also remains unrun.

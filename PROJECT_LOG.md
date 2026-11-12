@@ -1298,3 +1298,43 @@ the prediction track needs 0 or 3 crosscoders.
   0.03 RTX 6000 Ada wall-hours. Historical occupancy is reported separately as approximately
   14.92 A100 wall-hours; heterogeneous device-hours are not added. No causal effect was computed
   or reported.
+
+### IRED activation-cache diagnosis (2026-11-12)
+
+- `[ADJUST]` Causal no-op and dead-feature hygiene are now evaluated in the same
+  baseline-prediction-SD units as the random-feature control. The earlier raw `1e-05` tolerance
+  tested float32 accumulation rather than splice correctness and is superseded for a reason
+  stated independently of its result. The retained raw maximum `7.95424e-05` is `0.0010763` SD,
+  below the common standardized tolerance `0.05`; the hygiene phase passes. Both units remain in
+  the artifact. Candidate ablations remain unrun because the separate cache-depth audit blocks
+  them. The earlier `[FINDING]` labeling this value `failed_no_op` is retained above only as the
+  superseded audit record.
+- `[FINDING]` The `2284` cache discrepancy is a depth-label/storage mismatch, not normalization
+  and not a different numerical model. `Cache/step3/IRED/full_selected_layer_base.npy` matches
+  current depth 29 at Pearson/Spearman `0.999685/0.999558`, scale `0.999504`; its depth-26
+  correlations are `0.446689/0.311353`. The adapted file likewise matches depth 29 at
+  `0.999788/0.999762`, scale `0.997500`, but depth 26 only at `0.175909/0.128945`. These are the
+  original final-layer files already marked superseded in the Step 3 handoff, but later configs
+  consumed them as depth 26.
+- `[FINDING]` The authoritative Step 4 training-only cache is correctly depth 26. After reversing
+  its fixed scalars, current single-sequence re-extraction agrees at Pearson/Spearman
+  `0.999788/0.999726` for base and `0.999605/0.999529` for adapted, with unit through-origin
+  scales. The small remaining scatter has the expected float16-storage signature. The all-layer
+  reserve also matches every current same depth above Pearson `0.99968`, and cached depth 26
+  matches current depth 26 best. Thus Step 6/7 nulls, crosscoders, thresholds, and the 25.23%
+  five-seed rotated taxonomy remain valid.
+- `[ADJUST]` Step 5 dense probes, Gate 2, Step 9 phi/expressivity/sample-efficiency results, and
+  Step 8 semantic and mutation-responsive enrichment are superseded pending correct depth-26
+  recomputation. Their campaign paths point to the depth-29 Step 3 files while their reports call
+  the inputs depth 26. The earlier shell enrichment is withdrawn as a current biological result;
+  underlying files are retained for audit. No full cache was re-extracted and no downstream
+  result was recomputed in this diagnosis.
+- `[FINDING]` Runtime provenance is incomplete for the A100 cache-producing container: Torch,
+  CUDA, TF32 flags, realized attention kernel, and Transformer Engine availability were not
+  persisted. The diagnostic used an RTX PRO 4500 Blackwell with Torch 2.11.0+cu130, CUDA 13.0,
+  matmul TF32 off, cuDNN TF32 on, no autocast, and no Flash-Attention, xFormers, or Transformer
+  Engine. The preceding hygiene run used an RTX 6000 Ada. Correctly identified layers agree
+  across devices, so device precision does not explain the large mismatch.
+- `[COST]` The single-sequence, all-depth cache diagnosis used approximately 0.02 RTX PRO 4500
+  Blackwell wall-hours. No patching, full-corpus extraction, crosscoder training, or predictor
+  refit ran.

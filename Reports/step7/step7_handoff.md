@@ -1,5 +1,17 @@
 # Step 7 handoff — IRED width diagnostics, provisional taxonomy, and Gate 2
 
+## Cache-depth correction (2026-11-12)
+
+The Step 6/7 crosscoders and taxonomy used the authoritative Step 4 depth-26 training cache and
+remain valid. The five-seed `w=1` rotated fraction remains 25.23%.
+
+Gate 2 does not remain reportable: its Step 5 campaign dense probes and Step 9 sparse predictors
+were built from `Cache/step3/IRED/full_selected_layer_*.npy`. A direct all-depth audit proves
+those explicitly superseded files store depth 29, although the consuming configuration called
+them depth 26. The Gate 2 verdict and dense-reference comparisons below are retained only as a
+superseded audit record pending correct depth-26 recomputation. See
+`Reports/step8/v17_activation_cache_diagnosis.md`.
+
 ## v17 current result (2026-11-08)
 
 This section supersedes the v16 taxonomy section retained later in this document for audit.
