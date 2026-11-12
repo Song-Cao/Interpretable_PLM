@@ -144,10 +144,16 @@ def main() -> int:
     adapted.eval()
 
     analysis_layer = int(step8["analysis_layer"])
+    current_variant_base = extract_residue_layer(
+        base, [str(variant["mutant_sequence"])],
+        layer=analysis_layer, batch_size=1,
+    )[0]
     current_variant = extract_residue_layer(
         adapted.backbone, [str(variant["mutant_sequence"])],
         layer=analysis_layer, batch_size=1,
     )[0]
+    cached_base_file = cache / "full_selected_layer_base.npy"
+    cached_variant_base = np.load(cached_base_file, mmap_mode="r")[variant_index]
     cached_variant_file = cache / "full_selected_layer_adapted.npy"
     cached_variant = np.load(cached_variant_file, mmap_mode="r")[variant_index]
 
@@ -198,6 +204,14 @@ def main() -> int:
             "wild_type_available_cache_layer": "final model embedding after final normalization",
         },
         "wild_type_final_layer_base_comparison": _comparison(cached_wt_final, current_wt_final),
+        "direct_layer26_base_comparison": {
+            "variant_row": int(variant["variant_row"]),
+            "mutations": str(variant["mutations"]),
+            "cached_file": str(cached_base_file.relative_to(REPO_ROOT)),
+            "cached_dtype": str(cached_variant_base.dtype),
+            "current_return_dtype": str(current_variant_base.dtype),
+            "statistics": _comparison(cached_variant_base, current_variant_base),
+        },
         "direct_layer26_adapted_comparison": {
             "substitute_reason": (
                 "No wild-type layer-26 activation was persisted; use one exactly aligned cached "
@@ -209,6 +223,10 @@ def main() -> int:
             "cached_dtype": str(cached_variant.dtype),
             "current_return_dtype": str(current_variant.dtype),
             "statistics": _comparison(cached_variant, current_variant),
+        },
+        "within_runtime_adaptation_comparisons": {
+            "cached_fit_vs_cached_base": _comparison(cached_variant_base, cached_variant),
+            "current_fit_vs_current_base": _comparison(current_variant_base, current_variant),
         },
     }
     report = REPO_ROOT / "Reports/step8/v17_activation_cache_diagnosis.json"
