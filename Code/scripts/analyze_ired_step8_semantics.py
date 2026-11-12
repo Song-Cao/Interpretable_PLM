@@ -17,6 +17,7 @@ from scipy import sparse
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from crossfit.crosscoder import CrossCoder
+from crossfit.cache_provenance import verify_ired_esmc_cache
 from crossfit.datasets import get_split, load_assay
 from crossfit.semantic_enrichment import (
     benjamini_hochberg_adjusted,
@@ -246,6 +247,14 @@ def main() -> int:
         raise RuntimeError("five-seed residue profiles require the GPU pod")
     started = time.monotonic()
     config = load_config(REPO_ROOT / "Code/config/step8.yaml")
+    step3 = load_config(REPO_ROOT / "Code/config/step3.yaml")
+    provenance = load_config(REPO_ROOT / config["paths"]["provenance_config"])
+    reference_verification = verify_ired_esmc_cache(
+        REPO_ROOT / config["paths"]["campaign_manifest"],
+        step3=step3,
+        verification=provenance["verification"],
+        adapter_checkpoint=REPO_ROOT / config["paths"]["step3_adapter"],
+    )
     step4 = json.loads((REPO_ROOT / config["paths"]["step4_manifest"]).read_text())
     evo_scalar = float(step4["models"]["evo"]["normalization_scalar"])
     fit_scalar = float(step4["models"]["fit"]["normalization_scalar"])
@@ -254,14 +263,14 @@ def main() -> int:
     if evo.shape != fit.shape:
         raise AssertionError("campaign activations are not aligned")
     report = REPO_ROOT / config["paths"]["reports"]
-    profile_cache = REPO_ROOT / config["paths"]["delta_z_cache"] / "v17_semantic_profiles"
+    profile_cache = REPO_ROOT / config["paths"]["delta_z_cache"] / "v18_semantic_profiles"
     profile_cache.mkdir(parents=True, exist_ok=True)
     taxonomy_dir = REPO_ROOT / "Reports/step6/v17_pooled_null"
     seeds = list(map(int, load_config(REPO_ROOT / "Code/config/step7.yaml")["training"]["seeds"]))
     taxonomies = [pd.read_csv(taxonomy_dir / f"taxonomy_v17_w1_seed{seed}.csv") for seed in seeds]
     target, selection = _select_target(taxonomies, list(config["semantic_test"]["shifted_classes"]))
     comparison = str(config["semantic_test"]["comparison_class"])
-    selection.to_csv(report / "v17_target_class_selection.csv", index=False)
+    selection.to_csv(report / "v18_target_class_selection.csv", index=False)
     claim_tracks, control_tracks, shells = _tracks(evo.shape[1])
 
     profiles, labels, checkpoint_hashes = [], [], {}
@@ -311,7 +320,7 @@ def main() -> int:
             row[f"effect_seed_{seed}"] = seed_effects[seed_index, index]
         rows.append(row)
     semantic = pd.DataFrame(rows)
-    semantic.to_csv(report / "v17_class_semantic_tests.csv", index=False)
+    semantic.to_csv(report / "v18_class_semantic_tests.csv", index=False)
 
     control_scores = [profile_enrichment(profile, control_tracks)[1] for profile in profiles]
     control_observed, control_p, control_seed = blocked_class_permutation(
@@ -325,27 +334,27 @@ def main() -> int:
         "target_class": target, "comparison_class": comparison,
         "mean_standardized_effect": control_observed[0], "permutation_p_value": control_p[0],
         **{f"effect_seed_{seed}": control_seed[index, 0] for index, seed in enumerate(seeds)},
-    }]).to_csv(report / "v17_positive_control_test.csv", index=False)
+    }]).to_csv(report / "v18_positive_control_test.csv", index=False)
 
     spatial_statistic, spatial_p, spatial_rows = top_position_shell_statistic(
         profiles, labels, shells, target=target, comparison=comparison,
         permutations=int(config["semantic_test"]["permutations"]),
         seed=int(config["semantic_test"]["permutation_seed"]) + 2,
     )
-    pd.DataFrame(spatial_rows).to_csv(report / "v17_top_position_shell_counts.csv", index=False)
+    pd.DataFrame(spatial_rows).to_csv(report / "v18_top_position_shell_counts.csv", index=False)
     spatial = {
         "target_class": target, "comparison_class": comparison,
         "statistic_mean_total_variation": spatial_statistic,
         "blocked_permutation_p_value": spatial_p,
         "top_positions_per_feature": int(config["semantic_test"]["top_activating_positions_per_feature"]),
     }
-    (report / "v17_spatial_structure_test.json").write_text(json.dumps(spatial, indent=2) + "\n")
+    (report / "v18_spatial_structure_test.json").write_text(json.dumps(spatial, indent=2) + "\n")
 
     mutation, mutation_details = _mutation_response(
         claim_tracks, taxonomies[0], shells, config, target, comparison
     )
-    mutation.to_csv(report / "v17_mutation_responsive_tests.csv", index=False)
-    (report / "v17_mutation_responsive_manifest.json").write_text(
+    mutation.to_csv(report / "v18_mutation_responsive_tests.csv", index=False)
+    (report / "v18_mutation_responsive_manifest.json").write_text(
         json.dumps(mutation_details, indent=2) + "\n"
     )
 
@@ -359,7 +368,7 @@ def main() -> int:
     ].astype(int)
     variant_count = int(config["causal_budget"]["proposed_variant_count"])
     variants = _variant_subsample(config, variant_count)
-    variants.to_csv(report / "v17_causal_variant_subsample.csv", index=False)
+    variants.to_csv(report / "v18_causal_variant_subsample.csv", index=False)
     controls = list(config["causal_budget"]["controls"])
     budget = {
         "status": "planned_not_run", "target_class": target,
@@ -377,9 +386,11 @@ def main() -> int:
         "patching_started": False,
         "approval_required_before_execution": True,
     }
-    (report / "v17_causal_patching_budget.json").write_text(json.dumps(budget, indent=2) + "\n")
+    (report / "v18_causal_patching_budget.json").write_text(json.dumps(budget, indent=2) + "\n")
     manifest = {
-        "status": "complete", "dataset": "IRED", "plan": "v17",
+        "status": "complete", "dataset": "IRED", "plan": "v18",
+        "representation_layer": int(config["analysis_layer"]),
+        "cache_reference_verification": reference_verification,
         "target_class": target, "comparison_class": comparison,
         "real_crosscoder_seeds": seeds, "checkpoint_sha256": checkpoint_hashes,
         "variants_in_static_residue_average": int(len(evo)),
@@ -388,7 +399,7 @@ def main() -> int:
         "gpu_wall_hours": (time.monotonic() - started) / 3600.0,
         "causal_patching_run": False, "oracle_validation_run": False,
     }
-    (report / "v17_semantic_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (report / "v18_semantic_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(semantic.to_string(index=False), flush=True)
     print(json.dumps(spatial, indent=2), flush=True)
     print(json.dumps(budget, indent=2), flush=True)

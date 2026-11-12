@@ -75,9 +75,9 @@ def test_registered_excluded_architectures_stay_absent():
     assert "attention_pooling" not in text
 
 
-def test_v17_is_the_only_plan_and_dictionary_uses_width_terminology():
+def test_v18_is_the_only_plan_and_dictionary_uses_width_terminology():
     plans = sorted(path.name for path in REPO_ROOT.glob("CROSSFIT_Implementation_Plan_v*.docx"))
-    assert plans == ["CROSSFIT_Implementation_Plan_v17.docx"]
+    assert plans == ["CROSSFIT_Implementation_Plan_v18.docx"]
     step4 = yaml.safe_load((REPO_ROOT / "Code/config/step4.yaml").read_text())
     assert step4["width_multipliers"] == [1, 2, 4, 8]
     assert not any("alpha" in key.lower() for key in _keys(step4))
@@ -105,6 +105,27 @@ def test_v17_is_the_only_plan_and_dictionary_uses_width_terminology():
     assert not any("alpha" in key.lower() for config in (step6, step7) for key in _keys(config))
     source = (REPO_ROOT / "Code/crossfit/crosscoder.py").read_text().lower()
     assert "l1" not in source
+
+
+def test_superseded_depth29_campaign_cache_is_unresolvable():
+    configs = [
+        yaml.safe_load((REPO_ROOT / "Code/config/step8.yaml").read_text()),
+        yaml.safe_load((REPO_ROOT / "Code/config/step9.yaml").read_text()),
+    ]
+    forbidden = (
+        "Cache/step3/IRED/full_selected_layer_base.npy",
+        "Cache/step3/IRED/full_selected_layer_adapted.npy",
+        "Cache/step3/IRED/full_variant_rows.npy",
+    )
+    for config in configs:
+        rendered = str(config)
+        assert not any(path in rendered for path in forbidden)
+        assert "Cache/archive/" not in rendered
+    production = _production_text()
+    active = production.replace(
+        (REPO_ROOT / "Code/scripts/diagnose_ired_activation_cache.py").read_text(), ""
+    )
+    assert not any(path in active for path in forbidden)
 
 
 def test_ired_causal_patch_budget_is_the_approved_scope():

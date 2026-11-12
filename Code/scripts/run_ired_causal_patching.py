@@ -15,6 +15,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from crossfit.adaptation import SequenceFitnessAdapter, build_lora_adapter, load_trainable_state
+from crossfit.cache_provenance import verify_ired_esmc_cache
 from crossfit.crosscoder import CrossCoder
 from crossfit.datasets import get_split, load_assay
 from crossfit.esmc import load_esmc
@@ -156,6 +157,13 @@ def main() -> int:
     started = time.monotonic()
     config = load_config(REPO_ROOT / "Code/config/step8.yaml")
     step3 = load_config(REPO_ROOT / "Code/config/step3.yaml")
+    provenance = load_config(REPO_ROOT / config["paths"]["provenance_config"])
+    reference_verification = verify_ired_esmc_cache(
+        REPO_ROOT / config["paths"]["campaign_manifest"],
+        step3=step3,
+        verification=provenance["verification"],
+        adapter_checkpoint=REPO_ROOT / config["paths"]["step3_adapter"],
+    )
     report = REPO_ROOT / config["paths"]["reports"]
     dimension = int(config["dimension"])
     layer = int(config["analysis_layer"])
@@ -187,7 +195,7 @@ def main() -> int:
     random_feature = int(rng.choice(random_pool))
 
     variants = _sample_variants(config, int(config["causal_budget"]["proposed_variant_count"]))
-    variants.drop(columns="sequence").to_csv(report / "v17_causal_variant_subsample.csv", index=False)
+    variants.drop(columns="sequence").to_csv(report / "v18_causal_variant_subsample.csv", index=False)
     all_rows = np.load(REPO_ROOT / config["paths"]["campaign_rows"]).astype(int)
     row_to_cache = {int(row): index for index, row in enumerate(all_rows)}
     evo_cache = np.load(REPO_ROOT / config["paths"]["campaign_base"], mmap_mode="r")
@@ -261,7 +269,7 @@ def main() -> int:
         hygiene["status"] = "failed_dead_feature"
     elif abs(hygiene["random_feature_mean_standardized_effect"]) > hygiene["tolerances"]["random_standardized_mean_absolute"]:
         hygiene["status"] = "failed_random_feature"
-    (report / "v17_causal_patching_hygiene.json").write_text(json.dumps(hygiene, indent=2) + "\n")
+    (report / "v18_causal_patching_hygiene.json").write_text(json.dumps(hygiene, indent=2) + "\n")
     print(json.dumps(hygiene, indent=2), flush=True)
     if hygiene["status"] != "passed":
         raise RuntimeError(f"causal patching hygiene failed: {hygiene['status']}")
@@ -287,7 +295,7 @@ def main() -> int:
                 "standardized_effect": float(effect),
             })
     effects = pd.DataFrame(result_rows)
-    effects.to_csv(report / "v17_causal_patching_variant_effects.csv", index=False)
+    effects.to_csv(report / "v18_causal_patching_variant_effects.csv", index=False)
     summaries = []
     bootstrap_samples = int(config["semantic_test"]["bootstrap_samples"])
     bootstrap_seed = int(config["semantic_test"]["bootstrap_seed"]) + 100
@@ -301,9 +309,11 @@ def main() -> int:
             "standardized_effect_sd": float(values.std(ddof=1)),
             "bootstrap_ci_lower": lower, "bootstrap_ci_upper": upper,
         })
-    pd.DataFrame(summaries).to_csv(report / "v17_causal_patching_feature_effects.csv", index=False)
+    pd.DataFrame(summaries).to_csv(report / "v18_causal_patching_feature_effects.csv", index=False)
     gpu_hours = (time.monotonic() - started) / 3600.0
     manifest = {
+        "representation_layer": layer,
+        "cache_reference_verification": reference_verification,
         "status": "complete", "dataset": "IRED", "target_class": "rotated",
         "candidate_features": len(candidates), "variants": len(variants),
         "candidate_partial_forward_passes": len(candidates) * len(variants),
@@ -319,7 +329,7 @@ def main() -> int:
         "taxonomy": str(taxonomy_path.relative_to(REPO_ROOT)),
         "gpu_wall_hours": gpu_hours, "partial_results_reported": False,
     }
-    (report / "v17_causal_patching_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (report / "v18_causal_patching_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(json.dumps(manifest, indent=2), flush=True)
     return 0
 

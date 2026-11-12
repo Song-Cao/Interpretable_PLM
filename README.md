@@ -2,7 +2,7 @@
 
 CROSSFIT measures the feature-level structure of representation change when a protein language model is adapted from evolutionary sequence modelling to measured fitness. Each dataset has an independent pipeline. A shared BatchTopK dictionary within that pipeline identifies evolutionary features the fitness model conserves, re-weights, rotates, abandons, or creates. Gate 1 drift is a precondition for this measurement, not the result itself.
 
-`CROSSFIT_Implementation_Plan_v17.docx` is the only implementation plan. IRED runs first, followed by GB1, GFP, KRAS, and DAAO. Models predict per-variant fitness directly; ranking comparisons exist only transiently inside a training batch. Step 2 searches the registered arms by random search with five-fold validation inside the pg_kfold training pool; the test fold is reporting-only. IRED Gate 1 is failed because its paired five-fold task gain is not significant. Depth 26 is frozen for the exploratory IRED pipeline. The Step 4 cache uses only the pg_kfold fold-0 training pool.
+`CROSSFIT_Implementation_Plan_v18.docx` is the only implementation plan. IRED runs first, followed by GB1, GFP, KRAS, and DAAO. Models predict per-variant fitness directly; ranking comparisons exist only transiently inside a training batch. Step 2 searches the registered arms by random search with five-fold validation inside the pg_kfold training pool; the test fold is reporting-only. IRED Gate 1 is failed because its paired five-fold task gain is not significant. Step 2 embedding baselines use ESM-C's final output; analysis objects use the explicitly reported frozen depth (26 for IRED). Every activation-derived cache carries a provenance manifest and a fresh-forward-verified wild-type reference block. The Step 4 crosscoder cache uses only the pg_kfold fold-0 training pool.
 
 Every future fitted model persists held-out predictions before metric reduction. Selected CV
 and per-member evaluation predictions are committed; full random-search predictions are
@@ -80,7 +80,7 @@ and leaves all tensors and checkpoints under the gitignored `Cache/` and `Models
 .venv/bin/python Code/scripts/run_ired_step9_sample_efficiency.py
 .venv/bin/python Code/scripts/prepare_ired_annotations.py
 .venv/bin/python Code/scripts/cache_ired_delta_z.py
-.venv/bin/python Code/scripts/analyze_ired_v17_step8_semantics.py
+.venv/bin/python Code/scripts/analyze_ired_step8_semantics.py
 ```
 
 Committed results are summarized in `Reports/step2/step2_handoff.md` and

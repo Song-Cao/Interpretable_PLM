@@ -13,6 +13,12 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from crossfit.cache_provenance import (
+    copy_reference_blocks,
+    manifest_provenance,
+    sha256_file,
+    verify_ired_esmc_cache,
+)
 from crossfit.crosscoder import CrossCoder
 from crossfit.feature_pooling import pool_codes
 from crossfit.utils import REPO_ROOT, load_config
@@ -48,14 +54,26 @@ def main() -> int:
     if not torch.cuda.is_available():
         raise RuntimeError("phi caching requires the GPU pod")
     config = load_config(REPO_ROOT / "Code/config/step9.yaml")
+    step3 = load_config(REPO_ROOT / "Code/config/step3.yaml")
+    provenance = load_config(REPO_ROOT / config["paths"]["provenance_config"])
+    source_manifest = REPO_ROOT / config["paths"]["campaign_manifest"]
+    verification = verify_ired_esmc_cache(
+        source_manifest,
+        step3=step3,
+        verification=provenance["verification"],
+        adapter_checkpoint=REPO_ROOT / config["paths"]["step3_adapter"],
+    )
     step4_manifest = json.loads((REPO_ROOT / "Cache/step4/IRED/manifest.json").read_text())
     evo_scalar = float(step4_manifest["models"]["evo"]["normalization_scalar"])
     fit_scalar = float(step4_manifest["models"]["fit"]["normalization_scalar"])
     campaign_evo = _normalize(np.load(REPO_ROOT / config["paths"]["campaign_base"], mmap_mode="r"), evo_scalar)
     campaign_fit = _normalize(np.load(REPO_ROOT / config["paths"]["campaign_fit"], mmap_mode="r"), fit_scalar)
-    plate_dir = REPO_ROOT / config["paths"]["plate_cache"]
-    plate_evo = _normalize(np.load(plate_dir / "base.npy", mmap_mode="r"), evo_scalar)
-    plate_fit = _normalize(np.load(plate_dir / "fit.npy", mmap_mode="r"), fit_scalar)
+    plate_evo = _normalize(
+        np.load(REPO_ROOT / config["paths"]["plate_base"], mmap_mode="r"), evo_scalar
+    )
+    plate_fit = _normalize(
+        np.load(REPO_ROOT / config["paths"]["plate_fit"], mmap_mode="r"), fit_scalar
+    )
     destination = REPO_ROOT / config["paths"]["phi_cache"]
     temporary = destination.with_name(destination.name + ".incomplete")
     if destination.exists():
@@ -63,9 +81,30 @@ def main() -> int:
     if temporary.exists():
         raise FileExistsError(f"inspect incomplete phi cache before removal: {temporary}")
     temporary.mkdir(parents=True)
+    references = copy_reference_blocks(source_manifest, temporary)
     rows = np.load(REPO_ROOT / config["paths"]["campaign_rows"])
     np.save(temporary / "campaign_rows.npy", rows)
-    manifest = {"status": "complete", "dataset": str(config["dataset"]), "widths": {}}
+    source = json.loads(source_manifest.read_text())
+    manifest = {
+        "status": "complete",
+        **manifest_provenance(
+            contract_version=int(provenance["contract_version"]),
+            dataset=str(config["dataset"]),
+            split="campaign_all_and_external_plate_derived_phi",
+            layer_index=int(config["analysis_layer"]),
+            storage_dtype="float32",
+            compute_dtype="float32",
+            backbone_revision=str(source["backbone_revision"]),
+            activation_units="crosscoder_pooled_code",
+            reference_blocks=references,
+            requested_attention=str(provenance["runtime"]["requested_attention_implementation"]),
+        ),
+        "dimension": int(config["dimension"]),
+        "source_manifest": str(source_manifest.relative_to(REPO_ROOT)),
+        "source_manifest_sha256": sha256_file(source_manifest),
+        "source_reference_verification": verification,
+        "widths": {},
+    }
     for width in map(int, config["width_multipliers"]):
         seed = int(config["primary_crosscoder_seed"])
         checkpoint = (

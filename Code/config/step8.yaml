@@ -1,4 +1,4 @@
-# CROSSFIT v17 Step 8 — IRED annotation and causal-validation configuration.
+# CROSSFIT v18 Step 8 — IRED annotation and causal-validation configuration.
 dataset: IRED
 analysis_layer: 26
 dimension: 960
@@ -61,10 +61,15 @@ causal_budget:
 paths:
   reports: Reports/step8
   delta_z_cache: Cache/step8/IRED/delta_z
-  campaign_base: Cache/step3/IRED/full_selected_layer_base.npy
-  campaign_fit: Cache/step3/IRED/full_selected_layer_adapted.npy
-  campaign_rows: Cache/step3/IRED/full_variant_rows.npy
+  campaign_cache: Cache/step5/IRED/analysis_layer_26
+  campaign_manifest: Cache/step5/IRED/analysis_layer_26/manifest.json
+  campaign_base: Cache/step5/IRED/analysis_layer_26/campaign_base.npy
+  campaign_fit: Cache/step5/IRED/analysis_layer_26/campaign_fit.npy
+  campaign_rows: Cache/step5/IRED/analysis_layer_26/campaign_rows.npy
+  plate_base: Cache/step5/IRED/analysis_layer_26/plate_base.npy
+  plate_fit: Cache/step5/IRED/analysis_layer_26/plate_fit.npy
   step4_manifest: Cache/step4/IRED/manifest.json
   crosscoder_checkpoints: Models/step7/IRED
   step3_adapter: Models/step3/IRED/real_adapter.pt
   gate1_checkpoint_verification: Reports/step3/gate1_checkpoint_verification.json
+  provenance_config: Code/config/cache_provenance.yaml

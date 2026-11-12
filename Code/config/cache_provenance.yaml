@@ -1,0 +1,11 @@
+# CROSSFIT v18 cache-provenance verification thresholds.
+contract_version: 1
+reference_sequence_role: wild_type
+reference_storage_dtype: float32
+verification:
+  minimum_pearson: 0.999
+  maximum_relative_rmse: 0.05
+  minimum_through_origin_scale: 0.98
+  maximum_through_origin_scale: 1.02
+runtime:
+  requested_attention_implementation: flash_attention_2

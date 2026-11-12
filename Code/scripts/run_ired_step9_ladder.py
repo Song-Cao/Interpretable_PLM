@@ -23,6 +23,7 @@ from sklearn.preprocessing import SplineTransformer, StandardScaler
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from crossfit.cache_provenance import verify_ired_esmc_cache
 from crossfit.datasets import get_split, load_assay, load_plate_dataset
 from crossfit.evaluation import bootstrap_metric_intervals, combine_deep_ensemble
 from crossfit.feature_pooling import select_feature_set
@@ -218,6 +219,15 @@ def _interaction_gate(model: RandomForestRegressor, features: np.ndarray, config
 def main() -> int:
     started = time.monotonic()
     config = load_config(REPO_ROOT / "Code/config/step9.yaml")
+    step3 = load_config(REPO_ROOT / "Code/config/step3.yaml")
+    provenance = load_config(REPO_ROOT / config["paths"]["provenance_config"])
+    reference_verification = verify_ired_esmc_cache(
+        REPO_ROOT / config["paths"]["phi_cache"] / "manifest.json",
+        step3=step3,
+        verification=provenance["verification"],
+        adapter_checkpoint=REPO_ROOT / config["paths"]["step3_adapter"],
+        device="cuda" if torch.cuda.is_available() else "cpu",
+    )
     step2 = load_config(REPO_ROOT / "Code/config/step2.yaml")
     frame = load_assay("IRED", with_sequences=True)
     plate = load_plate_dataset("IRED")
@@ -403,6 +413,8 @@ def main() -> int:
     gap = l4_r2 - float(l0["pg_kfold_test_r2"])
     ladder.to_csv(report / "ired_expressivity_ladder.csv", index=False)
     manifest = {
+        "representation_layer": int(config["analysis_layer"]),
+        "cache_reference_verification": reference_verification,
         "status": "complete", "headline_arm": headline,
         "expressivity_gap_r2_L4_minus_L0": gap, "L4_test_r2": l4_r2,
         "L0_test_r2": float(l0["pg_kfold_test_r2"]), "interaction_gate": interaction,

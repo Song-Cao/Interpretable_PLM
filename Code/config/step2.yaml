@@ -1,4 +1,4 @@
-# CROSSFIT v17 Step 2 — IRED architecture search and baseline suite.
+# CROSSFIT v18 Step 2 — IRED architecture search and baseline suite.
 
 datasets: [IRED, SPG1_STRSG_Olson_2014, GFP_AEQVI_Sarkisyan_2016, RASK_HUMAN_Weng_2022_abundance, OXDA_RHOTO_Vanella_2023_activity]
 paths:
@@ -40,6 +40,8 @@ representations:
   aaindex_channels: 19
   aaindex_sha256: ef8ba3e53df6ea0ac770cb86978fb68d679c28a1eff8b1ec3463e0fa17b161b4
   esm_mutpool_role: pooling_domain_diagnostic
+  esm_layer_convention: final_output
+  esm_layer_label: final
 arms:
   onehot_ridge:
     representation: onehot

@@ -16,6 +16,7 @@ from scipy.stats import spearmanr
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from crossfit.cache_provenance import verify_ired_esmc_cache
 from crossfit.datasets import get_split, load_assay
 from crossfit.feature_pooling import select_feature_set
 from crossfit.models import build_model
@@ -39,6 +40,15 @@ def _headline_features(config: dict, frame: pd.DataFrame, arm: str) -> np.ndarra
 def main() -> int:
     started = time.monotonic()
     config = load_config(REPO_ROOT / "Code/config/step9.yaml")
+    step3 = load_config(REPO_ROOT / "Code/config/step3.yaml")
+    provenance = load_config(REPO_ROOT / config["paths"]["provenance_config"])
+    reference_verification = verify_ired_esmc_cache(
+        REPO_ROOT / config["paths"]["phi_cache"] / "manifest.json",
+        step3=step3,
+        verification=provenance["verification"],
+        adapter_checkpoint=REPO_ROOT / config["paths"]["step3_adapter"],
+        device="cuda" if torch.cuda.is_available() else "cpu",
+    )
     step2 = load_config(REPO_ROOT / "Code/config/step2.yaml")
     report = REPO_ROOT / config["paths"]["reports_step9"]
     results = pd.read_csv(report / "ired_phi_feature_set_results.csv")
@@ -114,6 +124,8 @@ def main() -> int:
     frame_summary.to_csv(report / "sample_efficiency_runs.csv", index=False)
     aggregate.to_csv(report / "sample_efficiency_summary.csv", index=False)
     manifest = {
+        "representation_layer": int(config["analysis_layer"]),
+        "cache_reference_verification": reference_verification,
         "status": "complete", "arm": arm, "epochs": epochs, "seeds_per_size": 10,
         "gpu_wall_hours": (time.monotonic() - started) / 3600.0,
         "selection_used_low_n": False,

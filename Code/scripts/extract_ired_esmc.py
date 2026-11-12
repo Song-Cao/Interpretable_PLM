@@ -14,6 +14,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from crossfit.datasets import load_assay, load_plate_dataset, wt_sequence
+from crossfit.cache_provenance import manifest_provenance, write_reference_block
 from crossfit.density import changed_positions
 from crossfit.esmc import extract_residue_embeddings, load_esmc, masked_log_probabilities
 from crossfit.utils import REPO_ROOT, load_config
@@ -36,6 +37,7 @@ def main() -> int:
     args = _arguments()
     config = load_config(REPO_ROOT / "Code" / "config" / "step2.yaml")
     step3 = load_config(REPO_ROOT / "Code" / "config" / "step3.yaml")
+    provenance = load_config(REPO_ROOT / "Code/config/cache_provenance.yaml")
     cache = REPO_ROOT / config["paths"]["representations"]
     cache.mkdir(parents=True, exist_ok=True)
     targets = {
@@ -61,6 +63,7 @@ def main() -> int:
         repository=str(step3["backbone"]["repository"]),
         expected_revision=str(step3["backbone"]["revision"]),
     )
+    compute_dtype = str(next(model.parameters()).dtype).removeprefix("torch.")
 
     variant_batch = extract_residue_embeddings(
         model,
@@ -84,6 +87,9 @@ def main() -> int:
     np.save(targets["rows"], full["variant_row"].to_numpy(np.int64))
     np.save(targets["plate"], plate_batch.final.astype(np.float16))
     np.save(targets["wild_type"], wild_type_batch.final[0].astype(np.float16))
+    reference = write_reference_block(
+        cache, "base", wild_type_batch.final[0], activation_units="raw"
+    )
     np.save(targets["reserve"], reserve_batch.layers.astype(np.float16))
     np.save(targets["reserve_rows"], full.loc[reserve, "variant_row"].to_numpy(np.int64))
 
@@ -124,7 +130,18 @@ def main() -> int:
     elapsed = time.perf_counter() - started
     cache_bytes = sum(path.stat().st_size for path in targets.values() if path.exists())
     metadata = {
-        "dataset": "IRED",
+        **manifest_provenance(
+            contract_version=int(provenance["contract_version"]),
+            dataset="IRED",
+            split="campaign_all_plus_external_plate_and_layer_freeze_reserve",
+            layer_index="final",
+            storage_dtype="float16",
+            compute_dtype=compute_dtype,
+            backbone_revision=str(step3["backbone"]["revision"]),
+            activation_units="raw",
+            reference_blocks={"base": reference},
+            requested_attention=str(provenance["runtime"]["requested_attention_implementation"]),
+        ),
         "model_name": step3["backbone"]["name"],
         "variant_count_including_reserve": len(full),
         "plate_count": len(plate),

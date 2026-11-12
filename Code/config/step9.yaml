@@ -1,7 +1,8 @@
-# CROSSFIT v17 Steps 5, 7 Gate 2, and 9 — IRED exploratory prediction.
+# CROSSFIT v18 Steps 5, 7 Gate 2, and 9 — IRED exploratory prediction.
 dataset: IRED
 analysis_layer: 26
 dimension: 960
+extraction_batch_size: 4
 primary_crosscoder_seed: 20261311
 width_multipliers: [1, 2]
 pooling_operators: [sum, max, binarized]
@@ -54,10 +55,13 @@ evaluation:
   paired_bootstrap_seed: 20261504
   confidence_level: 0.95
 paths:
-  campaign_base: Cache/step3/IRED/full_selected_layer_base.npy
-  campaign_fit: Cache/step3/IRED/full_selected_layer_adapted.npy
-  campaign_rows: Cache/step3/IRED/full_variant_rows.npy
-  plate_cache: Cache/step9/IRED/plate_layer26
+  campaign_cache: Cache/step5/IRED/analysis_layer_26
+  campaign_manifest: Cache/step5/IRED/analysis_layer_26/manifest.json
+  campaign_base: Cache/step5/IRED/analysis_layer_26/campaign_base.npy
+  campaign_fit: Cache/step5/IRED/analysis_layer_26/campaign_fit.npy
+  campaign_rows: Cache/step5/IRED/analysis_layer_26/campaign_rows.npy
+  plate_base: Cache/step5/IRED/analysis_layer_26/plate_base.npy
+  plate_fit: Cache/step5/IRED/analysis_layer_26/plate_fit.npy
   phi_cache: Cache/step9/IRED/phi
   crosscoder_checkpoints: Models/step7/IRED
   step3_adapter: Models/step3/IRED/real_adapter.pt
@@ -66,3 +70,4 @@ paths:
   reports_step5: Reports/step5
   reports_step7: Reports/step7
   reports_step9: Reports/step9
+  provenance_config: Code/config/cache_provenance.yaml

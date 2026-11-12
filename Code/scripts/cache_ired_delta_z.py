@@ -17,6 +17,12 @@ from scipy import sparse
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from crossfit.adaptation import SequenceFitnessAdapter, build_lora_adapter, load_trainable_state
+from crossfit.cache_provenance import (
+    copy_reference_blocks,
+    manifest_provenance,
+    sha256_file as provenance_sha256,
+    verify_ired_esmc_cache,
+)
 from crossfit.crosscoder import CrossCoder
 from crossfit.datasets import load_assay, wt_sequence
 from crossfit.esmc import extract_residue_layer, load_esmc
@@ -121,6 +127,14 @@ def main() -> int:
     started = time.monotonic()
     config = load_config(REPO_ROOT / "Code/config/step8.yaml")
     step3 = load_config(REPO_ROOT / "Code/config/step3.yaml")
+    provenance = load_config(REPO_ROOT / config["paths"]["provenance_config"])
+    source_manifest = REPO_ROOT / config["paths"]["campaign_manifest"]
+    reference_verification = verify_ired_esmc_cache(
+        source_manifest,
+        step3=step3,
+        verification=provenance["verification"],
+        adapter_checkpoint=REPO_ROOT / config["paths"]["step3_adapter"],
+    )
     destination = REPO_ROOT / config["paths"]["delta_z_cache"]
     temporary = destination.with_name(destination.name + ".incomplete")
     if destination.exists():
@@ -128,6 +142,7 @@ def main() -> int:
     if temporary.exists():
         raise FileExistsError(f"inspect incomplete delta-z cache before removal: {temporary}")
     temporary.mkdir(parents=True)
+    references = copy_reference_blocks(source_manifest, temporary)
 
     step4 = json.loads((REPO_ROOT / config["paths"]["step4_manifest"]).read_text())
     evo_scalar = float(step4["models"]["evo"]["normalization_scalar"])
@@ -146,14 +161,30 @@ def main() -> int:
     wild_evo, wild_fit, adapter_hash = _extract_wild_type(config, step3)
     wild_evo = wild_evo.astype(np.float32) * evo_scalar
     wild_fit = wild_fit.astype(np.float32) * fit_scalar
+    source = json.loads(source_manifest.read_text())
     manifest = {
-        "status": "complete", "dataset": str(config["dataset"]),
+        "status": "complete",
+        **manifest_provenance(
+            contract_version=int(provenance["contract_version"]),
+            dataset=str(config["dataset"]),
+            split="campaign_all_derived_mutation_responsive_codes",
+            layer_index=int(config["analysis_layer"]),
+            storage_dtype="float32_sparse",
+            compute_dtype="float32",
+            backbone_revision=str(source["backbone_revision"]),
+            activation_units="crosscoder_delta_code",
+            reference_blocks=references,
+            requested_attention=str(provenance["runtime"]["requested_attention_implementation"]),
+        ),
         "definition": "z_j(x_mutant) - z_j(x_WT)",
         "batch_semantics": str(config["delta_z"]["batch_semantics"]),
         "reasoning": str(config["delta_z"]["reasoning"]),
         "analysis_layer": int(config["analysis_layer"]), "variants": int(len(evo)),
         "positions": int(evo.shape[1]), "adapter_checkpoint_sha256": adapter_hash,
         "widths": {}, "enrichment_tests_run": False,
+        "source_manifest": str(source_manifest.relative_to(REPO_ROOT)),
+        "source_manifest_sha256": provenance_sha256(source_manifest),
+        "source_reference_verification": reference_verification,
     }
     for width in map(int, config["width_multipliers"]):
         seed = int(config["primary_crosscoder_seed"])

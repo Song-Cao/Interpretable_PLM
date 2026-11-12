@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from crossfit.activation_cache import normalization_scalar, normalize_shards_in_place, shard_sha256
 from crossfit.adaptation import SequenceFitnessAdapter, build_lora_adapter, load_trainable_state
+from crossfit.cache_provenance import manifest_provenance, write_reference_block
 from crossfit.datasets import get_split, load_assay
 from crossfit.esmc import extract_residue_layer, load_esmc
 from crossfit.persistence import sha256_file
@@ -80,6 +81,7 @@ def main() -> int:
     started = time.monotonic()
     config = load_config(REPO_ROOT / "Code/config/step4.yaml")
     step3 = load_config(REPO_ROOT / "Code/config/step3.yaml")
+    provenance = load_config(REPO_ROOT / config["paths"]["provenance_config"])
     cache_dir = REPO_ROOT / config["paths"]["cache"]
     temporary = cache_dir.with_name(cache_dir.name + ".incomplete")
     if cache_dir.exists():
@@ -103,7 +105,12 @@ def main() -> int:
 
         device = "cuda"
         base = _load_backbone(step3, device)
+        compute_dtype = str(next(base.parameters()).dtype).removeprefix("torch.")
         base_tokens = base._tokenize(sequences[:1]).detach().cpu()
+        wild_type_sequence = str(training.iloc[0]["wild_type_sequence"])
+        base_reference = extract_residue_layer(
+            base, [wild_type_sequence], layer=int(config["analysis_layer"]), batch_size=1
+        )[0]
         evo_paths, evo_scalar, evo_realized = _extract_model(
             base, sequences, temporary / "evo", layer=int(config["analysis_layer"]),
             batch_size=int(config["extraction_batch_size"]),
@@ -111,6 +118,10 @@ def main() -> int:
             dimension=int(config["embedding_dimension"]),
         )
         evo_raw_mean = float(np.sqrt(int(config["embedding_dimension"])) / evo_scalar)
+        base_reference_record = write_reference_block(
+            temporary, "base", base_reference * evo_scalar,
+            activation_units="normalized", normalization_scalar=evo_scalar,
+        )
         del base
         gc.collect()
         torch.cuda.empty_cache()
@@ -132,6 +143,10 @@ def main() -> int:
         fit_tokens = wrapped.backbone._tokenize(sequences[:1]).detach().cpu()
         if not torch.equal(base_tokens, fit_tokens):
             raise AssertionError("base and adapted token alignment differs")
+        fit_reference = extract_residue_layer(
+            wrapped.backbone, [wild_type_sequence],
+            layer=int(config["analysis_layer"]), batch_size=1,
+        )[0]
         fit_paths, fit_scalar, fit_realized = _extract_model(
             wrapped.backbone, sequences, temporary / "fit", layer=int(config["analysis_layer"]),
             batch_size=int(config["extraction_batch_size"]),
@@ -139,6 +154,10 @@ def main() -> int:
             dimension=int(config["embedding_dimension"]),
         )
         fit_raw_mean = float(np.sqrt(int(config["embedding_dimension"])) / fit_scalar)
+        fit_reference_record = write_reference_block(
+            temporary, "fit", fit_reference * fit_scalar,
+            activation_units="normalized", normalization_scalar=fit_scalar,
+        )
 
         if [np.load(path, mmap_mode="r").shape for path in evo_paths] != [
             np.load(path, mmap_mode="r").shape for path in fit_paths
@@ -146,8 +165,18 @@ def main() -> int:
             raise AssertionError("base and adapted cache shards are not aligned")
         manifest = {
             "status": "complete",
-            "dataset": str(config["dataset"]),
-            "split": f"{config['source_split']}_fold_{config['source_fold']}_training_only",
+            **manifest_provenance(
+                contract_version=int(provenance["contract_version"]),
+                dataset=str(config["dataset"]),
+                split=f"{config['source_split']}_fold_{config['source_fold']}_training_only",
+                layer_index=int(config["analysis_layer"]),
+                storage_dtype=str(config["storage_dtype"]),
+                compute_dtype=compute_dtype,
+                backbone_revision=str(step3["backbone"]["revision"]),
+                activation_units=str(config["activation_units"]),
+                reference_blocks={"base": base_reference_record, "fit": fit_reference_record},
+                requested_attention=str(provenance["runtime"]["requested_attention_implementation"]),
+            ),
             "analysis_layer": int(config["analysis_layer"]),
             "training_variants": len(training),
             "sequence_length": sequence_length,

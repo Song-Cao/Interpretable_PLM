@@ -1,0 +1,8 @@
+object,registered_convention,existing_or_withdrawn_extraction,disposition
+Step 2 esm_mean,final output,final output,retained embedding baseline
+Step 2 esm_mutpool,final output,final output,retained embedding diagnostic
+Step 2 esm_residue,final output,final output,retained embedding baseline
+Step 2 esm_residue_delta,final output,final output,retained embedding baseline
+Step 4 crosscoder cache,selected hidden-state depth 26,selected hidden-state depth 26,authoritative and retained
+Step 5 dense probes,selected hidden-state depth 26,depth 29 from superseded generic files,withdrawn and recomputed at depth 26
+Step 9 phi inputs,selected hidden-state depth 26,depth 29 from superseded generic files,withdrawn and recomputed at depth 26

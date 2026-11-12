@@ -1338,3 +1338,25 @@ the prediction track needs 0 or 3 crosscoders.
 - `[COST]` The single-sequence, all-depth cache diagnosis used approximately 0.02 RTX PRO 4500
   Blackwell wall-hours. No patching, full-corpus extraction, crosscoder training, or predictor
   refit ran.
+
+### v18 cache provenance and depth-26 recomputation pre-commitment (2026-11-12)
+
+- `[DECISION]` Representation depth is now a dataset-independent convention. Step 2 embedding
+  baselines (`esm_mean`, `esm_mutpool`, `esm_residue`, and `esm_residue_delta`) use ESM-C's final
+  output layer. Analysis-layer objects—Step 5 dense probes, Step 4/6/7 crosscoder inputs, Step 9
+  phi, Step 8 semantics, and causal patching—use the frozen selected hidden-state depth, which is
+  26 for IRED. Every reported number must name its depth. The withdrawn IRED Step 5/9 artifacts
+  violated the analysis-layer half of this convention by loading superseded depth-29 tensors;
+  they remain non-comparable to Step 2 until recomputed at depth 26.
+- `[ADJUST]` The superseded depth-29 base, adapted, and coupled row-index files were moved from
+  active `Cache/step3/IRED/` paths to
+  `Cache/archive/IRED_depth29_superseded_2026-11-12/` before recomputation. Active Step 8/9
+  configuration now resolves only the explicitly named depth-26 cache. An invariant test forbids
+  the old generic paths and all archive paths in active configuration.
+- `[DECISION]` v18's outcome-neutral recomputation rule is pre-committed before extraction. The
+  withdrawn Gate 2, Step 9 expressivity, and Step 8 enrichment results are withdrawn, not
+  refuted: the dictionary and depth-26 taxonomy remain valid, but those downstream inputs were
+  wrong. Whatever the depth-26 recomputation returns is the IRED result. Reproduction is the
+  expected consequence of fixing the input and is not described as confirmation; failure to
+  reproduce is reported without changing the analysis. Gate 2's rule and all Step 8/9 selection
+  procedures remain unchanged.

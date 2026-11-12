@@ -1,6 +1,6 @@
 # CROSSFIT repository rules
 
-`CROSSFIT_Implementation_Plan_v17.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
+`CROSSFIT_Implementation_Plan_v18.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
 
 - Run one independent pipeline per dataset and report every result per dataset. Never pool fitness values, training data, or metrics across datasets.
 - Use `pg_kfold` as the only model-selection split. Low-N, unseen-position, mutation-count, round-held-out, and external data are evaluation conditions only.
@@ -13,6 +13,14 @@
 - Pool eligible drift-matched null samples across runs into one null per dataset, width,
   and statistic. Treat leave-one-seed-out threshold variation as uncertainty; never make
   significance stricter merely by adding null seeds.
+- Use the backbone final output for embedding baselines. Use the frozen selected depth for
+  dense probes, crosscoder inputs, sparse features, semantic tests, and patching. Name the
+  depth beside every reported number.
+- Give every activation-derived cache a provenance manifest and canonical wild-type reference
+  block. Verify the reference with a fresh forward pass before reading the cache downstream.
+- Quarantine tensors, checkpoints, and intermediates in the same action that reverses the
+  decision that produced them. Active loaders must never resolve archived artifacts.
+- Compare numerical tolerances in the units of the quantity being judged.
 - Answer strange observations with more replicates and a reported spread, never with a
   dataset-specific rule change.
 - Compare baselines with the same backbone, data, and splits. Report per-dataset results; never pool them.

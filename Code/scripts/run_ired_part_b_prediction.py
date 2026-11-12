@@ -22,6 +22,7 @@ from sklearn.metrics import r2_score
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from crossfit.datasets import get_split, load_assay, load_plate_dataset, wild_type_fitness
+from crossfit.cache_provenance import verify_ired_esmc_cache
 from crossfit.evaluation import bootstrap_metric_intervals, combine_deep_ensemble
 from crossfit.feature_pooling import select_feature_set
 from crossfit.models import build_model
@@ -412,6 +413,15 @@ def main() -> int:
     started = time.monotonic()
     config = load_config(REPO_ROOT / "Code/config/step9.yaml")
     step2 = load_config(REPO_ROOT / "Code/config/step2.yaml")
+    step3 = load_config(REPO_ROOT / "Code/config/step3.yaml")
+    provenance = load_config(REPO_ROOT / config["paths"]["provenance_config"])
+    cache_verification = verify_ired_esmc_cache(
+        REPO_ROOT / config["paths"]["campaign_manifest"],
+        step3=step3,
+        verification=provenance["verification"],
+        adapter_checkpoint=REPO_ROOT / config["paths"]["step3_adapter"],
+        device="cuda" if torch.cuda.is_available() else "cpu",
+    )
     frame = load_assay("IRED", with_sequences=True)
     plate = load_plate_dataset("IRED")
     target = frame["y"].to_numpy(np.float32)
@@ -426,9 +436,8 @@ def main() -> int:
         path.mkdir(parents=True, exist_ok=True)
 
     evo, fit = _campaign_arrays(config, frame)
-    plate_root = REPO_ROOT / config["paths"]["plate_cache"]
-    plate_evo = np.asarray(np.load(plate_root / "base.npy"), dtype=np.float32)
-    plate_fit = np.asarray(np.load(plate_root / "fit.npy"), dtype=np.float32)
+    plate_evo = np.asarray(np.load(REPO_ROOT / config["paths"]["plate_base"]), dtype=np.float32)
+    plate_fit = np.asarray(np.load(REPO_ROOT / config["paths"]["plate_fit"]), dtype=np.float32)
     dense_inputs = {
         "fit_mean": (fit.mean(axis=1), plate_fit.mean(axis=1)),
         "evo_mean": (evo.mean(axis=1), plate_evo.mean(axis=1)),
@@ -469,6 +478,7 @@ def main() -> int:
             "pg_kfold_test_spearman": float(spearmanr(ensemble["pg_kfold_test"], target[test]).statistic),
             "round_held_out_spearman": float(spearmanr(ensemble["round_held_out"], target[round_test]).statistic),
             "plate_spearman": float(spearmanr(ensemble["plate"], plate["1/s"]).statistic),
+            "representation_layer": int(config["analysis_layer"]),
         })
     dense_frame = pd.DataFrame(dense_results)
     dense_frame.to_csv(report5 / "ired_dense_probe_results.csv", index=False)
@@ -562,6 +572,8 @@ def main() -> int:
 
     summary = {
         "status": "complete", "dataset": "IRED", "selected_phi_family": family,
+        "representation_layer": int(config["analysis_layer"]),
+        "cache_reference_verification": cache_verification,
         "best_phi_arm_by_validation": best_phi_arm, "gate2_verdict": verdict,
         "gpu_wall_hours": (time.monotonic() - started) / 3600.0,
         "plate_labels_used_for_selection": False, "test_labels_used_for_selection": False,
