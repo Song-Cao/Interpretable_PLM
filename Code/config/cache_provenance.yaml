@@ -1,5 +1,6 @@
 # CROSSFIT v18 cache-provenance verification thresholds.
 contract_version: 1
+paths: {}
 reference_sequence_role: wild_type
 reference_storage_dtype: float32
 verification:
