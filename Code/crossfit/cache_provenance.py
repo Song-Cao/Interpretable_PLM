@@ -183,8 +183,6 @@ def verify_reference_blocks(
 ) -> dict[str, dict[str, float]]:
     """Verify checksums and fresh forward-pass blocks against one manifest."""
     manifest = validate_manifest(manifest_path)
-    if str(manifest["backbone_revision"]) != str(step3["backbone"]["revision"]):
-        raise AssertionError("cache backbone revision differs from the configured revision")
     results: dict[str, dict[str, float]] = {}
     for role, fresh in fresh_blocks.items():
         if role not in manifest["reference_blocks"]:
@@ -229,6 +227,8 @@ def verify_ired_esmc_cache(
     from crossfit.esmc import extract_residue_embeddings, extract_residue_layer, load_esmc
 
     manifest = validate_manifest(manifest_path)
+    if str(manifest["backbone_revision"]) != str(step3["backbone"]["revision"]):
+        raise AssertionError("cache backbone revision differs from the configured revision")
     sequence = wt_sequence(str(manifest["dataset"]))
     layer = manifest["layer_index"]
 
