@@ -36,8 +36,10 @@ def _quantiles(values: np.ndarray) -> dict[str, float]:
 def _comparison(cached: np.ndarray, current: np.ndarray) -> dict:
     if cached.shape != current.shape:
         raise ValueError(f"activation shapes differ: {cached.shape} versus {current.shape}")
-    old = cached.astype(np.float64, copy=False).reshape(-1)
-    new = current.astype(np.float64, copy=False).reshape(-1)
+    cached_values = cached.astype(np.float64, copy=False)
+    current_values = current.astype(np.float64, copy=False)
+    old = cached_values.reshape(-1)
+    new = current_values.reshape(-1)
     difference = new - old
     magnitude = np.abs(old)
     denominator_floor = max(float(np.quantile(magnitude, 0.01)), np.finfo(np.float16).tiny)
@@ -61,7 +63,7 @@ def _comparison(cached: np.ndarray, current: np.ndarray) -> dict:
             "difference_sd": float(np.std(difference[selected], ddof=1)),
         })
 
-    return {
+    result = {
         "element_count": int(old.size),
         "pearson": float(pearsonr(old, new).statistic),
         "spearman": float(spearmanr(old, new).statistic),
@@ -79,6 +81,55 @@ def _comparison(cached: np.ndarray, current: np.ndarray) -> dict:
         "through_origin_scale": slope,
         "residual_after_scale_absolute_quantiles": _quantiles(np.abs(residual_after_scale)),
         "magnitude_bins": magnitude_bins,
+    }
+    if cached_values.ndim == 2:
+        position_correlations = []
+        position_slopes = []
+        position_intercepts = []
+        residuals = []
+        for cached_position, current_position in zip(cached_values, current_values):
+            slope, intercept = np.polyfit(cached_position, current_position, 1)
+            position_correlations.append(pearsonr(cached_position, current_position).statistic)
+            position_slopes.append(slope)
+            position_intercepts.append(intercept)
+            residuals.append(current_position - (slope * cached_position + intercept))
+        residual = np.concatenate(residuals)
+        result["per_position_affine_alignment"] = {
+            "pearson_quantiles": _quantiles(np.asarray(position_correlations)),
+            "slope_quantiles": _quantiles(np.asarray(position_slopes)),
+            "intercept_quantiles": _quantiles(np.asarray(position_intercepts)),
+            "residual_absolute_quantiles": _quantiles(np.abs(residual)),
+            "residual_rmse": float(np.sqrt(np.mean(residual ** 2))),
+        }
+    return result
+
+
+def _layer_alignment(cached: np.ndarray, current: np.ndarray, selected_layer: int) -> dict:
+    if cached.shape != current.shape or cached.ndim != 3:
+        raise ValueError("layer alignment expects matching layer-position-channel arrays")
+    same_depth = []
+    for depth in range(cached.shape[0]):
+        old = cached[depth].astype(np.float64, copy=False).reshape(-1)
+        new = current[depth].astype(np.float64, copy=False).reshape(-1)
+        same_depth.append({
+            "depth": depth,
+            "pearson": float(pearsonr(old, new).statistic),
+            "spearman": float(spearmanr(old, new).statistic),
+        })
+    selected = cached[selected_layer].astype(np.float64, copy=False).reshape(-1)
+    cross_depth = []
+    for depth in range(current.shape[0]):
+        candidate = current[depth].astype(np.float64, copy=False).reshape(-1)
+        cross_depth.append({
+            "current_depth": depth,
+            "pearson_to_cached_selected_depth": float(pearsonr(selected, candidate).statistic),
+        })
+    return {
+        "same_depth": same_depth,
+        "cached_selected_depth_against_every_current_depth": cross_depth,
+        "best_current_depth": max(
+            cross_depth, key=lambda row: row["pearson_to_cached_selected_depth"]
+        ),
     }
 
 
@@ -164,6 +215,18 @@ def main() -> int:
     cached_wt_file = REPO_ROOT / "Cache/step2/IRED/representations/wild_type_residue.npy"
     cached_wt_final = np.load(cached_wt_file, mmap_mode="r")
 
+    reserve = frame.loc[frame["is_layer_freeze_reserve"]].reset_index(drop=True)
+    reserve_rows = np.load(REPO_ROOT / "Cache/step2/IRED/representations/reserve_rows.npy")
+    if not np.array_equal(reserve_rows, reserve["variant_row"].to_numpy(np.int64)):
+        raise AssertionError("reserve cache and curated rows do not align")
+    current_reserve_layers = extract_residue_embeddings(
+        base, [str(reserve.iloc[0]["mutant_sequence"])], batch_size=1, all_layers=True,
+    ).layers[0]
+    cached_reserve_layers = np.load(
+        REPO_ROOT / "Cache/step2/IRED/representations/reserve_all_layers_base.npy",
+        mmap_mode="r",
+    )[0]
+
     step4 = json.loads((REPO_ROOT / step8["paths"]["step4_manifest"]).read_text())
     normalized_scalar = float(step4["models"]["fit"]["normalization_scalar"])
     result = {
@@ -204,6 +267,13 @@ def main() -> int:
             "wild_type_available_cache_layer": "final model embedding after final normalization",
         },
         "wild_type_final_layer_base_comparison": _comparison(cached_wt_final, current_wt_final),
+        "base_all_layer_alignment": {
+            "variant_row": int(reserve.iloc[0]["variant_row"]),
+            "mutations": str(reserve.iloc[0]["mutations"]),
+            "statistics": _layer_alignment(
+                cached_reserve_layers, current_reserve_layers, analysis_layer,
+            ),
+        },
         "direct_layer26_base_comparison": {
             "variant_row": int(variant["variant_row"]),
             "mutations": str(variant["mutations"]),
