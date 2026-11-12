@@ -48,9 +48,23 @@ largest feature-level mean absolute effect was 0.03515. Bootstrap intervals excl
 111 features (53 positive, 58 negative). These are effects on the registered additive
 attribution readout, not the nonlinear prediction ceiling.
 
+The feature-level mean-absolute distribution has 5th/25th/50th/75th/95th percentiles
+0.001123/0.002467/0.003832/0.006583/0.015320 SD. It is broad rather than driven only by a few
+features: 103/116 feature means exceed the random-live control mean absolute effect of
+0.001575 SD. The complete distribution, ten largest features, and matched control quantiles are
+reported in `v18_causal_effect_distribution.md`.
+
+Spatial and causal results meet at the second shell. Across the 116 features, absolute patching
+effect correlates with mean second-shell activation at Spearman rho 0.2782 (10,000-permutation
+p=0.0028, four-shell FDR q=0.0112). Catalytic activation is unrelated (rho 0.0209, q=0.8203).
+First-shell and distal correlations are nominal but do not survive FDR (both q=0.0588). The
+result therefore supports a second-shell link, not a general claim that every active-site-
+proximal or distal activation is causal.
+
 Files: `v18_class_semantic_tests.csv`, `v18_mutation_responsive_tests.csv`,
 `v18_spatial_structure_test.json`, `v18_causal_patching_hygiene.json`, and
-`v18_causal_patching_{feature,variant}_effects.csv` in `Reports/step8/`.
+`v18_causal_patching_{feature,variant}_effects.csv` in `Reports/step8/`. The full linked table is
+`v18_causal_feature_shell_profiles.csv`.
 
 ## Incomplete or uncertain
 

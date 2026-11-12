@@ -26,6 +26,10 @@ def main() -> int:
 
     rows = []
     rows.extend(quantile_rows(
+        features["mean_standardized_effect"], quantiles,
+        population="rotated_feature_mean_signed_effect", sampling_unit="feature",
+    ))
+    rows.extend(quantile_rows(
         features["mean_absolute_standardized_effect"], quantiles,
         population="rotated_feature_mean_absolute_effect", sampling_unit="feature",
     ))
@@ -34,9 +38,13 @@ def main() -> int:
         population="rotated_candidate_absolute_effect", sampling_unit="feature_variant",
     ))
     for control in ("dead_feature", "random_live_feature"):
-        selected = controls.loc[controls["control"] == control, "standardized_effect"].abs()
+        selected = controls.loc[controls["control"] == control, "standardized_effect"]
         rows.extend(quantile_rows(
-            selected, quantiles, population=f"{control}_absolute_effect",
+            selected, quantiles, population=f"{control}_signed_effect",
+            sampling_unit="variant",
+        ))
+        rows.extend(quantile_rows(
+            selected.abs(), quantiles, population=f"{control}_absolute_effect",
             sampling_unit="variant",
         ))
     pd.DataFrame(rows).to_csv(report / "v18_causal_patching_effect_quantiles.csv", index=False)

@@ -1,0 +1,5 @@
+shell,features,spearman_rho,permutation_p_value,fdr_q_value,fdr_significant,permutations,permutation_seed,position_count,effect_definition,profile_definition
+catalytic,116,0.020903056400521598,0.8203179682031797,0.8203179682031797,False,10000,20261801,3,mean absolute standardized prediction effect,mean static latent activation over shell positions
+first_shell,116,0.18726621454547956,0.04409559044095591,0.05879412058794121,False,10000,20261801,37,mean absolute standardized prediction effect,mean static latent activation over shell positions
+second_shell,116,0.2781606386849594,0.0027997200279972004,0.011198880111988802,True,10000,20261801,36,mean absolute standardized prediction effect,mean static latent activation over shell positions
+distal,116,0.1978822086695092,0.033096690330966905,0.05879412058794121,False,10000,20261801,214,mean absolute standardized prediction effect,mean static latent activation over shell positions

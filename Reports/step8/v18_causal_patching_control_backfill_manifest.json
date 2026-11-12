@@ -1,0 +1,14 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "representation_layer": 26,
+  "variants": 256,
+  "controls": [
+    "no_op",
+    "dead_feature",
+    "random_live_feature"
+  ],
+  "partial_forward_passes": 768,
+  "candidate_ablation_rerun": false,
+  "gpu_wall_hours": 0.0072992913083483775
+}
