@@ -25,6 +25,16 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _sharded_row(directory: Path, row_index: int) -> np.ndarray:
+    offset = int(row_index)
+    for path in sorted(directory.glob("shard_*.npy")):
+        shard = np.load(path, mmap_mode="r")
+        if offset < len(shard):
+            return np.asarray(shard[offset])
+        offset -= len(shard)
+    raise IndexError(f"row {row_index} is outside {directory}")
+
+
 def _quantiles(values: np.ndarray) -> dict[str, float]:
     probabilities = [0.0, 0.01, 0.05, 0.25, 0.5, 0.75, 0.95, 0.99, 1.0]
     return {
@@ -247,6 +257,21 @@ def main() -> int:
 
     step4 = json.loads((REPO_ROOT / step8["paths"]["step4_manifest"]).read_text())
     normalized_scalar = float(step4["models"]["fit"]["normalization_scalar"])
+    step4_root = REPO_ROOT / "Cache/step4/IRED"
+    step4_rows = np.load(step4_root / "variant_rows.npy")
+    step4_row = int(step4_rows[0])
+    step4_frame_index = int(np.flatnonzero(rows == step4_row)[0])
+    step4_variant = frame.iloc[step4_frame_index]
+    current_step4_base = extract_residue_embeddings(
+        base, [str(step4_variant["mutant_sequence"])], batch_size=1, all_layers=True,
+    ).layers[0, analysis_layer]
+    current_step4_fit = extract_residue_embeddings(
+        adapted.backbone, [str(step4_variant["mutant_sequence"])], batch_size=1, all_layers=True,
+    ).layers[0, analysis_layer]
+    cached_step4_base_normalized = _sharded_row(step4_root / "evo", 0)
+    cached_step4_fit_normalized = _sharded_row(step4_root / "fit", 0)
+    evo_scalar = float(step4["models"]["evo"]["normalization_scalar"])
+    fit_scalar = float(step4["models"]["fit"]["normalization_scalar"])
     result = {
         "status": "complete_diagnosis_only",
         "dataset": "IRED",
@@ -316,6 +341,21 @@ def main() -> int:
             "statistics": _comparison(cached_variant, current_variant),
             "stored_file_against_every_current_depth": _stored_layer_against_current_depths(
                 cached_variant, current_variant_layers,
+            ),
+        },
+        "authoritative_step4_depth26_comparison": {
+            "variant_row": step4_row,
+            "mutations": str(step4_variant["mutations"]),
+            "cache_is_normalized": True,
+            "evo_normalization_scalar": evo_scalar,
+            "fit_normalization_scalar": fit_scalar,
+            "base_after_reversing_fixed_scalar": _comparison(
+                cached_step4_base_normalized.astype(np.float32) / evo_scalar,
+                current_step4_base,
+            ),
+            "fit_after_reversing_fixed_scalar": _comparison(
+                cached_step4_fit_normalized.astype(np.float32) / fit_scalar,
+                current_step4_fit,
             ),
         },
         "within_runtime_adaptation_comparisons": {
