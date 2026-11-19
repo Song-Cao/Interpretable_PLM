@@ -1,7 +1,17 @@
 # Step 8 handoff: IRED depth-26 semantics and causal patching
 
-Date: 2026-11-12
-Status: final; no further IRED Step 8 analyses are proposed
+Date: 2026-11-19
+Status: v20 domain partition complete; cache-dependent CPU analyses blocked on local input
+
+## v20 reopening status
+
+v20 promotes structure-derived domains over distance shells. The domain, dimer-interface, and
+core/surface tracks are complete in `v20_domain_partition.md` and the associated CSV files.
+The requested domain enrichment, domain-fraction causal linkage, long-range response, oracle
+correlations, atlas, and rotated sub-typing have not run. They require the registered delta-z
+and five-seed residue-profile cache, but local `Cache/` is empty and this session forbids
+starting the pod that exposes the network volume. `v20_cpu_input_blocker.md` lists the exact
+files required. No result below is silently relabelled as a domain analysis.
 
 ## Scope and interpretation
 
@@ -99,6 +109,6 @@ location with feature magnitude; its artifacts are quarantined under
 
 ## Incomplete or uncertain
 
-No oracle validation was requested in this run. The 116-feature inference has limited power
-for shell-effect correlations, especially for the three-position catalytic shell. Step 8 is
-closed without further IRED analyses.
+The 116-feature inference has limited power for shell-effect correlations, especially for the
+three-position catalytic shell. v20's domain and oracle additions remain incomplete for the
+input reason above; Step 8 is not closed under v20.

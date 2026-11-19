@@ -1,0 +1,38 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "pdb_id": "5OCM",
+  "source": "CATH_v4.3.0_structure_classification_of_PDB_5OCM",
+  "source_url": "https://www.cathdb.info/pdb/5ocm",
+  "retrieved_date": "2026-11-19",
+  "biological_assembly_chain_sets": {
+    "1": [
+      "A",
+      "F"
+    ],
+    "2": [
+      "B",
+      "C"
+    ],
+    "3": [
+      "D",
+      "E"
+    ]
+  },
+  "interface_contact_cutoff_angstrom": 5.0,
+  "interface_min_chain_copy_fraction": 0.5,
+  "rsa_maximum_scale": "Wilke",
+  "core_surface_rsa_cutoff": 0.25,
+  "domain_counts": {
+    "cofactor_binding_domain": 159,
+    "substrate_catalytic_region": 130,
+    "unassigned": 1
+  },
+  "interface_residues": 105,
+  "core_surface_counts": {
+    "core": 184,
+    "surface": 106
+  },
+  "chain_provenance_rows": 1740,
+  "unassigned_fraction": 0.0034482758620689655
+}

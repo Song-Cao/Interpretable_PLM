@@ -1,6 +1,6 @@
 # CROSSFIT repository rules
 
-`CROSSFIT_Implementation_Plan_v19.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
+`CROSSFIT_Implementation_Plan_v20.docx` is the only implementation plan. Earlier plans and handoffs are superseded.
 
 - Run one independent pipeline per dataset and report every result per dataset. Never pool fitness values, training data, or metrics across datasets.
 - Use `pg_kfold` as the only model-selection split. Low-N, unseen-position, mutation-count, round-held-out, and external data are evaluation conditions only.
@@ -21,6 +21,11 @@
 - Quarantine tensors, checkpoints, and intermediates in the same action that reverses the
   decision that produced them. Active loaders must never resolve archived artifacts.
 - Compare numerical tolerances in the units of the quantity being judged.
+- Commit the per-run values behind every reported mean, range, or interval and cite them from
+  the reporting sentence.
+- Derive spatial proximity, neighbourhoods, contacts, shells, and domain assignments from the
+  deposited biological assembly in three dimensions, recording the chain of origin; never use
+  sequence separation as a spatial proxy.
 - Answer strange observations with more replicates and a reported spread, never with a
   dataset-specific rule change.
 - Compare baselines with the same backbone, data, and splits. Report per-dataset results; never pool them.

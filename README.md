@@ -2,7 +2,7 @@
 
 CROSSFIT measures the feature-level structure of representation change when a protein language model is adapted from evolutionary sequence modelling to measured fitness. Each dataset has an independent pipeline. A shared BatchTopK dictionary within that pipeline identifies evolutionary features the fitness model conserves, re-weights, rotates, abandons, or creates. Gate 1 drift is a precondition for this measurement, not the result itself.
 
-`CROSSFIT_Implementation_Plan_v19.docx` is the only implementation plan. IRED runs first, followed by GB1, GFP, KRAS, and DAAO. Models predict per-variant fitness directly; ranking comparisons exist only transiently inside a training batch. Step 2 searches the registered arms by random search with five-fold validation inside the pg_kfold training pool; the test fold is reporting-only. IRED Gate 1 is failed because its paired five-fold task gain is not significant. Step 2 embedding baselines use ESM-C's final output; analysis objects use the explicitly reported frozen depth (26 for IRED). Every activation-derived cache carries a provenance manifest and a fresh-forward-verified wild-type reference block. The Step 4 crosscoder cache uses only the pg_kfold fold-0 training pool.
+`CROSSFIT_Implementation_Plan_v20.docx` is the only implementation plan. IRED runs first, followed by GB1, GFP, KRAS, and DAAO. Models predict per-variant fitness directly; ranking comparisons exist only transiently inside a training batch. Step 2 searches the registered arms by random search with five-fold validation inside the pg_kfold training pool; the test fold is reporting-only. IRED Gate 1 is failed because its paired five-fold task gain is not significant. Step 2 embedding baselines use ESM-C's final output; analysis objects use the explicitly reported frozen depth (26 for IRED). Every activation-derived cache carries a provenance manifest and a fresh-forward-verified wild-type reference block. The Step 4 crosscoder cache uses only the pg_kfold fold-0 training pool.
 
 Every future fitted model persists held-out predictions before metric reduction. Selected CV
 and per-member evaluation predictions are committed; full random-search predictions are
@@ -99,8 +99,10 @@ impossibility. Raw-rank, death-timing, and dead-feature-resampling diagnostics s
 and `w=2` as the two exploratory working widths. The v17 pooled, drift-matched five-seed
 taxonomy leaves no emergent candidates and identifies rotation as the only robust shifted class.
 Gate 2 finds sparse features competitive with dense probes. Step 8 class-level semantic and
-spatial tests and the approved 30,464-pass causal patching panel are complete for the
-exploratory IRED run. Spatial-causal linkage is defined using each feature's fraction of total
-activation mass in each shell, not its absolute shell activation. The active Step 5, Step 8,
-and Step 9 reports use the verified depth-26
+shell tests and the approved 30,464-pass causal patching panel are complete for the exploratory
+IRED run. v20's structure-derived domain, interface, and core/surface partition is committed;
+the domain-feature analyses await a local copy of the registered network-volume code cache.
+Spatial-causal linkage is defined using each feature's fraction of total activation mass in
+each structural domain; distance shells are a secondary axis. The active Step 5, Step 8, and
+Step 9 reports use the verified depth-26
 cache; their wrong-depth predecessors are quarantined. Oracle validation has not run.

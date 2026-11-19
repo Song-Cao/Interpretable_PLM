@@ -1506,3 +1506,46 @@ the prediction track needs 0 or 3 crosscoders.
   wall-clock time was 0.000 hours and GPU use was 0.000 hours. Cumulative documented IRED GPU
   use is unchanged: approximately 0.393 RTX PRO 4500 Blackwell hours, 14.92 A100 hours, and
   0.03 RTX 6000 Ada hours.
+
+### v20 structural domains and CPU-input audit (2026-11-19)
+
+- `[ADJUST]` `CROSSFIT_Implementation_Plan_v20.docx` replaces v19, which is deleted. v20 makes
+  structural and functional domains the primary spatial partition and demotes 3-D distance
+  shells to a secondary axis. The v19 shell-fraction null remains a valid claim about shells
+  only; it is not a general statement that position is uninformative.
+- `[DECISION]` IRED's structural-domain boundary is taken from CATH v4.3.0's classification of
+  deposited PDB 5OCM, not inferred from sequence separation. Campaign positions 2-160 are the
+  NAD(P)-binding Rossmann-like cofactor domain (3.40.50.720), 161-290 are the mainly alpha
+  second domain labelled substrate/catalytic region (1.10.1040.10), and position 1 is retained
+  as unassigned because it lies outside the CATH domain coordinates. The deposited topology
+  and ligand contacts support the labels: the first domain contains the eight-strand sheet and
+  25/29 NADP-contact positions; the second is entirely helix/coil and contains 10/14 ketone-
+  analogue contact positions.
+- `[DECISION]` Dimer-interface membership is a <=5.0-A cross-subunit heavy-atom contact present
+  in at least half of the six chain copies across biological dimers A/F, B/C, and D/E. Core is
+  mean assembly-level relative solvent accessibility below 0.25 on the Wilke maximum-ASA
+  scale. Every chain-specific RSA and nearest partner contact is committed before aggregation.
+- `[FINDING]` The 290 campaign positions partition into 159 cofactor-binding, 130 substrate/
+  catalytic, and one structurally unassigned residue. There are 105 consensus dimer-interface
+  residues, 184 core residues, and 106 surface residues. The first shell is predominantly core
+  (35/37) and interface (29/37), while both domains span several shells; domains and shells are
+  therefore empirically non-equivalent axes.
+- `[FINDING]` The requested records audit finds committed per-seed values for taxonomy class
+  proportions, norm-restricted rotation, shell distribution, and class-level enrichment.
+  Feature-variant patching observations and feature-level shell fractions are also committed.
+  The exact mutated-position-group effects behind the mutation-responsive bootstrap interval
+  were reduced before persistence and cannot be recovered locally because the registered
+  delta-z cache is absent.
+- `[FINDING]` Local `Cache/` is empty. The domain enrichment, domain-fraction causal linkage,
+  long-range response, atlas, and sub-typing are CPU analyses but require the network-volume
+  delta-z matrix, wild-type codes, variant rows, and five seed-level residue profiles listed in
+  `Reports/step8/v20_cpu_input_blocker.md`. The pod was not contacted or started under the
+  CPU-only instruction.
+- `[FINDING]` ThermoMPNN is not installed locally and its registered model predicts point-
+  mutation ddG, so scoring the campaign's multi-mutants requires an explicit aggregation rule;
+  none was improvised. SoluProt is likewise absent locally and its official documentation says
+  it is not intended for point-mutation effects. Both limitations are recorded rather than
+  substituting application-workstream outputs or an unregistered approximation.
+- `[COST]` This v20 session used 0.000 pod wall-hours and 0.000 GPU-hours. Structure parsing,
+  assembly RSA, interface contacts, reporting, and tests ran locally on CPU. Cumulative
+  documented IRED GPU usage is unchanged.

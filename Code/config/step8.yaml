@@ -1,4 +1,4 @@
-# CROSSFIT v18 Step 8 — IRED annotation and causal-validation configuration.
+# CROSSFIT v20 Step 8 — IRED annotation and causal-validation configuration.
 dataset: IRED
 analysis_layer: 26
 dimension: 960
@@ -21,6 +21,26 @@ structure:
   ketone_analogue_resname: 9RH
   cofactor_resname: NAP
   pdb_reported_context_positions: [208, 238]
+domain_partition:
+  source: CATH_v4.3.0_structure_classification_of_PDB_5OCM
+  source_url: https://www.cathdb.info/pdb/5ocm
+  retrieved_date: "2026-11-19"
+  assignments:
+    cofactor_binding_domain:
+      cath_domain_id: 5ocmA01
+      cath_superfamily: 3.40.50.720
+      cath_description: NAD(P)-binding Rossmann-like Domain
+      campaign_ranges: [[2, 160]]
+    substrate_catalytic_region:
+      cath_domain_id: 5ocmA02
+      cath_superfamily: 1.10.1040.10
+      cath_description: N-(1-d-carboxylethyl)-L-norvaline dehydrogenase domain 2
+      campaign_ranges: [[161, 290]]
+  unassigned_campaign_positions: [1]
+  interface_contact_cutoff_angstrom: 5.0
+  interface_min_chain_copy_fraction: 0.5
+  rsa_maximum_scale: Wilke
+  core_surface_rsa_cutoff: 0.25
 annotation_tracks:
   catalytic_proposed: [S94, D170, W178]
   substrate_direct_contact: [T241]

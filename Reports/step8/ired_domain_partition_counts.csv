@@ -1,0 +1,8 @@
+axis,category,residue_count
+structural_domain,cofactor_binding_domain,159
+structural_domain,substrate_catalytic_region,130
+structural_domain,unassigned,1
+dimer_interface,False,185
+dimer_interface,True,105
+core_surface,core,184
+core_surface,surface,106

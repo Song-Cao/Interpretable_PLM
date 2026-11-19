@@ -1,0 +1,4 @@
+structural_domain,coil,coil;helix,coil;sheet,helix,helix;sheet,sheet
+cofactor_binding_domain,42,4,5,70,1,37
+substrate_catalytic_region,23,0,0,107,0,0
+unassigned,1,0,0,0,0,0
