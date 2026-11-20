@@ -1,0 +1,31 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "analysis_layer": 26,
+  "crosscoder_width": 1,
+  "crosscoder_seeds": [
+    20261311,
+    20261312,
+    20261313,
+    20261314,
+    20261315
+  ],
+  "domain_tests": 7,
+  "domain_linkage_tests": 7,
+  "long_range_variants": 289,
+  "mutation_background_records_backfilled": 1285,
+  "atlas_live_features": 642,
+  "rotated_subtypes": 5,
+  "subtype_causal_test": {
+    "features_with_causal_effect": 116,
+    "subtypes": 4,
+    "between_subtype_statistic": 0.00010731494301508552,
+    "permutation_p_value": 0.37806219378062195,
+    "permutations": 10000,
+    "permutation_seed": 20262032
+  },
+  "cpu_wall_hours": 0.019090700450000844,
+  "gpu_hours": 0.0,
+  "oracle_status": "complete",
+  "oracle_manifest": "Reports/step8/v20_oracle_manifest.json"
+}

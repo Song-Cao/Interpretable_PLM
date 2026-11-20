@@ -1,0 +1,7 @@
+mutation,experimental_direction,thermompnn_ddg,predicted_direction,sign_agrees
+T241A,stabilizing,-0.1317752599716186,stabilizing,True
+S68P,destabilizing,0.0347776412963867,destabilizing,True
+P203Q,destabilizing,1.2204792499542236,destabilizing,True
+H244Y,destabilizing,0.1308224201202392,destabilizing,True
+A72T,destabilizing,0.4960075616836548,destabilizing,True
+G37C,destabilizing,0.6740062236785889,destabilizing,True

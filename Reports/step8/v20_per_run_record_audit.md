@@ -14,8 +14,8 @@ The four records named in the v20 request are auditable from committed files:
 - Enrichment effects: each row in `v18_class_semantic_tests.csv` contains the five named
   seed-level effects from which the mean and interval were formed.
 
-The wider audit is in `v20_per_run_record_audit.csv`. One gap remains: the grouped
-mutated-position effects underlying `v18_mutation_responsive_tests.csv` were reduced before
-being written. The exact matrix is recoverable from the registered delta-z cache without model
-inference, but that cache is not present locally, so it was not backfilled in this CPU-only
-session.
+The wider audit is in `v20_per_run_record_audit.csv`. The previously missing grouped
+mutated-position effects underlying `v18_mutation_responsive_tests.csv` have now been recovered
+from the registered delta-z cache and committed in `v20_mutation_responsive_group_effects.csv`.
+This was arithmetic only; no model was refitted or re-extracted. All reported Step 8 means,
+ranges, and intervals now have committed underlying observations or named per-seed values.

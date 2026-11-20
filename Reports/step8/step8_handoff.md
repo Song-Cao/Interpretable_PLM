@@ -1,114 +1,159 @@
-# Step 8 handoff: IRED depth-26 semantics and causal patching
+# Step 8 handoff: IRED feature atlas and causal validation
 
-Date: 2026-11-19
-Status: v20 domain partition complete; cache-dependent CPU analyses blocked on local input
+Date: 2026-11-20
 
-## v20 reopening status
+Status: complete under CROSSFIT v20
 
-v20 promotes structure-derived domains over distance shells. The domain, dimer-interface, and
-core/surface tracks are complete in `v20_domain_partition.md` and the associated CSV files.
-The requested domain enrichment, domain-fraction causal linkage, long-range response, oracle
-correlations, atlas, and rotated sub-typing have not run. They require the registered delta-z
-and five-seed residue-profile cache, but local `Cache/` is empty and this session forbids
-starting the pod that exposes the network volume. `v20_cpu_input_blocker.md` lists the exact
-files required. No result below is silently relabelled as a domain analysis.
+Interpretation: exploratory because IRED failed Gate 1 on task gain
 
-## Scope and interpretation
+## Result in one paragraph
 
-IRED remains exploratory because Gate 1 failed on task gain. All active Step 8 results use
-depth-26 codes from the provenance-verified cache. Rotated features are the target class and
-conserved features are the comparison. Static codes are aggregated to residues before
-class-level inference, and five dictionary seeds are replicate blocks. Claim-bearing families
-share FDR correction; the campaign-derived evolutionary-peak track is a separate positive
-control.
+At ESM-C depth 26, the populated shifted class is `rotated`. Relative to conserved features,
+rotated features concentrate in the substrate/catalytic structural domain and at the dimer
+interface, and are depleted from the cofactor-binding domain. This domain result is stronger and
+more interpretable than the secondary distance-shell result: it reproduces the first/second-shell
+enrichment but locates it chiefly in the substrate/catalytic half of the dimeric enzyme. Patching
+establishes that rotated features affect the registered additive fitness readout, but the fraction
+of a feature's activation in any domain or shell does not predict its causal-effect magnitude
+after FDR correction. Distal mutations do not produce an aggregate increase in active-site/cofactor
+response: mean absolute delta-z is lower at the nine functional positions than at 211 generic-
+distal positions. These are exploratory IRED findings and do not revise the failed Gate 1 verdict.
 
-## Class-level semantic tests
+## Provenance and registered inputs
 
-| track | positions | rotated - conserved (SD) | 95% interval | q |
+The analysis uses the v17 pooled-null taxonomy at width 1, five real crosscoder seeds, and the
+authoritative depth-26 cache. Before final reporting, a fresh wild-type forward pass on the
+restarted RTX PRO 4500 Blackwell pod reproduced both canonical reference blocks exactly: base
+Pearson 1.0000, relative RMSE 0, scale 1; adapted Pearson 1.0000, relative RMSE 0, scale 1.
+`v20_cache_session_verification.json` holds the complete check. The copied 120-MB delta-z and
+residue-profile cache remains gitignored.
+
+The primary dictionary seed contains 642 live features: 393 conserved, 248 rotated, and one
+re-weighted. One conserved feature was active once during crosscoder training but has zero
+activation mass under registered per-sequence semantic coding; it remains in the atlas with an
+explicit undefined-profile flag rather than being silently removed.
+
+## Structural partition
+
+The 290 positions comprise 159 cofactor-binding-domain residues, 130 substrate/catalytic-region
+residues, and one structurally unassigned N-terminal residue. Orthogonally, 105 residues are at
+the dimer interface, 184 are core, and 106 are surface. Assignments come from CATH topology,
+deposited 5OCM ligand contacts, all six chain copies in the three biological dimers, and assembly-
+level RSA. The exact chain provenance and the overlap with distance shells are in
+`v20_domain_partition.md` and the `ired_domain_*` CSV files.
+
+## Class-level domain enrichment
+
+All effects are rotated minus conserved in within-seed SD units. Tests permute class labels
+within each of five dictionary seeds; intervals bootstrap seed blocks and features. The per-seed
+effects are columns in `v20_domain_class_enrichment.csv`.
+
+| structural axis | positions | effect | 95% interval | q |
 |---|---:|---:|---:|---:|
-| catalytic | 3 | +0.041 | [-0.064, +0.145] | 0.286 |
-| first shell | 37 | +0.287 | [+0.197, +0.371] | 0.000129 |
-| second shell | 36 | +0.688 | [+0.608, +0.773] | 0.000129 |
-| distal functional network | 3 | -0.196 | [-0.273, -0.120] | 0.000129 |
-| generic distal | 211 | -0.311 | [-0.383, -0.241] | 0.000129 |
-| substrate direct contact | 1 | +0.319 | [+0.216, +0.425] | 0.000129 |
-| NADPH direct contact | 1 | -0.238 | [-0.314, -0.159] | 0.000129 |
-| NADPH proximal/coupled | 4 | -0.222 | [-0.295, -0.152] | 0.000129 |
-| crystallographic ketone proxy | 36 | +0.038 | [-0.032, +0.107] | 0.286 |
+| substrate/catalytic domain | 130 | +0.998 | [+0.917, +1.072] | 0.00010 |
+| cofactor-binding domain | 159 | -0.990 | [-1.067, -0.906] | 0.00010 |
+| dimer interface | 105 | +0.608 | [+0.540, +0.677] | 0.00010 |
+| core | 184 | -0.281 | [-0.356, -0.205] | 0.00010 |
+| surface | 106 | +0.281 | [+0.205, +0.356] | 0.00010 |
 
-The robust headline is first- and second-shell enrichment with generic-distal depletion.
-Single-position substrate and NADPH-direct tracks cannot carry standalone claims. The
-positive-control effect is +0.444 SD (permutation p=0.00010). Top-position shell distributions
-differ between rotated and conserved features (total-variation distance 0.09645, permutation
-p=0.00010).
+The one-position unassigned category also rejects the null but cannot support a biological claim.
+The domain result leads Step 8. Distance shells remain secondary: rotated features are enriched
+in first and second shells and depleted at generic-distal positions, as reported in
+`v18_class_semantic_tests.csv`.
 
-## Causal patching
+## Causal patching and spatial linkage
 
-Patching targets 116 rotated features above both decoder medians on 256 training-pool variants
-stratified by clipped mutation count and fitness quartile. It performs 29,696 candidate and 768
-control partial forward passes (30,464 total), inside E_fit at depth 26, using
-`D_fit(z_ablated) + original_fit_residual`.
+Patching targeted 116 rotated features above both decoder medians on 256 registered training-
+pool variants. The no-op, dead-feature, and random-live controls passed before candidate effects
+were read. Rotated absolute effects exceed both control distributions; the median feature effect
+is 0.003832 SD and the 95th percentile is 0.015320 SD. Full feature-variant effects, controls,
+quantiles, and distribution tests remain in the v18/v19 patching artifacts.
 
-All hygiene checks passed before candidate effects were read. The no-op maximum was
-0.00034395 raw prediction units or 0.002299 SD; the dead-feature maximum was identical. The
-random-live control mean absolute effect was 0.001575 SD. All are below the common 0.05-SD
-tolerance. The fresh-versus-float16-cache maximum raw activation difference was 21, replacing
-the wrong-depth discrepancy of 2,284.
+No activation-location fraction predicts effect magnitude at q <= 0.05. The strongest domain
+associations are substrate/catalytic fraction (rho +0.198, q=0.114) and cofactor-domain fraction
+(rho -0.207, q=0.114); core fraction is rho +0.171 (q=0.121). The secondary shell analysis is
+also null after FDR. These are statements about average spatial occupancy, not evidence that
+individual features lack spatial meaning. Per-feature domain fractions and effects are committed
+in `v20_causal_feature_domain_fractions.csv`.
 
-Across 116 features, mean absolute standardized effect was 0.005796 (median 0.003832); the
-largest feature-level mean absolute effect was 0.035150. Bootstrap intervals on mean signed
-effect excluded zero for 111 features (53 positive, 58 negative). The feature-level
-mean-absolute 5th/25th/50th/75th/95th percentiles were
-0.001123/0.002467/0.003832/0.006583/0.015320 SD. These are effects on the registered additive
-attribution readout, not the nonlinear prediction ceiling.
+## Long-range mutation response
 
-The distribution comparison replaces the superseded count relative to a control mean.
-Using all 29,696 rotated feature-variant absolute effects and the 256 effects for each control,
-the rotated distribution exceeds random-live (Mann-Whitney U=5,347,415, p=3.06e-29;
-rank-biserial=0.4068, hierarchical-bootstrap 95% interval [0.3211, 0.4894]) and dead control
-(U=6,797,533, p=6.55e-105; rank-biserial=0.7883, interval [0.7461, 0.8275]). The bootstrap
-resamples rotated features and the shared variant backgrounds. Complete quantiles and the ten
-largest features are in `v19_causal_effect_distribution.md` and its companion CSV files.
+The registered functional region is the union of proposed catalytic, substrate-contact,
+NADPH-contact, and NADPH-proximal positions (nine unique residues). The comparison region is the
+211-position generic-distal shell. There are 289 variants whose substitutions all lie in the
+distal-functional or generic-distal shells.
 
-## Spatial-causal linkage
+| feature set | functional mean abs delta-z | distal mean abs delta-z | paired difference | 95% interval | q |
+|---|---:|---:|---:|---:|---:|
+| all live | 5.373 | 6.097 | -0.724 | [-0.727, -0.719] | 0.00010 |
+| rotated | 4.852 | 7.139 | -2.287 | [-2.291, -2.282] | 0.00010 |
+| conserved | 5.714 | 5.414 | +0.300 | [+0.296, +0.304] | 0.00010 |
 
-The final linkage statistic uses, for each feature, the fraction of its total static activation
-mass assigned to each mutually exclusive shell. This measures location rather than activation
-magnitude. Correlations use the feature's mean absolute standardized patching effect and a
-10,000-draw feature-label permutation test, with BH correction over four shells.
+Thus the aggregate representation does not show the hypothesized distal-mutation amplification
+inside the functional region. The opposing class-specific pattern is descriptive: conserved
+features respond slightly more inside, while rotated features respond much more strongly at
+distal positions. `v20_long_range_response_by_variant.csv` contains every paired observation.
 
-| shell | positions | Spearman rho | permutation p | q |
-|---|---:|---:|---:|---:|
-| catalytic | 3 | +0.0216 | 0.8139 | 0.8139 |
-| first shell | 37 | +0.1198 | 0.2000 | 0.4000 |
-| second shell | 36 | +0.1713 | 0.0668 | 0.2672 |
-| distal | 214 | -0.0717 | 0.4463 | 0.5950 |
+## Stability and solubility oracles
 
-Second shell is the strongest positive association, first shell is weaker, catalytic is null,
-and distal is weakly negative. No fraction-based linkage clears FDR. The class-level result
-that rotated features are depleted at generic-distal positions and the within-rotated result
-that distal activation fraction does not predict causal effect answer different questions and
-do not conflict. The earlier absolute-activation linkage is discarded because it conflated
-location with feature magnitude; its artifacts are quarantined under
-`Reports/archive/ired_step8_absolute_linkage_v18/`.
+The official ThermoMPNN point-mutant model was run in CPU-only mode on 5OCM chain A. Its sign
+agrees with all six registered experimental anchors: T241A is stabilizing; S68P, P203Q, H244Y,
+A72T, and G37C are destabilizing. Campaign multi-mutant scores are the explicit additive sum of
+the official point-mutant ddG predictions. This covers 1,181/1,182 variants; M1I-S68P-T241A is
+unsupported because 5OCM has no coordinates for campaign residue 1, and no value is imputed.
 
-## Active artifacts and interface
+SoluProt 1.0.1.0 was run in its authors' pinned CPU environment with the official no-TMHMM model.
+It covers all 1,182 variants but is labelled exploratory: IRED has no solubility anchor, and the
+authors state that SoluProt is not designed to measure point-mutation effects. ThermoMPNN and
+SoluProt agree only weakly across variants (Spearman 0.110). Per-feature correlations and
+500-draw rank-pair bootstrap intervals are columns in `v20_ired_feature_atlas.csv`; they are
+descriptors, not causal evidence.
 
-- `v18_class_semantic_tests.csv`: depth-26 class-level semantic effects and position counts.
-- `v18_mutation_responsive_tests.csv`: depth-26 mutation-responsive tests.
-- `v18_spatial_structure_test.json`: class-level spatial-structure permutation result.
-- `v18_causal_patching_hygiene.json`: registered hygiene checks and tolerances.
-- `v18_causal_patching_feature_effects.csv`: one row per rotated feature.
-- `v18_causal_patching_variant_effects.csv`: one row per feature-variant ablation.
-- `v18_causal_patching_control_effects.csv`: no-op, dead, and random-live controls.
-- `v19_causal_patching_effect_quantiles.csv`: rotated and control effect quantiles.
-- `v19_causal_patching_top_features.csv`: ten largest feature-level absolute effects.
-- `v19_causal_effect_distribution_tests.csv`: Mann-Whitney and rank-biserial results.
-- `v19_causal_feature_shell_fractions.csv`: feature-level shell fractions and causal effects.
-- `v19_causal_spatial_fraction_correlations.csv`: final spatial-causal linkage tests.
+## Feature atlas and rotated sub-types
 
-## Incomplete or uncertain
+`v20_ired_feature_atlas.csv` has one row per live width-1 feature. It includes taxonomy
+statistics, decoder norms, Delta, cosine, activation frequency, residue-profile-matched seed
+replication, five top positions with domain and shell labels, activation-weighted values and
+global-FDR q values for 26 annotation tracks, causal effects where measured, and both oracle
+correlations. The per-feature annotation tests have no q <= 0.05 after correcting the full
+feature-by-track family; biological inference therefore remains class-level.
 
-The 116-feature inference has limited power for shell-effect correlations, especially for the
-three-position catalytic shell. v20's domain and oracle additions remain incomplete for the
-input reason above; Step 8 is not closed under v20.
+Five descriptive rotated sub-types maximize the pre-registered silhouette candidates, but the
+silhouette is low (0.202) and one sub-type has only two features:
+
+| sub-type | features | profile summary | patched features | mean abs effect (SD) |
+|---:|---:|---|---:|---:|
+| 0 | 112 | substrate/catalytic, interface, core, helical | 60 | 0.00630 |
+| 1 | 69 | surface, non-interface, generic distal | 34 | 0.00618 |
+| 2 | 54 | cofactor domain, core, sheet/NADP context | 13 | 0.00401 |
+| 3 | 11 | first shell, NADP/substrate-contact context | 9 | 0.00355 |
+| 4 | 2 | catalytic/ketone-proxy positions | 0 | not measured |
+
+Causal magnitude does not differ across the four sub-types represented in the 116-feature
+patching set (permutation p=0.378). The sub-types describe distinct position profiles but do not
+explain the pooled causal-effect distribution on IRED. Assignment, selection diagnostics,
+enrichment rows, and causal test are committed in the `v20_rotated_subtype_*` artifacts.
+
+## Audit, limitations, and interface
+
+The previously missing mutated-position-group records were recovered without inference and are
+now in `v20_mutation_responsive_group_effects.csv`. `v20_per_run_record_audit.csv` now marks all
+reported Step 8 means, ranges, and intervals as backed by committed observations or named
+per-seed values.
+
+Limitations are explicit: IRED failed Gate 1; all feature results are hypothesis-generating.
+Class labels depend on the registered additive attribution readout, which is weaker than the
+nonlinear prediction ceiling. The domain sub-types are low-separation descriptive clusters.
+ThermoMPNN multi-mutant scores assume additivity, SoluProt has no assay-specific validation, and
+neither oracle enters the patching result.
+
+This closes IRED Step 8. No further IRED analysis is proposed. The next dataset runs the frozen
+v20 specification without per-dataset adjustment.
+
+## Compute accounting
+
+This continuation occupied the restarted pod for approximately 0.67 wall-clock hours. GPU use
+was approximately 0.004 GPU-hours, solely for the mandatory two-reference cache verification;
+ThermoMPNN was forced to CPU mode, and all other analyses were local CPU work. Cumulative
+documented IRED use is approximately 0.397 RTX PRO 4500 Blackwell GPU-hours, 14.92 A100
+GPU-hours, and 0.03 RTX 6000 Ada GPU-hours.

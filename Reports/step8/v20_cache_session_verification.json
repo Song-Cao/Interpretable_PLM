@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "date": "2026-11-20",
+  "manifest": "Cache/step5/IRED/analysis_layer_26/manifest.json",
+  "dataset": "IRED",
+  "analysis_layer": 26,
+  "fresh_forward_pass": true,
+  "base": {
+    "pearson": 1.0000000000000002,
+    "relative_rmse": 0.0,
+    "through_origin_scale": 1.0,
+    "maximum_absolute_difference": 0.0
+  },
+  "fit": {
+    "pearson": 0.9999999999999998,
+    "relative_rmse": 0.0,
+    "through_origin_scale": 1.0,
+    "maximum_absolute_difference": 0.0
+  },
+  "runtime_note": "Fresh base and adapted wild-type blocks were extracted on the restarted RTX PRO 4500 Blackwell pod before the copied cache was used for final reporting."
+}

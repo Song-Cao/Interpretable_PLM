@@ -83,6 +83,12 @@ and leaves all tensors and checkpoints under the gitignored `Cache/` and `Models
 .venv/bin/python Code/scripts/cache_ired_delta_z.py
 .venv/bin/python Code/scripts/analyze_ired_step8_semantics.py
 .venv/bin/python Code/scripts/run_ired_causal_patching.py
+.venv/bin/python Code/scripts/build_ired_domain_partition.py
+.venv/bin/python Code/scripts/run_ired_step8_v20_cpu.py
+# Then integrate the official CPU-oracle outputs:
+.venv/bin/python Code/scripts/integrate_ired_step8_oracles.py \
+  --thermompnn-raw /path/to/ThermoMPNN_inference_5ocm_chainA.csv \
+  --soluprot /path/to/ired_soluprot.csv
 ```
 
 Committed results are summarized in `Reports/step2/step2_handoff.md` and
@@ -98,11 +104,10 @@ treats the earlier stopping statement as a pre-committed rule rather than an emp
 impossibility. Raw-rank, death-timing, and dead-feature-resampling diagnostics select `w=1`
 and `w=2` as the two exploratory working widths. The v17 pooled, drift-matched five-seed
 taxonomy leaves no emergent candidates and identifies rotation as the only robust shifted class.
-Gate 2 finds sparse features competitive with dense probes. Step 8 class-level semantic and
-shell tests and the approved 30,464-pass causal patching panel are complete for the exploratory
-IRED run. v20's structure-derived domain, interface, and core/surface partition is committed;
-the domain-feature analyses await a local copy of the registered network-volume code cache.
-Spatial-causal linkage is defined using each feature's fraction of total activation mass in
-each structural domain; distance shells are a secondary axis. The active Step 5, Step 8, and
-Step 9 reports use the verified depth-26
-cache; their wrong-depth predecessors are quarantined. Oracle validation has not run.
+Gate 2 finds sparse features competitive with dense probes. Step 8 is complete for exploratory
+IRED: the class-level shell and structural-domain analyses, long-range response, 30,464-pass
+causal panel, CPU oracles, per-feature atlas, and rotated-feature sub-types are committed.
+Structural domains are the primary spatial axis and distance shells are secondary. The active
+Step 5, Step 8, and Step 9 reports use the verified depth-26 cache; their wrong-depth
+predecessors are quarantined. ThermoMPNN passed all six registered anchor signs, while SoluProt
+is explicitly exploratory. `Reports/step8/step8_handoff.md` is the final IRED Step 8 summary.

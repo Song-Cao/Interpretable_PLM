@@ -1,0 +1,20 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "analysis_layer": 26,
+  "thermompnn_repository": "https://github.com/Kuhlman-Lab/ThermoMPNN",
+  "thermompnn_revision": "370f76ec62bd929f7425e311d8df04a0d094990f",
+  "thermompnn_raw_sha256": "4bc4e2bcfaf1d0e8dfe310b63acd0704b1398d38abcf304252719ee6d7e5129c",
+  "thermompnn_aggregation": "additive sum of official point-mutation ddG scores",
+  "thermompnn_anchor_signs_passed": 6,
+  "thermompnn_anchor_signs_total": 6,
+  "thermompnn_supported_variants": 1181,
+  "thermompnn_unsupported_variants": 1,
+  "soluprot_source": "official SoluProt 1.0.1.0 standalone no-TMHMM model",
+  "soluprot_status": "exploratory_no_IRED_anchor_and_not_designed_for_point_mutation_effects",
+  "soluprot_variants": 1182,
+  "feature_pooling": "sum over residue codes",
+  "oracle_correlation_bootstrap": "variant-pair bootstrap on pre-ranked values",
+  "oracle_correlation_bootstrap_samples": 500,
+  "gpu_hours": 0.0
+}

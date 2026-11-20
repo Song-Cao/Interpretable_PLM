@@ -1549,3 +1549,64 @@ the prediction track needs 0 or 3 crosscoders.
 - `[COST]` This v20 session used 0.000 pod wall-hours and 0.000 GPU-hours. Structure parsing,
   assembly RSA, interface contacts, reporting, and tests ran locally on CPU. Cumulative
   documented IRED GPU usage is unchanged.
+
+### v20 IRED Step 8 completion (2026-11-20)
+
+- `[ADJUST]` The v20 CPU-input blocker is resolved. The registered 120-MB delta-z and five-seed
+  residue-profile cache was copied from the network volume to the local gitignored `Cache/`
+  tree without recomputation. The active blocker report was moved to
+  `Reports/archive/ired_step8_v20_resolved_blockers/`. The previously missing 1,285
+  mutated-position-group-by-track records are now committed in
+  `Reports/step8/v20_mutation_responsive_group_effects.csv`; the per-run audit is complete.
+- `[DECISION]` Per-feature crosscoder-seed class replication matches each primary-seed live
+  feature one-to-one to each other seed by Hungarian assignment on cosine similarity between
+  its 290-position mean-activation profile. Matches below cosine 0.25 are marked unmatched.
+  Raw matched feature IDs, cosines, acceptance, and class agreement are committed; dictionary
+  feature indices are never assumed to align across independent initializations.
+- `[DECISION]` The long-range functional region is the union of the supplied catalytic,
+  substrate-contact, NADPH-contact, and NADPH-proximal tracks (nine unique positions). Eligible
+  variants have every substitution in the distal-functional or generic-distal shell; the
+  211-position generic-distal shell is the comparison. This implements the plan's mechanistic
+  region rather than taking the union of the two structural domains, which would cover 289/290
+  residues and leave no meaningful distal test.
+- `[DECISION]` ThermoMPNN scores campaign multi-mutants by the explicit additive sum of the
+  official point-mutant ddG predictions. This is the only extension of the registered
+  point-mutant oracle; it is labelled additive in every artifact. The M1I-containing variant
+  is unsupported because campaign residue 1 has no 5OCM coordinates, and no value is imputed.
+  SoluProt uses the official v1.0.1.0 no-TMHMM model in its pinned legacy environment and is
+  exploratory only, because no IRED solubility anchor exists and its authors warn against
+  interpreting it as a point-mutation-effect predictor.
+- `[FINDING]` A fresh restarted-pod forward pass reproduced the depth-26 base and adapted
+  canonical wild-type blocks exactly (both relative RMSE 0 and scale 1; Pearson numerically 1).
+  Final v20 CPU outputs therefore satisfy the cache provenance contract.
+- `[FINDING]` Rotated features are strongly shifted toward the substrate/catalytic structural
+  domain (effect +0.998 SD, 95% interval [0.917, 1.072], q=0.00010) and away from the cofactor-
+  binding domain (-0.990, [-1.067, -0.906], q=0.00010). They are enriched at the dimer
+  interface (+0.608, [0.540, 0.677], q=0.00010) and shifted from core toward surface
+  (+0.281 surface, [0.205, 0.356], q=0.00010). Per-seed values are in
+  `Reports/step8/v20_domain_class_enrichment.csv`.
+- `[FINDING]` Domain occupancy does not explain the mean absolute patching effect after FDR.
+  The largest associations are cofactor-domain fraction rho -0.207 and substrate/catalytic
+  fraction rho +0.198, both q=0.114. The earlier shell-fraction null was therefore specific to
+  shells, but the new domain analysis also returns a pooled spatial-causal null on IRED.
+- `[FINDING]` The registered long-range response hypothesis is not supported in aggregate.
+  Across 289 distal-mutant variants, mean absolute delta-z is 5.373 at the nine functional
+  positions and 6.097 at generic-distal positions (paired difference -0.724, 95% interval
+  [-0.727, -0.719], q=0.00010). Rotated features are more strongly distal-biased, while
+  conserved features show a small positive inside-minus-distal difference. Every paired
+  variant observation is committed.
+- `[FINDING]` Five descriptive rotated sub-types maximize silhouette over k=2..6, but separation
+  is low (silhouette 0.202) and the fifth cluster has only two features. The four sub-types
+  represented in the 116-feature patching panel do not differ in causal magnitude
+  (permutation p=0.378). Profiles separate substrate/interface/core-helical, surface/distal,
+  cofactor/core-sheet, and first-shell/NADP-contact groups, but this structure does not explain
+  effect-size heterogeneity on IRED.
+- `[FINDING]` ThermoMPNN reproduces all six registered anchor signs: T241A stabilizing and
+  S68P, P203Q, H244Y, A72T, and G37C destabilizing. It is therefore validated for the atlas,
+  subject to the additive multi-mutant caveat. SoluProt covers all variants but remains
+  exploratory. Their variant scores agree weakly (Spearman 0.110).
+- `[COST]` This continuation held the restarted pod for approximately 0.67 wall-clock hours.
+  GPU use was approximately 0.004 GPU-hours, solely for the required base/adapted reference
+  verification; ThermoMPNN was forced to CPU mode and all statistical analyses ran locally.
+  Cumulative documented IRED use is approximately 0.397 RTX PRO 4500 Blackwell GPU-hours,
+  14.92 A100 GPU-hours, and 0.03 RTX 6000 Ada GPU-hours.

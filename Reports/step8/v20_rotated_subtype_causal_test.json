@@ -1,0 +1,8 @@
+{
+  "features_with_causal_effect": 116,
+  "subtypes": 4,
+  "between_subtype_statistic": 0.00010731494301508552,
+  "permutation_p_value": 0.37806219378062195,
+  "permutations": 10000,
+  "permutation_seed": 20262032
+}
