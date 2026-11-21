@@ -1,0 +1,7 @@
+{
+  "status": "complete",
+  "candidates": 30,
+  "models": 13,
+  "ensemble_members_per_model": 5,
+  "conformal_status": "reported only where supported by the registered Step 2 Mondrian strata; one-row strata are explicitly unbounded"
+}

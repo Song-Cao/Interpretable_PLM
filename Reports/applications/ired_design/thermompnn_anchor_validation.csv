@@ -1,0 +1,7 @@
+mutation,experimental_anchor,thermompnn_ddg_kcal_mol,predicted_sign,sign_matches
+T241A,stabilising,-0.113253116607666,stabilising,True
+S68P,destabilising,0.0343245863914489,destabilising,True
+P203Q,destabilising,1.2316198348999023,destabilising,True
+H244Y,destabilising,0.1373022198677063,destabilising,True
+A72T,destabilising,0.596011221408844,destabilising,True
+G37C,destabilising,0.7194771766662598,destabilising,True

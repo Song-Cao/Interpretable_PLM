@@ -1,0 +1,25 @@
+{
+  "winner_pool_size": 300,
+  "survivors_per_round": 30,
+  "upper_bound_candidates_per_arm": 114710,
+  "projected_gpu_hours_upper_bound": 2.0300747220026802,
+  "components_hours": {
+    "base_esm_arms": 0.7142428099064394,
+    "phi_two_backbones": 0.2380809366354798,
+    "adapter": 0.1190404683177399,
+    "dpll_two_arms": 0.9587105071430213
+  },
+  "reduced_from": {
+    "winner_pool_size": 500,
+    "survivors_per_round": 50
+  },
+  "reduction_reason": "realized full-pool round timing projected above the six GPU-hour ceiling",
+  "benchmark": {
+    "sequences": 64,
+    "embedding_seconds": 0.2390979330521077,
+    "seconds_per_sequence": 0.0037359052039391827,
+    "masked_tasks": 64,
+    "masked_seconds": 0.19256115495227277,
+    "seconds_per_masked_task": 0.003008768046129262
+  }
+}

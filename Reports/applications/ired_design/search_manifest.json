@@ -1,0 +1,28 @@
+{
+  "status": "complete",
+  "arms": [
+    "onehot_ridge_unaugmented",
+    "onehot_ridge_augmented",
+    "aaindex_flat_ridge_unaugmented",
+    "aaindex_flat_ridge_augmented",
+    "esm_mean_ridge",
+    "esm_mean_mlp",
+    "esm_mean_random_forest",
+    "esm_mutpool_ridge",
+    "esm_residue_conv",
+    "esm_residue_delta_conv",
+    "onehot_positional_conv",
+    "phi_w1_max_all_live",
+    "adapter_linear"
+  ],
+  "founders": [
+    "S68P-T241A",
+    "S68P-P203Q-T241A",
+    "S68P-T241A-H244Y",
+    "S68P-P203Q-T241A-H244Y"
+  ],
+  "winner_pool_size": 300,
+  "survivors_per_round": 30,
+  "realized_evaluated_rows_new": 1147143,
+  "gpu_wall_hours": 3.151898998751357
+}
