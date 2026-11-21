@@ -1,0 +1,93 @@
+{
+  "status": "complete",
+  "provenance_contract_version": 1,
+  "dataset": "IRED",
+  "split": "campaign_all_and_external_plate_derived_phi",
+  "layer_index": 26,
+  "device_class": "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+  "storage_dtype": "float32",
+  "compute_dtype": "float32",
+  "tf32": {
+    "matmul_allow_tf32": false,
+    "cudnn_allow_tf32": true,
+    "float32_matmul_precision": "highest"
+  },
+  "attention_kernel_settings": {
+    "requested": "flash_attention_2",
+    "flash_sdp_enabled": true,
+    "memory_efficient_sdp_enabled": true,
+    "math_sdp_enabled": true,
+    "cudnn_sdp_enabled": true
+  },
+  "torch_version": "2.11.0+cu130",
+  "cuda_version": "13.0",
+  "backbone_revision": "e4bac860f0c502cd80f3aeac3d0ce6524c6627cb",
+  "activation_units": "crosscoder_pooled_code",
+  "reference_blocks": {
+    "base": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_base.npy",
+      "sha256": "142a13a463bd50c6bac08c04db4cbf874d9df744914b7709788f23cc7a5f2b3c",
+      "shape": [
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "raw",
+      "normalization_scalar": 1.0
+    },
+    "fit": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_fit.npy",
+      "sha256": "6433fdb2c0423823589ec816aab9073c1f5a89030b80ba87c8a5e9f044bb984b",
+      "shape": [
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "raw",
+      "normalization_scalar": 1.0
+    }
+  },
+  "dimension": 960,
+  "source_manifest": "Cache/step5/IRED/analysis_layer_26/manifest.json",
+  "source_manifest_sha256": "77b3ced65efa744b132e224207e3ab2fe3dffffc82c9490ec218297fbf87d793",
+  "source_reference_verification": {
+    "base": {
+      "pearson": 1.0000000000000002,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    },
+    "fit": {
+      "pearson": 0.9999999999999998,
+      "relative_rmse": 0.0,
+      "through_origin_scale": 1.0,
+      "maximum_absolute_difference": 0.0
+    }
+  },
+  "widths": {
+    "1": {
+      "features": 960,
+      "crosscoder_seed": 20261311,
+      "campaign_variants": 1182,
+      "plate_variants": 54,
+      "operators": [
+        "sum",
+        "max",
+        "binarized"
+      ]
+    },
+    "2": {
+      "features": 1920,
+      "crosscoder_seed": 20261311,
+      "campaign_variants": 1182,
+      "plate_variants": 54,
+      "operators": [
+        "sum",
+        "max",
+        "binarized"
+      ]
+    }
+  }
+}

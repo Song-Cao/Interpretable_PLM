@@ -1,0 +1,95 @@
+{
+  "status": "complete",
+  "provenance_contract_version": 1,
+  "dataset": "IRED",
+  "split": "layer_freeze_reserve_only",
+  "layer_index": "all",
+  "device_class": "NVIDIA A100 (historical cache-producing run)",
+  "storage_dtype": "float16",
+  "compute_dtype": "not_recorded_in_historical_run",
+  "tf32": {
+    "matmul_allow_tf32": "not_recorded_in_historical_run",
+    "cudnn_allow_tf32": "not_recorded_in_historical_run",
+    "float32_matmul_precision": "not_recorded_in_historical_run"
+  },
+  "attention_kernel_settings": {
+    "realized": "not_recorded_in_historical_run"
+  },
+  "backbone_revision": "e4bac860f0c502cd80f3aeac3d0ce6524c6627cb",
+  "activation_units": "raw",
+  "reference_blocks": {
+    "base": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_base.npy",
+      "sha256": "8832f59ee1dd219157214d3e7c0de6ddf4f048eda2b44de99ddb6710ee5a8292",
+      "shape": [
+        30,
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "raw",
+      "normalization_scalar": 1.0
+    },
+    "fit": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_fit.npy",
+      "sha256": "807c7b184a3f064f788d3588d2060dbe8f3ca5fc1557e05260b2851fa2f6c1ad",
+      "shape": [
+        30,
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "raw",
+      "normalization_scalar": 1.0
+    },
+    "shuffled": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_shuffled.npy",
+      "sha256": "eafe6e5dafd66537ad7ce4b5dbca454b7df287d2c23dec5dfede6e5617f897e3",
+      "shape": [
+        30,
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "raw",
+      "normalization_scalar": 1.0
+    }
+  },
+  "historical_provenance_completeness": "partial_fields_recovered_retroactively",
+  "dimension": 960,
+  "reserve_variants": 59,
+  "reference_extraction_runtime": {
+    "device_class": "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+    "torch_version": "2.11.0+cu130",
+    "cuda_version": "13.0",
+    "tf32": {
+      "matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "float32_matmul_precision": "highest"
+    },
+    "attention_kernel_settings": {
+      "requested": "flash_attention_2",
+      "flash_sdp_enabled": true,
+      "memory_efficient_sdp_enabled": true,
+      "math_sdp_enabled": true,
+      "cudnn_sdp_enabled": true
+    }
+  },
+  "payload": {
+    "reserve_all_layers_base.npy": {
+      "path": "Cache/step2/IRED/representations/reserve_all_layers_base.npy",
+      "sha256": "8ef923810b34db1ca66872fbc3308555f3938afcf9e57cd789ebe11c795b2a46"
+    },
+    "reserve_all_layers_adapted.npy": {
+      "path": "Cache/step3/IRED/reserve_all_layers_adapted.npy",
+      "sha256": "293a6ba318fda0c5ba81eb335694c4c5b7a8014926978158c9fc673eb95a701f"
+    },
+    "reserve_all_layers_shuffled.npy": {
+      "path": "Cache/step3/IRED/reserve_all_layers_shuffled.npy",
+      "sha256": "288895e1777dee45acc2f0d79a1c0792a02fd3a3779e71cb354b8081a8909b37"
+    }
+  }
+}

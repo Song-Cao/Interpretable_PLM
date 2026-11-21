@@ -11,6 +11,10 @@ Data/processed/splits/low_n.csv
 Cache/
 Models/
 
+# Tiny provenance references required to verify cache reproduction after migration.
+!Reports/migration/reference_blocks/
+!Reports/migration/reference_blocks/**
+
 # Local environments and build/test caches
 .venv/
 __pycache__/

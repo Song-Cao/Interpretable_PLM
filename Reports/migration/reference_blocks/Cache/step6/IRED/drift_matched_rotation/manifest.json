@@ -1,0 +1,148 @@
+{
+  "status": "complete",
+  "dataset": "IRED",
+  "adapter": "drift_matched_shuffled_label",
+  "analysis_layer": 26,
+  "training_variants": 895,
+  "positions": 259550,
+  "sequence_length": 290,
+  "dimension": 960,
+  "dtype": "float16",
+  "adapter_checkpoint_sha256": "46bd002685bf04b02b11eef4e60253691cd00bc65f6d625c989894ff82a080c3",
+  "models": {
+    "drift_matched": {
+      "raw_mean_norm": 1099.3228510884223,
+      "normalization_scalar": 0.02818450170391955,
+      "normalized_mean_norm": 30.984214174773648,
+      "shards": [
+        {
+          "name": "shard_0000.npy",
+          "bytes": 35635328,
+          "sha256": "9675ca1ece74f692bde08f1a54e0af1feca7253281e9cef742c7cb9a307eed55"
+        },
+        {
+          "name": "shard_0001.npy",
+          "bytes": 35635328,
+          "sha256": "7013c54f4ee9887450144e8406c755407458eb431916ad5949e54ff8d1e5e649"
+        },
+        {
+          "name": "shard_0002.npy",
+          "bytes": 35635328,
+          "sha256": "c2a9420de536e868168f3ffd96cbea592daec5bfadeaf40001a4c5972621d1f8"
+        },
+        {
+          "name": "shard_0003.npy",
+          "bytes": 35635328,
+          "sha256": "bbdb031f1088b0b41a815a8d9fc924165fd46be63b050cf66fa1372dee6ca050"
+        },
+        {
+          "name": "shard_0004.npy",
+          "bytes": 35635328,
+          "sha256": "bd258ab4ec00270b786bf85a66ab9f7378b45a2bd52937447e273fda3195f9fb"
+        },
+        {
+          "name": "shard_0005.npy",
+          "bytes": 35635328,
+          "sha256": "03e4ef1c5554a2401c2bf1d7aa577745bfa223f64229c26793772bac6c32a82f"
+        },
+        {
+          "name": "shard_0006.npy",
+          "bytes": 35635328,
+          "sha256": "ab7b8acc521371b17a6e4fe43436effffed51c4fcde681bafbc0dbee9d06a8c9"
+        },
+        {
+          "name": "shard_0007.npy",
+          "bytes": 35635328,
+          "sha256": "7a298c258945b2a4da33cf3349213770cb03359c46d1dfeb78639d1e03e32b4b"
+        },
+        {
+          "name": "shard_0008.npy",
+          "bytes": 35635328,
+          "sha256": "2294f1b900e63266c60abaf1780bd3524d189f36f359e10703b43bd225f94375"
+        },
+        {
+          "name": "shard_0009.npy",
+          "bytes": 35635328,
+          "sha256": "22ffccafd60564cb1eb7fc06cf2fe3bccaaa5c10eb30ff9b0fb2eeb9f6946ab0"
+        },
+        {
+          "name": "shard_0010.npy",
+          "bytes": 35635328,
+          "sha256": "e860b9a9f4478d342bb0f88d850bedf62c40b79faa5f5eff9e98bfa7edc3a38e"
+        },
+        {
+          "name": "shard_0011.npy",
+          "bytes": 35635328,
+          "sha256": "22baf8616c1d11150ebd2863f1851dbd403e6f27c3d1fd23bf9e6081fb8d4053"
+        },
+        {
+          "name": "shard_0012.npy",
+          "bytes": 35635328,
+          "sha256": "3578364f9930b8d9e8e65a3881180105ff5b587e8b47c37dc9047cc6887db240"
+        },
+        {
+          "name": "shard_0013.npy",
+          "bytes": 35078528,
+          "sha256": "32899c156e7239b0c7eae34227b5c3d66accf33fe046a629c204044e9a5e1572"
+        }
+      ]
+    }
+  },
+  "gpu_wall_hours": 0.007847707416383654,
+  "excluded": [
+    "pg_kfold_test",
+    "layer_freeze_reserve",
+    "round_held_out_test",
+    "plate"
+  ],
+  "provenance_contract_version": 1,
+  "split": "pg_kfold_fold_0_training_only",
+  "layer_index": 26,
+  "device_class": "NVIDIA A100 (historical cache-producing run)",
+  "storage_dtype": "float16",
+  "compute_dtype": "not_recorded_in_historical_run",
+  "tf32": {
+    "matmul_allow_tf32": "not_recorded_in_historical_run",
+    "cudnn_allow_tf32": "not_recorded_in_historical_run",
+    "float32_matmul_precision": "not_recorded_in_historical_run"
+  },
+  "attention_kernel_settings": {
+    "realized": "not_recorded_in_historical_run"
+  },
+  "backbone_revision": "e4bac860f0c502cd80f3aeac3d0ce6524c6627cb",
+  "activation_units": "normalized",
+  "reference_blocks": {
+    "drift_matched": {
+      "sequence_role": "wild_type",
+      "file": "reference_wild_type_drift_matched.npy",
+      "sha256": "e3141a74b91df8cd74fa56c1c808e90ba5f91eac3211592262cb56f2a7dbad7c",
+      "shape": [
+        290,
+        960
+      ],
+      "dtype": "float32",
+      "activation_units": "normalized",
+      "normalization_scalar": 0.02818450170391955
+    }
+  },
+  "historical_provenance_completeness": "partial_fields_recovered_retroactively",
+  "pre_v18_manifest_sha256": "f0a87a7637cb4904c83d474bad37a969886ea391ccdc7b79c61a3d6882c2c4dd",
+  "reference_extraction_runtime": {
+    "device_class": "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+    "torch_version": "2.11.0+cu130",
+    "cuda_version": "13.0",
+    "tf32": {
+      "matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "float32_matmul_precision": "highest"
+    },
+    "attention_kernel_settings": {
+      "requested": "flash_attention_2",
+      "flash_sdp_enabled": true,
+      "memory_efficient_sdp_enabled": true,
+      "math_sdp_enabled": true,
+      "cudnn_sdp_enabled": true
+    }
+  },
+  "adapter_checkpoint": "Models/step6/IRED/drift_matched_rotation/adapter.pt"
+}
