@@ -1,0 +1,13 @@
+ M Code/config/step8.yaml
+ M Code/scripts/run_ired_causal_patching.py
+?? Cache
+?? Code/crossfit/patching_analysis.py
+?? Code/scripts/analyze_ired_patching_effects.py
+?? Models
+?? Reports/step8/v18_causal_effect_analysis_manifest.json
+?? Reports/step8/v18_causal_feature_shell_profiles.csv
+?? Reports/step8/v18_causal_patching_control_backfill_manifest.json
+?? Reports/step8/v18_causal_patching_control_effects.csv
+?? Reports/step8/v18_causal_patching_effect_quantiles.csv
+?? Reports/step8/v18_causal_patching_top_features.csv
+?? Reports/step8/v18_causal_spatial_effect_correlations.csv

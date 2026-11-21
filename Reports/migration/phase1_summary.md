@@ -8,19 +8,19 @@ The mounted network-volume root is `/workspace` (`mfs#us-ks-2.runpod.net:9421[/n
 
 The provider's `df` output reports service-wide capacity and is not a tenant-usage measurement. The byte totals below are sums of the inventoried files. The full per-file record is in `volume_inventory.csv`; every `regenerable` row includes its producing command and estimated GPU-hours.
 
-Classification was conservative. Files outside CROSSFIT were marked `irreplaceable` unless an upstream-backed clean git checkout, a locked environment, or a laptop copy established recoverability. This is why the transfer candidate total includes unrelated FMTS assets on the shared volume.
+Classification was conservative. Files outside CROSSFIT were marked `irreplaceable` unless an upstream-backed clean git checkout, a locked environment, or a laptop copy established recoverability. During review, `fmts-workshop-venv` was correctly reclassified as regenerable; its 48 installed package pins are committed in `fmts_workshop_requirements.txt`.
 
 ## Totals
 
 | Classification | Files | Bytes | Decimal GB |
 |---|---:|---:|---:|
-| committed | 5,792 | 794,054,491 | 0.794 |
+| committed | 5,798 | 794,095,329 | 0.794 |
 | local_uncommitted | 20 | 122,858,241 | 0.123 |
-| regenerable | 192,228 | 36,244,602,538 | 36.245 |
-| irreplaceable | 45,779 | 32,981,435,987 | 32.981 |
-| **Total** | **243,819** | **70,142,951,257** | **70.143** |
+| regenerable | 214,034 | 41,692,063,787 | 41.692 |
+| irreplaceable | 24,712 | 27,596,816,301 | 27.597 |
+| **Total** | **244,564** | **70,205,833,658** | **70.206** |
 
-Pending pod-to-laptop transfer, if every `irreplaceable` row is approved, is **32,981,435,987 bytes**. The `local_uncommitted` files are already byte-identical on the laptop and therefore are not included in that transfer total. The CROSSFIT-related portion of the pending transfer is **9,035,068,239 bytes**; the other **23,946,367,748 bytes** belong to unrelated volume content and should be reviewed separately.
+The reviewed CROSSFIT transfer set is **9,221,227,791 bytes** across 7,621 files. It deliberately includes repository histories and the requested Step 8 cache as well as irreplaceable files; it is therefore not identical to the classification totals. Unrelated FMTS and meta-flow-matching assets are excluded.
 
 Laptop free space measured at 2026-11-21 19:05:27 UTC, after committing this inventory and the reference blocks, was **44,808,388,608 bytes**. A full 32,981,435,987-byte approved transfer requires **39,577,723,185 bytes** with 20% headroom, so it fit at that snapshot by **5,230,665,423 bytes**. Free space must be checked again immediately before Part 2.
 
@@ -52,4 +52,4 @@ The copied manifests and blocks cover the active Step 2, 3, 4, 5, 6, 8, and 9 ca
 
 The inventory pass reported zero read failures. The repository suite passes with the project environment: `270 passed, 2 warnings` using `.venv/bin/python -m pytest Code/tests -q`.
 
-No Part 2 artifact transfer has started. No destination directory for Part 2 has been selected, and no volume content has been changed.
+Part 2 subsequently copied the approved set to `/Users/songcao/workdir/Interpretable_PLM_RunPod_Phase2_2026-11-21`. All 7,621 local SHA-256 values match the refreshed pod manifest. See `transfer_verification.csv` and `part2_transfer_summary.md`. No source payload was deleted, moved, or renamed.
