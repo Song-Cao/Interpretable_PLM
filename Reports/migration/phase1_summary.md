@@ -22,7 +22,7 @@ Classification was conservative. Files outside CROSSFIT were marked `irreplaceab
 
 Pending pod-to-laptop transfer, if every `irreplaceable` row is approved, is **32,981,435,987 bytes**. The `local_uncommitted` files are already byte-identical on the laptop and therefore are not included in that transfer total. The CROSSFIT-related portion of the pending transfer is **9,035,068,239 bytes**; the other **23,946,367,748 bytes** belong to unrelated volume content and should be reviewed separately.
 
-Laptop free space after writing this inventory and preserving the reference blocks is **44,874,211,328 bytes**. A full 32,981,435,987-byte approved transfer requires **39,577,723,185 bytes** with 20% headroom, so it fits at this snapshot by **5,296,488,143 bytes**. Free space must be checked again immediately before Part 2.
+Laptop free space after committing this inventory and the reference blocks is **44,809,515,008 bytes**. A full 32,981,435,987-byte approved transfer requires **39,577,723,185 bytes** with 20% headroom, so it fits at this snapshot by **5,231,791,823 bytes**. Free space must be checked again immediately before Part 2.
 
 ## CROSSFIT-specific findings
 
