@@ -1,0 +1,504 @@
+--- current_git/Reports/step2/step2_handoff.md
++++ pod/Reports/step2/step2_handoff.md
+@@ -16,13 +16,6 @@
+ 
+ The pinned backbone is `biohub/ESMC-300M` revision `e4bac860f0c502cd80f3aeac3d0ce6524c6627cb` under `esm==3.4.1.post1`. It returned 960 channels and 30 hidden-state depths.
+ 
+-All Step 2 ESM embedding baselines in this handoff use the model's final output after all
+-30 transformer blocks. This is the registered cross-dataset convention for embedding
+-baselines. It is distinct from analysis-layer objects, which use the dataset's frozen selected
+-hidden depth (depth 26 for IRED). Step 5 dense probes, Step 9 phi predictors, and Step 8
+-semantics are therefore compared within depth 26; they do not silently reuse these final-output
+-Step 2 tensors.
+-
+ `Cache/step2/IRED/representations/` remains on the pod and contains:
+ 
+ - `variant_residue.npy`: float16 `[1182, 290, 960]`, aligned to `variant_rows.npy`.
+--- current_git/Reports/step7/step7_handoff.md
++++ pod/Reports/step7/step7_handoff.md
+@@ -1,37 +1,226 @@
+-# Step 7 handoff: IRED taxonomy and recomputed Gate 2
++# Step 7 handoff — IRED width diagnostics, provisional taxonomy, and Gate 2
+ 
+-Date: 2026-11-12
+-Status: taxonomy retained; Gate 2 recomputed at depth 26
++## Status and scope
+ 
+-## Taxonomy
++Parts A and B are complete. IRED remains exploratory because Gate 1 failed on task gain; none of
++these results revise that verdict. The fixed-`k` width sweep, raw-activation rank,
++feature-death timing, and one registered dead-feature-resampling run selected `w=1` and `w=2`.
++Both widths then completed the null-calibrated provisional taxonomy. Gate 2 reports sparse
++features competitive with the dense reference under the rule committed in Step 5.
+ 
+-Steps 6 and 7 consumed the authoritative training-only depth-26 cache and were not rerun under
+-v18. The five-real-seed, pooled drift-matched-null taxonomy therefore stands. At w=1 the mean
+-provisional proportions are: dead 32.67%, emergent candidate 0.00%, evolution-only 0.03%,
+-rotated 25.23%, re-weighted 0.07%, and conserved 42.22%. Rotation is the only shifted class
+-populated in all five real dictionaries. The expanded 34-null resolution audit supports zero
+-emergent candidates; it is not a three-null p-value-resolution artifact.
++All 12 death-timing replays exactly reproduced both the authoritative scalar loss traces and
++every final state tensor before their epochwise activation counts were accepted. A complete NPZ
++exists for every width and seed. No interrupted or partial fit contributes to this report.
+ 
+-The Step 4 crosscoder cache is depth 26, training-only, normalized by one frozen scalar per
+-model, and contains 259,550 residue positions. Its committed manifest is
+-`Reports/step4/cache_manifest.json`.
++## Dictionary-free activation rank
+ 
+-## Gate 2
++The PCA uses centered covariance over all 259,550 normalized training-pool residue activations;
++normalization by a fixed scalar does not change its spectrum or participation ratio.
+ 
+-The dense probes and phi predictors were recomputed from the new provenance-verified depth-26
+-cache. Selection remained validation-only. The validation-selected dense reference is
+-`dense_fit_mean` (validation Spearman 0.628324; pg_kfold test 0.551305). The validation-selected
+-sparse arm is `phi_w2_max_all_live` (validation 0.636133; test 0.550402).
++| model | raw participation ratio | PCs for 50% | PCs for 80% | PCs for 90% | PCs for 95% | PCs for 99% |
++|---|---:|---:|---:|---:|---:|---:|
++| E_evo | 66.94 | 30 | 98 | 148 | 192 | 256 |
++| E_fit | 61.24 | 31 | 106 | 162 | 212 | 309 |
+ 
+-Paired bootstrap dense-minus-sparse on the 228-row pg_kfold test set is 0.000903 with 95%
+-interval [-0.038226, 0.040975]. The pre-committed verdict remains `sparse_competitive`; the
+-interval does not support improvement in either direction. The machine-readable decision is
++The raw 960-channel activations therefore have a small effective rank before any dictionary is
++introduced. For comparison, the prior code-level participation ratios were 122.83, 112.78,
++99.12, and 95.02 at `w=1,2,4,8`. Those code values describe the covariance of nonlinear sparse
++coordinates and are not PCA dimensions in the input space; the raw spectrum is the relevant
++intrinsic-rank constraint. Under v15, overcompleteness is measured against raw effective rank,
++not ambient dimension. The 960-feature `w=1` dictionary is already 14.34 times overcomplete
++against E_evo and 15.68 times against E_fit; `w=2` is 28.68 and 31.35 times overcomplete.
++
++Exact eigenvalues and cumulative spectra are in
++`Reports/step7/part_a/raw_activation_pca_spectrum.csv`; the summary is
++`raw_activation_pca_summary.json`.
++
++The matched layer-freeze reserve provides the corresponding shuffled-label control. At depth 26
++over the same 17,110 residue observations, PR is 66.93 for E_evo, 60.67 for E_fit, and 60.29 for
++the shuffled adapter. The real and shuffled contractions are 9.35% and 9.92%, respectively.
++Together with CKA 0.9189 real and 0.9811 shuffled, this shows that rank contraction is generic to
++fine-tuning here rather than label-driven. The matched result is in
++`Reports/step7/adapter_rank_comparison.json`.
++
++## When features died
++
++Counts below are means across three seeds. “Never active” means zero full-pool activations at
++initialization and every epoch. “Crowded out” means dead at epoch 20 but active at least once at
++initialization or an earlier epoch.
++
++| w | features | initially dead | never active | crowded out | live at epoch 20 | final dead fraction |
++|---:|---:|---:|---:|---:|---:|---:|
++| 1 | 960 | 30.3 (3.2%) | 14.3 (1.5%) | 299.3 (31.2%) | 646.3 | 0.3267 |
++| 2 | 1,920 | 201.7 (10.5%) | 144.7 (7.5%) | 814.0 (42.4%) | 961.3 | 0.4993 |
++| 4 | 3,840 | 859.3 (22.4%) | 652.3 (17.0%) | 1,891.0 (49.2%) | 1,296.7 | 0.6623 |
++| 8 | 7,680 | 2,877.7 (37.5%) | 2,032.7 (26.5%) | 3,969.3 (51.7%) | 1,678.0 | 0.7815 |
++
++Crowding is the majority source of final death at every width: among final-dead features, the
++crowded-out share is 95.4%, 84.9%, 74.4%, and 66.1% for `w=1,2,4,8`. Never-active features also
++rise sharply with width. The deaths occur through competition, but random resampling did not
++recover them and the raw effective rank is only 61-67. The rising dead fraction is therefore not
++treated as a recoverable BatchTopK artifact: the available variation is genuinely concentrated.
++
++Per-run categories, every epoch trajectory, and compressed per-feature counts are under
++`Reports/step7/part_a/death_timing/` and the two `death_timing_*.csv` files.
++
++## Dead-feature resampling intervention
++
++The registered intervention used `w=4`, seed 20261311, unchanged reconstruction objective and
++fixed `k=32`. Every full-pool-dead feature was randomly reinitialized after epochs 5, 10, and 15;
++its Adam moments were cleared while the global optimizer step was preserved. It resampled 2,454,
++2,524, and 2,549 features respectively.
++
++The final dead fraction was 0.66797 versus 0.66042 for the matched baseline: an absolute change
++of +0.00755, or a pre-registered “reduction” of -0.00755. It fails the 0.10 substantial-recovery
++criterion and is also worse than the `w=2` mean of 0.49931. Random resampling therefore did not
++rescue `w=4`; it does not justify replacing either default width. The intervention checkpoint is
++pod-only at `Models/step7/IRED/diagnostics/w4_seed20261311_resampled_nobias.pt`, SHA-256
++`1278de923a2c19bc837ced1abfbf823f8e7a6872cf7b6f90d041c89f91e74433`.
++
++## Width choice
++
++The exploratory Part B dictionaries are `w=1` and `w=2`, both run rather than selecting a single
++one. Both are strongly overcomplete relative to the 61-67-dimensional raw activations: `w=1`
++supplies the lowest-death 14-16-times-overcomplete reference, while `w=2` tests a 29-31-times
++overcomplete dictionary at the edge of what this cache supports. `w=4` and `w=8` are excluded because the
++registered intervention did not recover `w=4`, and feature death worsens further at `w=8`.
++
++This supersedes the earlier statement that IRED empirically “cannot support an overcomplete
++dictionary.” That statement implemented v13's pre-committed stopping rule. It was not an
++impossibility result, and v15 explicitly permits the exploratory comparison.
++
++## Cost
++
++Part A consumed 0.14059 A100 wall-hours (8.44 minutes), including raw PCA, 12 instrumented
++replays, exact reproduction checks, and the resampling run. The resampling fit itself used
++0.00971 hours. Cumulative documented IRED GPU occupancy through Part A is approximately 13.3
++A100 wall-hours; this includes the earlier searches, diagnostic and discarded runs retained in
++the project log, the v13 cache/null/width work, and this diagnostic.
++
++## Artifacts and next interface
++
++- `Reports/step7/part_a/part_a_manifest.json`: completed-run manifest and selected widths.
++- `Reports/step7/part_a/rank_and_feature_death.png`: raw PCA and live-feature trajectories.
++- `Reports/step7/part_a/raw_activation_pca_spectrum.csv`: 960 eigenvalues per model.
++- `Reports/step7/part_a/death_timing_runs.csv`: per-width, per-seed death categories and hashes.
++- `Reports/step7/part_a/death_timing_epochs.csv`: live counts at initialization and every epoch.
++- `Reports/step7/part_a/w4_resampling.json`: intervention decision and checkpoint hash.
++- `Models/step7/IRED/w{1,2}_seed{seed}_nobias.pt`: pod-only authoritative Part B inputs.
++
++## Provisional taxonomy
++
++Every threshold was fitted from its own three-seed shuffled-label null at `q=0.05`; null runs
++were fitted separately and the conservative cutoff was retained. The artifact gate is
++conjunctive: either latent-scaling ratio can exclude a candidate. The decoder norm floor uses
++each decoder's own median. Classification follows `dead`, `emergent candidate`,
++`evolution-only`, `rotated`, `re-weighted`, then `conserved`. “Emergent candidate” is explicitly
++not the final causal class.
++
++The original step-matched shuffled null produced the following proportions:
++
++| w | dead | emergent candidate | evolution-only | rotated | re-weighted | conserved |
++|---:|---:|---:|---:|---:|---:|---:|
++| 1 | 32.67% | 28.16% | 1.63% | 36.04% | 0.00% | 1.49% |
++| 2 | 49.93% | 0.00% | 0.94% | 47.81% | 0.05% | 1.27% |
++
++Values are means across three real crosscoder seeds. A subsequent drift-matched rotation null
++changed only the decoder-cosine threshold; Delta, latent-scaling, norm-floor, and frequency
++thresholds remain registered against the original step-matched null. The corrected provisional
++proportions are:
++
++| w | dead | emergent candidate | evolution-only | rotated | re-weighted | conserved |
++|---:|---:|---:|---:|---:|---:|---:|
++| 1 | 32.67% | 28.16% | 1.63% | 7.12% | 0.03% | 30.38% |
++| 2 | 49.93% | 0.00% | 0.94% | 10.45% | 0.30% | 38.39% |
++
++The original rotated mass was therefore largely global-drift re-reporting. The corrected
++taxonomy retains a smaller rotation signal and restores a substantial conserved class, which is
++consistent with the representation-level CKA of 0.919. Exact per-feature corrected labels are
++under `Reports/step6/drift_matched_rotation/`. The strong width instability in emergent
++candidates remains: no `w=2` feature passed the reconstruction-ratio component of latent
++scaling.
++
++### Width-matched reconstruction-ratio audit
++
++The registered null crosscoders were matched by width: three `w=1` nulls calibrated `w=1`, and
++three `w=2` nulls calibrated `w=2`. The real-pair ratio distribution did not shift materially
++with width. Across seeds, its median was 0.7849-0.7942 at `w=1` and 0.7797-0.7897 at `w=2`;
++the corresponding matched-null medians were 0.9295-0.9360 and 0.9301-0.9322. Thus doubling the
++dictionary did not mechanically make the observed ratios more reconstructible.
++
++At `w=1`, the conservative lower-tail cutoffs were 0.7828-0.7849 and 298-330 features passed.
++At `w=2`, at least one matched-width null run produced no BH rejection for every real seed. The
++pre-committed conservative-across-nulls rule therefore set the combined cutoff to `-inf`, and
++zero features passed. The zero is caused by null/BH instability at the wider dictionary, not by
++a visible downward shift in the real reconstruction-ratio distribution. Distribution summaries
++and the ECDF are `reconstruction_ratio_distributions.csv` and
++`reconstruction_ratio_ecdf.png` under the drift-matched report directory.
++
++### Drift-matched rotation audit
++
++The shuffled adapter used the registered rank 16, learning rate 0.0001, weight decay 0.01, and
++shuffled labels. It reached relative drift 0.6484 after 575 optimizer steps, within 2.3% of the
++real adapter's 0.6338. Rotation was recalibrated at `q=0.05` from three new crosscoders at each
++matched width. Mean rotated fractions fell from 36.04% to 7.12% at `w=1` and from 47.81% to
++10.45% at `w=2`; seedwise corrected ranges were 6.46-7.81% and 10.10-10.99%.
++
++At the rotation stage, the original flags were close to saturated across every quintile
++(84-100%), with only weak associations with decoder norm or activation frequency
++(Spearman -0.03 to 0.27 across runs). That pattern is predominantly global. After drift
++matching, flags were concentrated among high-activation-frequency features (Spearman 0.17-0.40;
++all chi-square p-values <= 8.1e-5) and, more modestly, among lower decoder-norm features
++(Spearman -0.27 to -0.10; five of six chi-square tests p<0.05). The residual rotation signal is
++therefore feature-structured rather than uniform, but decoder-norm dependence remains a caveat.
++
++Reconstruction remains high but is reported separately by model. Across real seeds, `w=1`
++explains 99.85% (E_evo) and 99.59% (E_fit) of variance; `w=2` explains 99.86% and 99.68%.
++These values do not rescue dead or artifact-failing features.
++
++## Gate 2
++
++The best dense reference selected only by five-fold validation Spearman was `dense_fit_mean`;
++the best sparse arm by the same rule was `phi_w1_max_all_live`. Their pg_kfold test Spearman
++values were 0.5007 and 0.5495. The paired bootstrap interval for dense minus sparse was
++`[-0.0956, -0.00153]`, point estimate -0.0488. Gate 2 therefore returns
++`sparse_competitive` (the interval actually favours sparse). The exact decision record is
+ `Reports/step7/gate2_result.json`.
+ 
+-Gate 2 is a routing gate. Its IRED-specific resource override still permits Step 9, but the
+-substantive result is competitiveness, not superiority.
++All dense references are shown to separate the pre-committed selection rule from a post-hoc
++test ranking:
+ 
++| dense reference | validation Spearman | pg_kfold test Spearman |
++|---|---:|---:|
++| h_fit mean | 0.6231 | 0.5007 |
++| h_evo mean | 0.6077 | 0.5543 |
++| PCs of h_fit - h_evo | 0.3948 | 0.4882 |
++
++`h_evo` is strongest on test, but selecting it after reading test would violate the registered
++protocol. The accepted Gate 2 result compares validation-selected `h_fit` against
++validation-selected sparse features; the full audit is
++`Reports/step7/gate2_dense_reference_audit.csv`.
++
++Step 9 was run regardless under the pre-recorded IRED-only resource-allocation override. This
++does not weaken Gate 1 or Gate 3 and does not apply to GB1.
++
++## Step 9 interpretation records
++
++The headline expressivity gap is `R2(L4)-R2(L0)=0.152725` on pg_kfold test. Fitness prediction
++therefore needs materially nonlinear feature logic on IRED. The additive readout retained for
++Steps 8 and 11 is weaker than this ceiling, so its attributions describe that weaker additive
++model rather than the full predictive logic.
++
++The validation-selected sparse arm is `phi_w1_max_all_live`: it uses max pooling over residue
++codes, whereas the plan's displayed notation defines `phi_j` using a residue sum. The computed
++result is internally consistent and downstream code is unaffected, but the notation must be
++corrected to distinguish the selected max-pooled arm from sum-pooled arms.
++
+ ## Incomplete or uncertain
+ 
+-The taxonomy remains exploratory because IRED Gate 1 failed on task gain. No confirmatory
+-central-claim evidence is inferred from it.
++All class proportions remain provisional until causal validation. The width-dependent loss of
++emergent candidates means the taxonomy is not stable to dictionary width on IRED. The `w=2`
++zero also depends on a conservative cutoff becoming undefined after one matched-width null run
++has no BH rejection; it should not be described as a mechanical width shift in the observed
++ratio. The
++resampling result tests one registered random-reset intervention, not every anti-death optimizer.
++No architecture or loss was tuned to reduce death. Gate 1 remains failed, and no Step 7 result
++is confirmatory evidence for the central claim.
+--- current_git/Reports/step8/step8_preparation_handoff.md
++++ pod/Reports/step8/step8_preparation_handoff.md
+@@ -9,11 +9,6 @@
+ IRED remains exploratory because Gate 1 failed. Nothing here revises that verdict or enters a
+ confirmatory central-claim table.
+ 
+-Under v16, recalibration of every taxonomy threshold against the unconditional drift-matched
+-null leaves zero emergent candidates at `w=1`. The user-specified condition for beginning Part C
+-is therefore not met. The prepared tracks and Delta-z cache remain intact, but no enrichment,
+-patching-budget calculation, ablation, or oracle validation has been run.
+-
+ ## Numbering verification
+ 
+ The 290-residue campaign wild type globally aligns to canonical 5OCM residues 1-290 with 100%
+--- current_git/Reports/step9/step9_handoff.md
++++ pod/Reports/step9/step9_handoff.md
+@@ -1,43 +1,80 @@
+-# Step 9 handoff: IRED phi prediction at depth 26
++# Step 9 handoff — exploratory IRED sparse-feature prediction
+ 
+-Date: 2026-11-12
+-Status: feature-set arms and registered expressivity ladder complete
++## Status
+ 
+-## Inputs and selection
++The IRED feature-set comparison, expressivity ladder, and reporting-only sample-efficiency curve
++are complete. Selection used five-fold validation Spearman inside the pg_kfold training pool.
++Neither pg_kfold test, round-held-out, nor plate labels influenced selection. Every selected fit
++has member-level predictions and a persisted checkpoint; full-search predictions remain
++pod-only parquet where registered.
+ 
+-All phi inputs are pooled residue codes from the provenance-verified depth-26 campaign and
+-plate activations. Widths 1 and 2 and sum, max, and binarized pooling were evaluated with the
+-registered feature sets. Hyperparameters were selected only by five-fold validation inside the
+-pg_kfold training pool. Test, round-held-out, reserve, and plate labels were reporting-only.
+-Every CV held-out and final-condition prediction is committed in `Reports/step9/`.
++Gate 1 remains failed, so these are exploratory pipeline-shakedown results and cannot support a
++confirmatory central-claim table.
+ 
+-The architecture shortlist validation Spearman values are MLP 0.642659, random forest
+-0.634123, and ridge 0.616636. The selected family is MLP. The selected feature arm is
+-`phi_w2_max_all_live`: validation 0.636133; pg_kfold test 0.550402 (95% bootstrap interval
+-[0.432634, 0.649810]); round-held-out 0.524105 [0.434199, 0.605063]; plate 0.463007
+-[0.215360, 0.659043]. The plate interval is wide at n=54 and does not establish superiority
+-over classical encodings.
++## Feature-set result
+ 
+-The full arm table is `ired_phi_feature_set_results.csv`; the selected predictions are
+-`phi_w2_max_all_live_predictions.csv`.
++The best arm by the registered selection metric is `phi_w1_max_all_live`: width 1, max pooling,
++all 642 live features, MLP, eight final-refit epochs. Bootstrap intervals below are 95%.
+ 
++| condition | Spearman | bootstrap interval |
++|---|---:|---:|
++| pg_kfold test | 0.5495 | [0.4337, 0.6465] |
++| round-held-out | 0.5652 | [0.4869, 0.6348] |
++| external plate | 0.5002 | [0.2442, 0.7094] |
++
++All 18 width/pooling/feature-set arms, with Spearman and NDCG bootstrap intervals for all three
++conditions, are in `ired_phi_feature_set_results.csv`. The largest plate point estimate was
++0.5729 for `phi_w2_max_objective_shifted`, with a wide interval [0.3571, 0.7506], but that arm
++was not selected by validation performance. It is therefore a post-hoc diagnostic, not the
++headline result.
++
++The pre-registered transfer expectation broadly holds for the selected arm: its plate Spearman
++0.5002 improves on the earlier dense ESM arms (0.23-0.44) but remains below the one-hot and
++AAIndex range (0.53-0.57). Some non-selected narrow `w=2` arms overlap or slightly exceed that
++classical range; their intervals are wide and their taxonomy is width-unstable, so this is not
++treated as an unqualified sparse-feature success. Max pooling is critical: several sum-pooled
++arms reverse rank on plate despite similar validation performance.
++
+ ## Expressivity ladder
+ 
+-On the headline all-live max-pooled w=2 arm, L0 test R2 is 0.058432 and L4 test R2 is
+-0.120331, giving R2(L4)-R2(L0) = 0.061899. This replaces the withdrawn wrong-depth gap of
+-0.152725. The additive attribution readout remains weaker than the nonlinear ceiling, but the
+-gap is materially smaller after correction. The registered interaction gate did not pass
+-(permutation p=1.0), and no analysis was altered in response.
++The full ladder was run only for the headline arm, as registered. Other feature sets received
++L0 and L1.5 only. The interaction gate failed (`H^2=0.9357`, permutation `p=1.0`, 200
++permutations), so L2 was not fitted.
+ 
+-## Compute and artifacts
++| level | validation Spearman | pg test Spearman | pg test R2 | round Spearman | plate Spearman |
++|---|---:|---:|---:|---:|---:|
++| L0 ridge | 0.5797 | 0.5021 | -0.0481 | 0.3842 | -0.5289 |
++| L1.5 forest | 0.6435 | 0.5741 | 0.1646 | 0.5826 | 0.3957 |
++| L1 splines | 0.4982 | 0.4206 | -0.1604 | 0.3615 | -0.6229 |
++| L4 selected MLP | 0.6548 | 0.5495 | 0.1046 | 0.5652 | 0.5002 |
+ 
+-The feature-set run used 0.174302 GPU-hours and the ladder 0.122662 GPU-hours. Search and final
+-checkpoints remain on the pod network volume under `Models/step9/IRED/`; every report-side
+-search table records checkpoint hashes. `ired_phi_cache_manifest.json` records the depth-26
+-source and exact wild-type reference verification.
++The registered expressivity gap is `R2(L4)-R2(L0) = 0.152725`. L1.5 has the strongest test
++point estimates but was not allowed to replace the validation-selected L4 headline after test
++inspection. Exact bootstrap intervals and every auxiliary arm are in
++`ired_expressivity_ladder.csv`.
+ 
++## Sample efficiency and budget
++
++The reporting-only curve used the already selected arm and fixed eight-epoch policy, with ten
++seeds per size. Mean pg_kfold test Spearman rose from 0.406 at N=16 to 0.539 at N=512. It did
++not select any model or hyperparameter.
++
++Ten representative ladder fits took 4.09 seconds. The projected 925-fit grid was 0.105 GPU-hours,
++so no search reduction was needed. Measured GPU wall time was 0.3573 hours for dense/feature-set
++prediction, 0.0948 for the ladder, and 0.0129 for sample efficiency: 0.4650 hours total for the
++prediction portion, well below the four-hour Part B cap. Completed checkpoint/prediction pairs
++were resumed after interruptions; no partial fit contributed a result.
++
++## Artifacts
++
++- `Reports/step9/ired_phi_feature_set_results.csv`: all feature-set arms and three conditions.
++- `Reports/step9/ired_expressivity_ladder.csv`: complete registered ladder outputs.
++- `Reports/step9/sample_efficiency_{runs,summary,predictions}.csv`: reporting-only curve.
++- `Reports/step9/*_predictions.csv`: every ensemble member and ensemble mean by condition.
++- `Models/step9/IRED/`: pod-only loadable checkpoints; hashes are recorded in search/run files.
++
+ ## Incomplete or uncertain
+ 
+-Sample-efficiency curves were not rerun because v18 requested Step 5, Gate 2, Step 9 phi arms,
+-and the expressivity ladder. The selected-arm manifest's historical `sample_efficiency_pending`
+-field records that omission. No partial training result is reported.
++No causal semantics follow from predictive performance. Plate estimates use only 54 variants
++and have wide intervals. The strong dependence on pooling and provisional width-specific
++taxonomy must be retested on GB1. No enrichment, patching, or oracle work was run here.
+--- current_git/Reports/step4/cache_manifest.json
++++ pod/Reports/step4/cache_manifest.json
+@@ -174,65 +174,5 @@
+     "layer_freeze_reserve",
+     "round_held_out_test",
+     "plate"
+-  ],
+-  "provenance_contract_version": 1,
+-  "layer_index": 26,
+-  "device_class": "NVIDIA A100 (historical cache-producing run)",
+-  "storage_dtype": "float16",
+-  "compute_dtype": "not_recorded_in_historical_run",
+-  "tf32": {
+-    "matmul_allow_tf32": "not_recorded_in_historical_run",
+-    "cudnn_allow_tf32": "not_recorded_in_historical_run",
+-    "float32_matmul_precision": "not_recorded_in_historical_run"
+-  },
+-  "attention_kernel_settings": {
+-    "realized": "not_recorded_in_historical_run"
+-  },
+-  "backbone_revision": "e4bac860f0c502cd80f3aeac3d0ce6524c6627cb",
+-  "activation_units": "normalized",
+-  "reference_blocks": {
+-    "base": {
+-      "sequence_role": "wild_type",
+-      "file": "reference_wild_type_base.npy",
+-      "sha256": "7fb8309982949d6703f1d1aa18812f9b4823d46cedfac419dc2c88673494aedf",
+-      "shape": [
+-        290,
+-        960
+-      ],
+-      "dtype": "float32",
+-      "activation_units": "normalized",
+-      "normalization_scalar": 0.027229148200895496
+-    },
+-    "fit": {
+-      "sequence_role": "wild_type",
+-      "file": "reference_wild_type_fit.npy",
+-      "sha256": "77ab74204969e316669b0f91ac0a178fedb84c7b1e715348cd2efb5c2a1940d2",
+-      "shape": [
+-        290,
+-        960
+-      ],
+-      "dtype": "float32",
+-      "activation_units": "normalized",
+-      "normalization_scalar": 0.029674916328793835
+-    }
+-  },
+-  "historical_provenance_completeness": "partial_fields_recovered_retroactively",
+-  "pre_v18_manifest_sha256": "e6e9e91166a4394d43e8ab04cf06bc9bd46d5c36e90a3592ca39e5d5a08b5bdc",
+-  "reference_extraction_runtime": {
+-    "device_class": "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+-    "torch_version": "2.11.0+cu130",
+-    "cuda_version": "13.0",
+-    "tf32": {
+-      "matmul_allow_tf32": false,
+-      "cudnn_allow_tf32": true,
+-      "float32_matmul_precision": "highest"
+-    },
+-    "attention_kernel_settings": {
+-      "requested": "flash_attention_2",
+-      "flash_sdp_enabled": true,
+-      "memory_efficient_sdp_enabled": true,
+-      "math_sdp_enabled": true,
+-      "cudnn_sdp_enabled": true
+-    }
+-  }
++  ]
+ }
+--- current_git/Reports/step7/gate2_result.json
++++ pod/Reports/step7/gate2_result.json
+@@ -3,11 +3,31 @@
+   "decision_metric": "pg_kfold_test_spearman",
+   "selection_data": "five_fold_cv_within_pg_kfold_training_pool",
+   "best_dense_arm_by_validation": "dense_fit_mean",
+-  "best_phi_arm_by_validation": "phi_w2_max_all_live",
++  "best_phi_arm_by_validation": "phi_w1_max_all_live",
++  "dense_reference_audit": [
++    {
++      "arm": "dense_fit_mean",
++      "validation_spearman": 0.6230639457069064,
++      "pg_kfold_test_spearman": 0.5006885760470586,
++      "selected_by_validation": true
++    },
++    {
++      "arm": "dense_evo_mean",
++      "validation_spearman": 0.60770783379537,
++      "pg_kfold_test_spearman": 0.554287054976893,
++      "selected_by_validation": false
++    },
++    {
++      "arm": "dense_delta_pcs",
++      "validation_spearman": 0.3947929180041692,
++      "pg_kfold_test_spearman": 0.4882012827086818,
++      "selected_by_validation": false
++    }
++  ],
+   "paired_bootstrap_dense_minus_sparse": {
+-    "dense_minus_sparse": 0.00090295231005455,
+-    "lower": -0.038226240339794694,
+-    "upper": 0.040974546504592084
++    "dense_minus_sparse": -0.04881870949058309,
++    "lower": -0.09564037121616129,
++    "upper": -0.0015288872239100294
+   },
+   "verdict": "sparse_competitive",
+   "step9_run_despite_verdict": true,
