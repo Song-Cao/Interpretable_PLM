@@ -2,6 +2,7 @@
 """Run approved error-preserving causal patches for IRED rotated features."""
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import sys
@@ -152,6 +153,12 @@ def _bootstrap(values: np.ndarray, samples: int, seed: int) -> tuple[float, floa
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--controls-only", action="store_true",
+        help="Persist hygiene-control effects without rerunning candidate ablations.",
+    )
+    args = parser.parse_args()
     if not torch.cuda.is_available():
         raise RuntimeError("causal patching requires the GPU pod")
     started = time.monotonic()
@@ -232,6 +239,28 @@ def main() -> int:
     control_array = np.stack(control_predictions)
     baseline_sd = float(baselines_array.std(ddof=1))
     standardized = (control_array - baselines_array[:, None]) / baseline_sd
+    control_names = ["no_op", "dead_feature", "random_live_feature"]
+    control_features = [None, dead_feature, random_feature]
+    control_rows = []
+    for variant_index, row in enumerate(variants.itertuples(index=False)):
+        for control_index, (name, feature) in enumerate(zip(
+            control_names, control_features, strict=True
+        )):
+            control_rows.append({
+                "dataset": "IRED", "control": name, "feature": feature,
+                "variant_row": int(row.variant_row), "mutations": str(row.mutations),
+                "n_mutations": int(row.n_mutations), "fitness": float(row.y),
+                "stratum": str(row.stratum),
+                "baseline_prediction": float(baselines_array[variant_index]),
+                "patched_prediction": float(control_array[variant_index, control_index]),
+                "raw_effect": float(
+                    control_array[variant_index, control_index] - baselines_array[variant_index]
+                ),
+                "standardized_effect": float(standardized[variant_index, control_index]),
+            })
+    pd.DataFrame(control_rows).to_csv(
+        report / "v18_causal_patching_control_effects.csv", index=False
+    )
     hygiene = {
         "status": "passed",
         "variant_count": len(variants), "baseline_prediction_sd": baseline_sd,
@@ -273,6 +302,19 @@ def main() -> int:
     print(json.dumps(hygiene, indent=2), flush=True)
     if hygiene["status"] != "passed":
         raise RuntimeError(f"causal patching hygiene failed: {hygiene['status']}")
+    if args.controls_only:
+        control_manifest = {
+            "status": "complete", "dataset": "IRED", "representation_layer": layer,
+            "variants": len(variants), "controls": control_names,
+            "partial_forward_passes": len(variants) * len(controls),
+            "candidate_ablation_rerun": False,
+            "gpu_wall_hours": (time.monotonic() - started) / 3600.0,
+        }
+        (report / "v18_causal_patching_control_backfill_manifest.json").write_text(
+            json.dumps(control_manifest, indent=2) + "\n"
+        )
+        print(json.dumps(control_manifest, indent=2), flush=True)
+        return 0
 
     result_rows = []
     feature_values = {feature: [] for feature in candidates}

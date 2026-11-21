@@ -58,6 +58,12 @@ causal_budget:
   dead_feature_standardized_max_absolute_tolerance: 0.05
   random_feature_standardized_mean_absolute_tolerance: 0.05
   standardization: baseline_prediction_sd_on_registered_variant_sample
+patching_effect_analysis:
+  quantiles: [0.0, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99, 1.0]
+  top_feature_count: 10
+  permutations: 10000
+  permutation_seed: 20261801
+  fdr_q: 0.05
 paths:
   reports: Reports/step8
   delta_z_cache: Cache/step8/IRED/delta_z
